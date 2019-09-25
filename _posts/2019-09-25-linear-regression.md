@@ -121,7 +121,7 @@ Hence $t \sim \mathcal{N}(y(x,w),\sigma^2)$
 Now consider a data set of inputs $X = \{x_1, ..., x_N\}$ with corresponding target values $t_1, ..., t_N$. Under the assumption that these data points are independent and identically distributed (i.i.d.), the likelihood function is:
 
 $$
-p(\bold{t}|\bold{X},\bold{w},\sigma^2) = \prod_{n=1}^{N}\mathcal{N}(t_n|\bold{w}^T\phi(x_n), \sigma^2) = \prod_{n=1}^{N}\frac{1}{2\pi\sigma^2}e^{{-\frac{(t-y(x,w))^2}{2\sigma^2}}}
+p(\bold{t}|\bold{X},\bold{w},\sigma^2) = \prod_{n=1}^{N}\mathcal{N}(t_n|\bold{w}^T\phi(x_n), \sigma^2) = \prod_{n=1}^{N}\frac{1}{2\pi\sigma^2}e^{-\frac{(t-y(x,w))^2}{2\sigma^2}}
 $$
 
 Recall that if we assume a squared loss function then the optimal prediction for a new value of $x$ will be given by the conditional mean of the target variable. That is why now we need to use $\bold{w}$ to approximate the mean of the Gaussian.
