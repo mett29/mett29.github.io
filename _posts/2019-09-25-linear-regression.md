@@ -9,7 +9,7 @@ tags:
 
 In this post we will analyze **Linear Regression Models** in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is **regularization**.
 
-The goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\bold{x}$ of input variables.
+The goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\boldsymbol{x}$ of input variables.
 
 Linear models are simple and ofter provide an adequate and interpretable description of how the inputs affect the output. They can sometimes outperform fancier nonlinear models, especially in situations with small numbers of training cases, low signal-to-noise or sparse data.
 
@@ -27,7 +27,7 @@ $$
 y(x,w) = w_0 + \sum_{j=1}^{M-1}w_j\phi_j(x)
 $$
 
-Using nonlinar basis functions, we allow the function $y(x,w)$ to be a nonlinear function of the input vector $\bold{x}$. It is important to underline that still the model is linear in $\bold{w}$, which brings some simplifications.
+Using nonlinar basis functions, we allow the function $y(x,w)$ to be a nonlinear function of the input vector $\boldsymbol{x}$. It is important to underline that still the model is linear in $\boldsymbol{w}$, which brings some simplifications.
 
 Some examples of basis functions are the following: 
 - Polynomial $\rightarrow \phi_j(x) = x^j$
@@ -37,45 +37,45 @@ Some examples of basis functions are the following:
 - Sigmoidal $\rightarrow \phi_j(x) = \frac{1}{1+e^{(\mu_j-x)/\sigma}}$
 
 
-## How can we estimate $\bold{w}$?
+## How can we estimate $\boldsymbol{w}$?
 
-Typically what we have is a set of training data $(x_1, y_1)...(x_N,y_N)$ from which we estimate the parameters $\bold{w}$.
+Typically what we have is a set of training data $(x_1, y_1)...(x_N,y_N)$ from which we estimate the parameters $\boldsymbol{w}$.
 
 A common choice to do this estimation is **least squares**, with which we minimize the residual sum of squares:
 
 $$
-RSS(\bold{w}) = \sum_{n=1}^{N}(y(x_n, \bold{w}) - t_n)^2
+RSS(\boldsymbol{w}) = \sum_{n=1}^{N}(y(x_n, \boldsymbol{w}) - t_n)^2
 $$
 
 Actually, for convenience, the loss function is usually described as:
 
 $$
-E(\bold{w}) = \frac{1}{2}RSS(\bold{w}) = \frac{1}{2}\sum_{n=1}^{N}(y(x_n, \bold{w}) - t_n)^2
+E(\boldsymbol{w}) = \frac{1}{2}RSS(\boldsymbol{w}) = \frac{1}{2}\sum_{n=1}^{N}(y(x_n, \boldsymbol{w}) - t_n)^2
 $$
 
-Observation: it is a nonnegative quantity, that can be zero only if the function $y(x,\bold{w})$ passes exactly through each data point.
+Observation: it is a nonnegative quantity, that can be zero only if the function $y(x,\boldsymbol{w})$ passes exactly through each data point.
 
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Linear_least_squares_example2.svg/1043px-Linear_least_squares_example2.svg.png" style="display: block; margin-left: auto; margin-right: auto;width: 400px;height: 400px;">
 
-Now that we have our loss function we have to minimize it, hence choose $\bold{w}$ so that $E(\bold{w})$ is as small as possible. Since the error function is a quadratic function of the coefficients $\bold{w}$, its derivative with respect to them will be linear, and so the minimization has a unique solution, denoted by $\bold{w^*}$.
+Now that we have our loss function we have to minimize it, hence choose $\boldsymbol{w}$ so that $E(\boldsymbol{w})$ is as small as possible. Since the error function is a quadratic function of the coefficients $\boldsymbol{w}$, its derivative with respect to them will be linear, and so the minimization has a unique solution, denoted by $\boldsymbol{w^*}$.
 
 Let's start by saying that the residual sum of squares $RSS$ can be also written as the sum of the $l_2$-norm of the vector of the residual errors:
 
 $$
-RSS(\bold{w}) = ||\epsilon||_2^2 = \sum^{N}\epsilon_i^2 = \epsilon^T\epsilon
+RSS(\boldsymbol{w}) = ||\epsilon||_2^2 = \sum^{N}\epsilon_i^2 = \epsilon^T\epsilon
 $$
 
 This formulation simplifies the way in which we will write $RSS$ in its matrix form.
 
 Let $\Phi = (\phi(x_1), \phi(x_2), ..., \phi(x_N))^T$ and $t = (t_1, ..., t_N)^T$.
 
-$\epsilon = \bold{t}-\Phi\bold{w}$
+$\epsilon = \boldsymbol{t}-\Phi\boldsymbol{w}$
 
 So, from the previous $RSS$ formula, we can write:
 
 $$
-L(\bold{w}) = \frac{1}{2}RSS(\bold{w}) = \frac{1}{2}(\bold{t}-\Phi\bold{w})^T(\bold{t}-\Phi\bold{w})
+L(\boldsymbol{w}) = \frac{1}{2}RSS(\boldsymbol{w}) = \frac{1}{2}(\boldsymbol{t}-\Phi\boldsymbol{w})^T(\boldsymbol{t}-\Phi\boldsymbol{w})
 $$
 
 Finally, we can obtain the minimum imposing the gradient to be zero and the curvature to have all the eigenvalues > 0.
@@ -83,13 +83,13 @@ Finally, we can obtain the minimum imposing the gradient to be zero and the curv
 - First derivative
   
 $$
-\frac{\partial L(\bold{w})}{\partial \bold{w}} = -\Phi^T(\bold{t}-\Phi\bold{w})
+\frac{\partial L(\boldsymbol{w})}{\partial \boldsymbol{w}} = -\Phi^T(\boldsymbol{t}-\Phi\boldsymbol{w})
 $$
 
 - Second derivative
   
 $$
-\frac{\partial^2 L(\bold{w})}{\partial \bold{w} \partial \bold{w}^T} = \Phi^T\Phi
+\frac{\partial^2 L(\boldsymbol{w})}{\partial \boldsymbol{w} \partial \boldsymbol{w}^T} = \Phi^T\Phi
 $$
 
 If we assume that $\Phi^T\Phi$ is nonsingular (hence invertible), it is symmetric and positive semi-definite, so all the eigenvalues are $\geq 0$.
@@ -97,9 +97,9 @@ If we assume that $\Phi^T\Phi$ is nonsingular (hence invertible), it is symmetri
 Setting the gradient to zero gives
 
 $$
--\Phi^T(\bold{t}-\Phi\bold{w}) = 0 \\
-\Phi^T\Phi\bold{w} = \Phi^Tt \\
-\bold{w}_{OLS} = (\Phi^T\Phi)^{-1}\Phi^Tt
+-\Phi^T(\boldsymbol{t}-\Phi\boldsymbol{w}) = 0 \\
+\Phi^T\Phi\boldsymbol{w} = \Phi^Tt \\
+\boldsymbol{w}_{OLS} = (\Phi^T\Phi)^{-1}\Phi^Tt
 $$
 
 # Discriminative approach
@@ -121,24 +121,24 @@ Hence $t \sim \mathcal{N}(y(x,w),\sigma^2)$
 Now consider a data set of inputs $X = \{x_1, ..., x_N\}$ with corresponding target values $t_1, ..., t_N$. Under the assumption that these data points are independent and identically distributed (i.i.d.), the likelihood function is:
 
 $$
-p(\bold{t}|\bold{X},\bold{w},\sigma^2) = \prod_{n=1}^{N}\mathcal{N}(t_n|\bold{w}^T\phi(x_n), \sigma^2) = \prod_{n=1}^{N}\frac{1}{2\pi\sigma^2}e^{-\frac{(t-y(x,w))^2}{2\sigma^2}}
+p(\boldsymbol{t}|\boldsymbol{X},\boldsymbol{w},\sigma^2) = \prod_{n=1}^{N}\mathcal{N}(t_n|\boldsymbol{w}^T\phi(x_n), \sigma^2) = \prod_{n=1}^{N}\frac{1}{2\pi\sigma^2}e^{-\frac{(t-y(x,w))^2}{2\sigma^2}}
 $$
 
-Recall that if we assume a squared loss function then the optimal prediction for a new value of $x$ will be given by the conditional mean of the target variable. That is why now we need to use $\bold{w}$ to approximate the mean of the Gaussian.
+Recall that if we assume a squared loss function then the optimal prediction for a new value of $x$ will be given by the conditional mean of the target variable. That is why now we need to use $\boldsymbol{w}$ to approximate the mean of the Gaussian.
 
 This can be done by finding the **maximum likelihood**:
 
 $$
-l(\bold{w}) = ln \ p(\bold{t}|\bold{X},\bold{w},\sigma^2) = \sum_{n=1}^{N}ln \ p(t_n|x_n,\bold{w},\sigma^2) \\
-= -\frac{N}{2}ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}RSS(\bold{w}) \\
-= -\frac{N}{2}ln(2\pi\sigma^2)-\frac{1}{4\sigma^2}(\bold{t}-\bold{w}\Phi)^T(\bold{t}-\bold{w}\Phi)
+l(\boldsymbol{w}) = ln \ p(\boldsymbol{t}|\boldsymbol{X},\boldsymbol{w},\sigma^2) = \sum_{n=1}^{N}ln \ p(t_n|x_n,\boldsymbol{w},\sigma^2) \\
+= -\frac{N}{2}ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}RSS(\boldsymbol{w}) \\
+= -\frac{N}{2}ln(2\pi\sigma^2)-\frac{1}{4\sigma^2}(\boldsymbol{t}-\boldsymbol{w}\Phi)^T(\boldsymbol{t}-\boldsymbol{w}\Phi)
 $$
 
 Now we compute the gradient:
 
 $$
-\nabla ln \ l(\bold{W}) = -\Phi^T(\bold{t}-\Phi\bold{w}) = -\Phi^T\bold{t}+\Phi^T\Phi\bold{w} = 0 \\
-\bold{w_{ML}} = (\Phi^T\Phi)^{-1}\Phi^T\bold{t}
+\nabla ln \ l(\boldsymbol{W}) = -\Phi^T(\boldsymbol{t}-\Phi\boldsymbol{w}) = -\Phi^T\boldsymbol{t}+\Phi^T\Phi\boldsymbol{w} = 0 \\
+\boldsymbol{w_{ML}} = (\Phi^T\Phi)^{-1}\Phi^T\boldsymbol{t}
 $$
 
 which are known as the **normal equations** for the least squares problem. Here $\Phi$ is a $NxM$ matrix, called the **design matrix**.
@@ -159,10 +159,10 @@ So, in this case a good idea could be using an **online** algorithm, in which th
 
 The most famous and used algorithm is the **stochastic gradient descent**.
 
-This algorithm updates the parameter vector $\bold{w}$ in the following way:
+This algorithm updates the parameter vector $\boldsymbol{w}$ in the following way:
 
 $$
-\bold{w}^{k+1} = \bold{w}^k - \eta\nabla E_n
+\boldsymbol{w}^{k+1} = \boldsymbol{w}^k - \eta\nabla E_n
 $$
 
 where $k$ indicates the iteration number and $\eta$ the learning rate. Choosing the right $\eta$ is not an easy task, since if the value is too high or too low, it could prevent the algorithm to converge.
@@ -188,23 +188,23 @@ Regularization consists of adding a penalty term to the loss function to discour
 ## Ridge regression
 
 $$
-L(\bold{w}) = \frac{1}{2}\sum_{n=1}^{N}\{(t_n - \bold{w}^T\phi(x_n))^2\} \ + \ \frac{\lambda}{2}\bold{w}^T\bold{w}
+L(\boldsymbol{w}) = \frac{1}{2}\sum_{n=1}^{N}\{(t_n - \boldsymbol{w}^T\phi(x_n))^2\} \ + \ \frac{\lambda}{2}\boldsymbol{w}^T\boldsymbol{w}
 $$
 
 This particular choice of regularizer is known as ridge regression or **weight decay**, since in online learning algorithms it encourages weigth values to decay towards zero, unless supported by the data.$\\$
-The advantage of Ridge regression is that the loss function remains quadratic in $\bold{w}$, so its exact minimizer can be found in closed form.
+The advantage of Ridge regression is that the loss function remains quadratic in $\boldsymbol{w}$, so its exact minimizer can be found in closed form.
 
 ## Lasso regression
 
 $$
-L(\bold{w}) = \frac{1}{2}\sum_{n=1}^{N}\{(t_n - \bold{w}^T\phi(x_n))^2\} \ + \ \frac{\lambda}{2}||\bold{w}||_1
+L(\boldsymbol{w}) = \frac{1}{2}\sum_{n=1}^{N}\{(t_n - \boldsymbol{w}^T\phi(x_n))^2\} \ + \ \frac{\lambda}{2}||\boldsymbol{w}||_1
 $$
 
 In this case no closed-form solution exists, however if $\lambda$ is sufficiently large, some of the coefficients $w_j$ are driven to zero, leading to a sparse model.
 
 <img src="https://i.ibb.co/373pzxc/ridge-lasso.png" style="display: block; margin-left: auto; margin-right: auto;width: 650px;height: 400px;">
 
-In the picture above we can see where the origin of sparsity in Lasso comes from: the optimum value $\bold{w}^*$ will probably be on one of the vertices, hence on the axes, where some features are zero (the features in the image are indicated as $\beta_j$). $\\$
+In the picture above we can see where the origin of sparsity in Lasso comes from: the optimum value $\boldsymbol{w}^*$ will probably be on one of the vertices, hence on the axes, where some features are zero (the features in the image are indicated as $\beta_j$). $\\$
 In cases of multi-correlation, i.e. many features are correlated with each other, this can be useful as the Lasso regression will set some of them to zero and leave the others to do their job.
 
 # Bayesian Linear Regression
@@ -213,16 +213,16 @@ Till now we have adopted a frequentist approach, namely we've seen the probabili
 
 Here the Bayesian approach comes into play. This approach can be splitted in the following steps:
 
-1) We enumerate all the reasonable models of the data and we assign a **prior distribution** $p(\bold{w})$ to each of these models.
-2) We observe the data and we evaluate how probable the data was under each of these models, computing $p(D|\bold{w})$.
-3) From the previous observation we compute a **posterior distribution** $p(\bold{w}|D)$, which encapsulates everything that you have learned from the data regarding the possible models under consideration.
+1) We enumerate all the reasonable models of the data and we assign a **prior distribution** $p(\boldsymbol{w})$ to each of these models.
+2) We observe the data and we evaluate how probable the data was under each of these models, computing $p(D|\boldsymbol{w})$.
+3) From the previous observation we compute a **posterior distribution** $p(\boldsymbol{w}|D)$, which encapsulates everything that you have learned from the data regarding the possible models under consideration.
 
 An important consideration is that this approach is not affected by the problem of overfitting and it also leads to automatic methods of determining model complexity using the training data alone.
 
 ## Posterior distribution
 
 $$
-p(\bold{w}|D) = \frac{p(D|\bold{w})p(\bold{w})}{P(D)}
+p(\boldsymbol{w}|D) = \frac{p(D|\boldsymbol{w})p(\boldsymbol{w})}{P(D)}
 $$
 
 where $P(D)$ is a normalizing constant.
@@ -249,42 +249,42 @@ Another important property of the Bayesian approach is that when new data are av
 As said, in the Bayesian approach the parameters are considered as drawn from some distribution. Assuming a Gaussian likelihood model, the conjugate prior is Gaussian too:
 
 $$
-p(\bold{w}) = \mathcal{N}(\bold{w}|\bold{w_0},\bold{S_0})
+p(\boldsymbol{w}) = \mathcal{N}(\boldsymbol{w}|\boldsymbol{w_0},\boldsymbol{S_0})
 $$
 
 Given the data $D$, we compute the posterior distribution, which is proportional to the product of the likelihood function and the prior and that is still a Gaussian:
 
 $$
-p(\bold{w}|\bold{t},\Phi,\sigma^2) \propto \mathcal{N}(\bold{w}|\bold{w_0},\bold{S_0})\mathcal{N}(\bold{t}|\Phi\bold{w},\sigma^2\bold{I_N}) = \mathcal{N}(\bold{w}|\bold{w_N},\bold{S_N})
+p(\boldsymbol{w}|\boldsymbol{t},\Phi,\sigma^2) \propto \mathcal{N}(\boldsymbol{w}|\boldsymbol{w_0},\boldsymbol{S_0})\mathcal{N}(\boldsymbol{t}|\Phi\boldsymbol{w},\sigma^2\boldsymbol{I_N}) = \mathcal{N}(\boldsymbol{w}|\boldsymbol{w_N},\boldsymbol{S_N})
 $$
 
 where 
 
 $$
-\bold{w_N} = \bold{S_N}(\bold{S_0}^{-1}\bold{w_0}+\frac{\Phi^T\bold{t}}{\sigma^2}) \\
-\bold{S_N}^{-1} = \bold{S_0}^{-1} + \frac{\Phi^T\Phi}{\sigma^2}
+\boldsymbol{w_N} = \boldsymbol{S_N}(\boldsymbol{S_0}^{-1}\boldsymbol{w_0}+\frac{\Phi^T\boldsymbol{t}}{\sigma^2}) \\
+\boldsymbol{S_N}^{-1} = \boldsymbol{S_0}^{-1} + \frac{\Phi^T\Phi}{\sigma^2}
 $$
 
-Since the posterior distribution is Gaussian, its mode coincides with its mean, so $\bold{w_N}$ is the MAP estimator. Notice that in many cases we may have little idea of what form the distribution should take. We may then seek a form or prior distribution, called a **noninformative prior**, which is intended to have as little influence on the posterior distribution as possible. This is sometimes referred to as *"letting the data speak for themselves"*.$\\$
-In such cases, the value of $\bold{S_0} \rightarrow \infty$, so
+Since the posterior distribution is Gaussian, its mode coincides with its mean, so $\boldsymbol{w_N}$ is the MAP estimator. Notice that in many cases we may have little idea of what form the distribution should take. We may then seek a form or prior distribution, called a **noninformative prior**, which is intended to have as little influence on the posterior distribution as possible. This is sometimes referred to as *"letting the data speak for themselves"*.$\\$
+In such cases, the value of $\boldsymbol{S_0} \rightarrow \infty$, so
 
 $$
-\bold{S_N}^{-1} \rightarrow 0 \ + \frac{\Phi^T\Phi}{\sigma^2} \Rightarrow \bold{S_N} = \sigma^2(\Phi^T\Phi)^{-1} \Rightarrow \bold{w_N} = \sigma^2(\Phi^T\Phi)^{-1}\frac{\Phi^T\bold{t}}{\sigma^2} = (\Phi^T\Phi)^{-1}\Phi^T\bold{t}
+\boldsymbol{S_N}^{-1} \rightarrow 0 \ + \frac{\Phi^T\Phi}{\sigma^2} \Rightarrow \boldsymbol{S_N} = \sigma^2(\Phi^T\Phi)^{-1} \Rightarrow \boldsymbol{w_N} = \sigma^2(\Phi^T\Phi)^{-1}\frac{\Phi^T\boldsymbol{t}}{\sigma^2} = (\Phi^T\Phi)^{-1}\Phi^T\boldsymbol{t}
 $$
 
-which is the ordinary least squares solution! So, $\bold{w_N}$ reduces to the ML estimator. If $\bold{w_0} = 0$ and $\bold{S_0} = \tau^2\bold{I}$, then ${\bold{w_N}}$ reduces to the ridge estimate, where $\lambda = \frac{\sigma^2}{\tau^2} \\$
+which is the ordinary least squares solution! So, $\boldsymbol{w_N}$ reduces to the ML estimator. If $\boldsymbol{w_0} = 0$ and $\boldsymbol{S_0} = \tau^2\boldsymbol{I}$, then ${\boldsymbol{w_N}}$ reduces to the ridge estimate, where $\lambda = \frac{\sigma^2}{\tau^2} \\$
 Indeed, doing ridge regression means doing bayesian linear regression when you put Gaussian prior centered in zero. Changing $\lambda$ means changing $\tau^2$, i.e. the variance of the prior.
 
 ## Predictive distribution 
 
-Said this, in practice, we are not usually interested in the value of $\bold{w}$ itself, but rather in making predictions of *t* for new values of *x*. This requires that we evaluate the **predictive distribution** defined by:
+Said this, in practice, we are not usually interested in the value of $\boldsymbol{w}$ itself, but rather in making predictions of *t* for new values of *x*. This requires that we evaluate the **predictive distribution** defined by:
 
 $$
-p(t|x,D,\sigma^2) = \int\mathcal{N}(t|\bold{w}^T\phi(x),\sigma^2)\mathcal{N}(\bold{w}|\bold{w_N},\bold{S_N})d\bold{w} = \mathcal{N}(t|\bold{w_N}^T\phi(x),\sigma_N^2(x)) \\
-\sigma_N^2(x) = \sigma^2 + \phi(x)^T\bold{S_N}\phi(x)
+p(t|x,D,\sigma^2) = \int\mathcal{N}(t|\boldsymbol{w}^T\phi(x),\sigma^2)\mathcal{N}(\boldsymbol{w}|\boldsymbol{w_N},\boldsymbol{S_N})d\boldsymbol{w} = \mathcal{N}(t|\boldsymbol{w_N}^T\phi(x),\sigma_N^2(x)) \\
+\sigma_N^2(x) = \sigma^2 + \phi(x)^T\boldsymbol{S_N}\phi(x)
 $$
 
-where $\sigma^2$ represents the noise in the target values (irreducible noise) and $\phi(x)^T\bold{S_N}\phi(x)$ the uncertainty associated with parameter values. As additional data points are observed, the second term becomes smaller and smaller. We can see this from this image:
+where $\sigma^2$ represents the noise in the target values (irreducible noise) and $\phi(x)^T\boldsymbol{S_N}\phi(x)$ the uncertainty associated with parameter values. As additional data points are observed, the second term becomes smaller and smaller. We can see this from this image:
 
 <img src="https://i.ibb.co/8NKPdCn/posterior-predictive-distribution.png" style="display: block; margin-left: auto; margin-right: auto;width: 550px;height: 400px;">
 
