@@ -1,5 +1,5 @@
 ---
-title: 'Future Blog Post'
+title: 'Linear Regression Models'
 date: 2019-09-25
 permalink: /posts/2019/09/linear_regression/
 tags:
@@ -7,7 +7,7 @@ tags:
   - regularization
 ---
 
-# Linear Regression Models
+In this post we will analyze **Linear Regression Models** in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is **regularization**.
 
 The goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\bold{x}$ of input variables.
 
