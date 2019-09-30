@@ -104,8 +104,7 @@ $$
 
 # Discriminative approach
 
-What we have seen so far is called a **direct approach**, i.e. find a regression function directly from the training data by searching in the space of the model (changing the parameters).
-
+What we have seen so far is called a **direct approach**, i.e. find a regression function directly from the training data by searching in the space of the model (changing the parameters).<br/>
 Now we will introduce a discriminative approach, where we model directly the conditional density $p(t|x)$.
 
 Let's assume that the target variable $t$ is given by a deterministic function $y(x,w)$ with additive Gaussian noise:
@@ -191,7 +190,8 @@ $$
 L(\boldsymbol{w}) = \frac{1}{2}\sum_{n=1}^{N}\{(t_n - \boldsymbol{w}^T\phi(x_n))^2\} \ + \ \frac{\lambda}{2}\boldsymbol{w}^T\boldsymbol{w}
 $$
 
-This particular choice of regularizer is known as ridge regression or **weight decay**, since in online learning algorithms it encourages weigth values to decay towards zero, unless supported by the data.$\\$
+This particular choice of regularizer is known as ridge regression or **weight decay**, since in online learning algorithms it encourages weigth values to decay towards zero, unless supported by the data.
+
 The advantage of Ridge regression is that the loss function remains quadratic in $\boldsymbol{w}$, so its exact minimizer can be found in closed form.
 
 ## Lasso regression
@@ -265,14 +265,16 @@ $$
 \boldsymbol{S_N}^{-1} = \boldsymbol{S_0}^{-1} + \frac{\Phi^T\Phi}{\sigma^2}
 $$
 
-Since the posterior distribution is Gaussian, its mode coincides with its mean, so $\boldsymbol{w_N}$ is the MAP estimator. Notice that in many cases we may have little idea of what form the distribution should take. We may then seek a form or prior distribution, called a **noninformative prior**, which is intended to have as little influence on the posterior distribution as possible. This is sometimes referred to as *"letting the data speak for themselves"*.$\\$
+Since the posterior distribution is Gaussian, its mode coincides with its mean, so $\boldsymbol{w_N}$ is the MAP estimator. Notice that in many cases we may have little idea of what form the distribution should take. We may then seek a form or prior distribution, called a **noninformative prior**, which is intended to have as little influence on the posterior distribution as possible. This is sometimes referred to as *"letting the data speak for themselves"*.
+
 In such cases, the value of $\boldsymbol{S_0} \rightarrow \infty$, so
 
 $$
 \boldsymbol{S_N}^{-1} \rightarrow 0 \ + \frac{\Phi^T\Phi}{\sigma^2} \Rightarrow \boldsymbol{S_N} = \sigma^2(\Phi^T\Phi)^{-1} \Rightarrow \boldsymbol{w_N} = \sigma^2(\Phi^T\Phi)^{-1}\frac{\Phi^T\boldsymbol{t}}{\sigma^2} = (\Phi^T\Phi)^{-1}\Phi^T\boldsymbol{t}
 $$
 
-which is the ordinary least squares solution! So, $\boldsymbol{w_N}$ reduces to the ML estimator. If $\boldsymbol{w_0} = 0$ and $\boldsymbol{S_0} = \tau^2\boldsymbol{I}$, then ${\boldsymbol{w_N}}$ reduces to the ridge estimate, where $\lambda = \frac{\sigma^2}{\tau^2} \\$
+which is the ordinary least squares solution! So, $\boldsymbol{w_N}$ reduces to the ML estimator. If $\boldsymbol{w_0} = 0$ and $\boldsymbol{S_0} = \tau^2\boldsymbol{I}$, then ${\boldsymbol{w_N}}$ reduces to the ridge estimate, where $\lambda = \frac{\sigma^2}{\tau^2}$
+
 Indeed, doing ridge regression means doing bayesian linear regression when you put Gaussian prior centered in zero. Changing $\lambda$ means changing $\tau^2$, i.e. the variance of the prior.
 
 ## Predictive distribution 
