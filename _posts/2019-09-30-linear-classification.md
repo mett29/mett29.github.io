@@ -213,7 +213,7 @@ $$
 p(C_1|\phi) = \frac{1}{1+e^{-\boldsymbol{w}^T\phi}} = \sigma(\boldsymbol{w}^T\phi)
 $$
 
-with $p(C_2|\phi) = 1 - p(C_1|\phi)$
+with $p(C_2\|\phi) = 1 - p(C_1\|\phi)$
 
 An important advantage of logistic regression is that for an $M$-dimensional feature space $\phi$, it has $M$ adjustable parameters, while if we had fitted Gaussian class conditional densities using maximum likelihood we would have used $\sim M^2$ parameters. 
 
@@ -223,7 +223,7 @@ $$
 \frac{d\sigma}{da} = \sigma(1-\sigma)
 $$
 
-So, given a dataset $D = \{\phi_n,t_n\}$, $t_n \in \{0,1\}$, applying ML means maximizing the probability of getting the right label:
+So, given a dataset $D =$ {$\phi_n,t_n$}, $t_n \in$ {$0,1$}, applying ML means maximizing the probability of getting the right label:
 
 $$
 p(\boldsymbol{t}|\boldsymbol{X},\boldsymbol{w}) = \prod_{n=1}^{N}y_n^{t_n}(1-y_n)^{1-t_n}, \ y_n = \sigma(\boldsymbol{w}^T\phi_n)
@@ -271,7 +271,7 @@ $$
 p(\boldsymbol{T}|\Phi,\boldsymbol{w_1},...,\boldsymbol{w_K}) = \prod_{n=1}^{N}(\prod_{k=1}^{K}p(C_k|\phi_n)^{t_{nk}}) = \prod_{n=1}^{N}(\prod_{k=1}^{K}y_{nk}^{t_{nk}})
 $$
 
-where $y_{nk} = p(C_k|\phi_n)$
+where $y_{nk} = p(C_k\|\phi_n)$
 
 The cross-entropy function is
 
@@ -312,7 +312,7 @@ The assumptions on distributions of features are called the event model of the N
 
 When dealing with continuous data, a typical assumption is that the continuous values associated with each class are distributed according to a Gaussian distribution. For example, suppose the training data contains a continuous attribute, $x$. We first segment the data by the class, and then compute the mean and variance of $x$ in each class. 
 
-Let $\mu_k$ be the mean of the values in $x$ associated with class $C_k$, and let $\sigma_k^2$ be the variance of the values in $x$ associated with class $C_k$. Suppose we have collected some observation value $v$. Then, the probability distribution of $v$ given a class $C_k$, $p(x=v|C_k)$, can be computed by plugging $v$ into the equation for a Normal distribution parameterized by $\mu_k$ and $\sigma_k^2$. That is,
+Let $\mu_k$ be the mean of the values in $x$ associated with class $C_k$, and let $\sigma_k^2$ be the variance of the values in $x$ associated with class $C_k$. Suppose we have collected some observation value $v$. Then, the probability distribution of $v$ given a class $C_k$, $p(x=v\|C_k)$, can be computed by plugging $v$ into the equation for a Normal distribution parameterized by $\mu_k$ and $\sigma_k^2$. That is,
 
 $$
 p(x=v|C_k) = \frac{1}{\sqrt{2\pi\sigma_k^2}}e^{-\frac{(v-\mu_k)^2}{2\sigma_k^2}}
@@ -322,7 +322,7 @@ $$
 
 Algorithms that do not make strong assumptions about the form of the mapping function are called nonparametric machine learning algorithms. By not making assumptions, they are free to learn any functional form from the training data.
 
-"Nonparametric methods are good when you have a lot of data and no prior knowledge, and when you don’t want to worry too much about choosing just the right features." [ Artificial Intelligence: A Modern Approach]
+"Nonparametric methods are good when you have a lot of data and no prior knowledge, and when you don’t want to worry too much about choosing just the right features." [Artificial Intelligence: A Modern Approach](http://aima.cs.berkeley.edu/)
 
 ### K-nearest neighbor
 
