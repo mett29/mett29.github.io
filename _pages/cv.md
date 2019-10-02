@@ -8,52 +8,26 @@ redirect_from:
 ---
 
 {% include base_path %}
+Download the PDF version of my full CV from [here](http://mett29.github.io/files/CV.pdf).
 
 Education
 ======
-* B.S. in GitHub, GitHub University, 2012
-* M.S. in Jekyll, GitHub University, 2014
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
+* B.S. in Computer Science Engineering, Polytechnic of Milan, 2018
+* M.S. in Computer Science Engineering (Artificial Intelligence and Machine Learning), Polytechnic of Milan, 2020
 
 Work experience
 ======
-* Summer 2015: Research Assistant
-  * Github University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
+* Summer 2014: Web Developer
+  * SERMATECH SRL
+  * Website development using HTML5, CSS3, Javascript, PHP and Bootstrap library
+  
+Projects
+======
+* Shor's Algorithm - Research Project (code [here](https://github.com/mett29/Shor-s-Algorithm))
+* Sagrada - Final project of my B.S. (code [here](https://github.com/mett29/ing-sw-2018-lambertucci-losavio-mancassola))
 
-* Fall 2015: Research Assistant
-  * Github University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
-  
-Skills
+Online Courses
 ======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
-
-Publications
-======
-  <ul>{% for post in site.publications %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Talks
-======
-  <ul>{% for post in site.talks %}
-    {% include archive-single-talk-cv.html %}
-  {% endfor %}</ul>
-  
-Teaching
-======
-  <ul>{% for post in site.teaching %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Service and leadership
-======
-* Currently signed in to 43 different slack teams
+* Quantum Computing and Quantum Machine Learning (.Bestr, 2019)
+* Neural Networks for Machine Learning (Coursera, 2018)
+* Data-driven Astronomy (Coursera, 2018)
