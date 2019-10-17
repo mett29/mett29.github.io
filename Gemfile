@@ -17,6 +17,9 @@ gem "github-pages", group: :jekyll_plugins
 # gem "jekyll"
 gem 'tzinfo-data'
 
+# SEO
+gem 'jekyll-seo-tag'
+
 gem "wdm", "~> 0.1.0" if Gem.win_platform?
 
 # If you have any plugins, put them here!
