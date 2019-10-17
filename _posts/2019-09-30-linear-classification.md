@@ -11,7 +11,7 @@ tags:
   - confusion matrix
 ---
 
-In this post we will talk about **Linear Classification**, explaining all the main methods which are at the basis of this task.
+In this post we will talk about **Linear Classification**, explaining some of the main methods which are at the basis of this task.
 
 # Linear Classification
 
@@ -19,7 +19,7 @@ The goal in classification is to take an input vector $x$ and to assign it to on
 
 In this chapter we will talk about linear models for classification, so these decision surfaces are defined by $(D - 1)$-dimensional hyperplanes within the $D$-dimensional input space.
 
-For regression problems, the target variable $t$ is simply the vector of real numbers whose values we wish to predict. In classification the representation can be different according to the context. For example, in the case of two-class problems, the most common choice is a single target variable $t \in \{0,1\}$, that can be interpreted as the probability of the class to be $C_1$ or $C_2$.
+For regression problems, the target variable $t$ is simply the vector of real numbers whose values we wish to predict. In classification the representation can be different according to the context. For example, in the case of two-class problems, the most common choice is a single target variable $$t \in \{0,1\}$$, that can be interpreted as the probability of the class to be $C_1$ or $C_2$.
 
 If instead we have more than two classes, we can expand the previous notation using a vector $\boldsymbol{t}$ where all elements are $0$ except from the one that represents the right class.
 
@@ -126,13 +126,13 @@ $$
 where $\tilde{W}$ is a $(D+1)$ x $K$ matrix, where each column is a weight vector of a different classifier.
 
 The next step is to find the optimal weight matrix. <br/>
-Given a dataset $D = \{x_i,t_i\}$, where $i = 1,...,N$ and considering the loss function
+Given a dataset $$D = \{x_i,t_i\}$$, where $i = 1,...,N$ and considering the loss function
 
 $$
 E_D(\boldsymbol{\tilde{W}}) = \frac{1}{2}Tr\{(\boldsymbol{\tilde{X}}\boldsymbol{\tilde{W}}-\boldsymbol{T})^T(\boldsymbol{\tilde{X}}\boldsymbol{\tilde{W}-\boldsymbol{T})}\}
 $$
 
-where $Tr\{\}$ means the trace of the matrix. <br/>
+where $$Tr\{\}$$ means the trace of the matrix. <br/>
 Minimizing least squares will lead to the already known closed-form solution
 
 $$

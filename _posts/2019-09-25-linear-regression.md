@@ -117,7 +117,7 @@ where $\epsilon \sim \mathcal{N}(0,\sigma^2)$
 
 Hence $t \sim \mathcal{N}(y(x,w),\sigma^2)$
 
-Now consider a data set of inputs $X = \{x_1, ..., x_N\}$ with corresponding target values $t_1, ..., t_N$. Under the assumption that these data points are independent and identically distributed (i.i.d.), the likelihood function is:
+Now consider a data set of inputs $$X = \{x_1, ..., x_N\}$$ with corresponding target values $t_1, ..., t_N$. Under the assumption that these data points are independent and identically distributed (i.i.d.), the likelihood function is:
 
 $$
 p(\boldsymbol{t}|\boldsymbol{X},\boldsymbol{w},\sigma^2) = \prod_{n=1}^{N}\mathcal{N}(t_n|\boldsymbol{w}^T\phi(x_n), \sigma^2) = \prod_{n=1}^{N}\frac{1}{2\pi\sigma^2}e^{-\frac{(t-y(x,w))^2}{2\sigma^2}}
