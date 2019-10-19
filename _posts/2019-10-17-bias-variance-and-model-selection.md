@@ -17,6 +17,8 @@ tags:
 
 In this post we will talk about the **Bias-Variance tradeoff**, explaining where it comes from and how we can manage it, introducing techniques for model selection (feature selection, regularization, dimensionality reduction) and model ensemble (bagging and boosting).
 
+**Disclaimer:** *the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book '[Pattern Recognition and Machine Learning](https://www.springer.com/gp/book/9780387310732)'.*
+
 # Bias-Variance trade-off and Model Selection
 
 ## No Free Lunch Theorems

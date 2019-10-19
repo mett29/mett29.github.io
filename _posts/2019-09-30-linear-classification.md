@@ -13,6 +13,8 @@ tags:
 
 In this post we will talk about **Linear Classification**, explaining some of the main methods which are at the basis of this task.
 
+**Disclaimer:** *the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book '[Pattern Recognition and Machine Learning](https://www.springer.com/gp/book/9780387310732)'.*
+
 # Linear Classification
 
 The goal in classification is to take an input vector $x$ and to assign it to one of $K$ discrete classes $C_k$ where $k = 1,...,K$. In the most common scenario these classes are disjoint, hence each input can belong to one and only one class. For this reason the input space is divided into the so called **decision regions**, whose boundaries are called **decision boundaries** or **decision surfaces**.
@@ -160,7 +162,7 @@ where $f(\cdot)$ is a **step function**, i.e.
 
 $$
 f(a) = \begin{cases} 
-+1 & {if } \ {a \geq 0} <br/> -1 & {if } \ {a < 0} 
++1 & {if } \ {a \geq 0} \\ -1 & {if } \ {a < 0} 
 \end{cases}
 $$
 

@@ -9,6 +9,8 @@ tags:
 
 In this post we will analyze **Linear Regression Models** in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is **regularization**.
 
+**Disclaimer:** *the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book '[Pattern Recognition and Machine Learning](https://www.springer.com/gp/book/9780387310732)'.*
+
 The goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\boldsymbol{x}$ of input variables.
 
 Linear models are simple and ofter provide an adequate and interpretable description of how the inputs affect the output. They can sometimes outperform fancier nonlinear models, especially in situations with small numbers of training cases, low signal-to-noise or sparse data.
