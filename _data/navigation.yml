@@ -2,6 +2,9 @@
 main:  
   - title: "Blog Posts"
     url: /year-archive/
+
+  - title: "List of Content"
+    url: /posts_list/
     
   - title: "CV"
     url: /cv/

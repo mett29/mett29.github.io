@@ -84,7 +84,7 @@ The bias-variance tradeoff can be managed using different techniques:
 	 - Dimension reduction
  2. Model ensemble
 	- Bagging 
-	 - Boosting
+	- Boosting
 
 ## Model Selection
 
