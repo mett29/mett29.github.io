@@ -19,5 +19,6 @@ Welcome to the much more ordered list of posts present on the blog!
         <ul>
             <li>{{"[Error Functions](/posts/2019/10/error_functions/)" | markdownify}}</li>
             <li>{{"[Deal with Overfitting](/posts/2019/10/overfitting/)" | markdownify}}</li>
+            <li>{{"[Activation Functions](/posts/2019/11/activation_functions/)" | markdownify}}</li>
         </ul>
 </ol>
