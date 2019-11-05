@@ -69,7 +69,10 @@ Of course, there are also possible disadvantages:
 **Leaky ReLUs** allow a small, positive gradient when the unit is not active. It is a fix for the "dying ReLU" problem.
 
 $$
-f(x) = \begin{cases} x, & \text{if } x \ge 0 \\ 0.01x, & \text{otherwise} \end{cases}
+f(x) = 
+\left\{\begin{aligned} & x, \quad \text{if } x \ge 0 \\ 
+& 0.01x, \quad \text{otherwise}
+\end{aligned} \right.
 $$
 
 ![leaky_relu](https://i.ibb.co/t30yKgv/leaky-relu.png)
@@ -77,7 +80,10 @@ $$
 **Exponential Linear Unit** is a function that tend to converge cost to zero faster and produce more accurate results. Different to other activation functions, ELU has a extra alpha constant which should be positive number (tuned by hand).
 
 $$
-f(x) = \begin{cases} x, & \text{if } x \ge 0 \\ \alpha(e^x-1), & \text{otherwise} \end{cases}
+f(x) = 
+\left\{\begin{aligned} & x, \quad \text{if } x \ge 0 \\ 
+&\alpha(e^x-1), \quad \text{otherwise}
+\end{aligned} \right.
 $$
 
 ![elu](https://i.ibb.co/G00Tsqq/elu.png)
