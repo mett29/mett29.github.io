@@ -21,5 +21,6 @@ Welcome to the much more ordered list of posts present on the blog!
             <li>{{"[Deal with Overfitting](/posts/2019/10/overfitting/)" | markdownify}}</li>
             <li>{{"[Activation Functions](/posts/2019/11/activation_functions/)" | markdownify}}</li>
             <li>{{"[Batch Normalization](/posts/2019/11/batch_normalization/)" | markdownify}}</li>
+            <li>{{"[Introduction to CNN](/posts/2019/11/intro_to_cnn/)" | markdownify}}</li>
         </ul>
 </ol>
