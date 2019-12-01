@@ -26,5 +26,6 @@ Hi, I’m Mattia. I'm 23 and I'm a MSc student of Computer Science Engineering a
             <li>{{"[Activation Functions](/posts/2019/11/activation_functions/)" | markdownify}}</li>
             <li>{{"[Batch Normalization](/posts/2019/11/batch_normalization/)" | markdownify}}</li>
             <li>{{"[Introduction to CNN](/posts/2019/11/intro_to_cnn/)" | markdownify}}</li>
+            <li>{{"[Image Segmentation](/posts/2019/12/image_segmentation/)" | markdownify}}</li>
         </ul>
 </ol>

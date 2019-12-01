@@ -39,7 +39,9 @@ The possibility of overfitting exists because the criterion used for selecting t
 
 As an extreme example, if the number of parameters is the same as or greater than the number of observations, then a model can perfectly predict the training data simply by memorizing the data in its entirety. Such a model, though, will typically fail severely when making predictions.
 
-![overfitting](https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Overfitting.svg/450px-Overfitting.svg.png)
+{:refdef: style="text-align: center;"}
+![overfitting](https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Overfitting.svg/450px-Overfitting.svg.png){:height="300px" width="300px"}
+{: refdef}
 
 In the above image, the green line represents an overfitted model. Indeed, even if it is the one that best follows the training data, it is too dependent on that data, thus it will probably have an high error rate on unseen samples.
 
@@ -49,13 +51,17 @@ A more detailed view of this problem is described in the post [Bias-Variance Tra
 
 The training set error is not a valid measure of performance since it's an optimistically biased estimate of the prediction error. The classifier, indeed, has been learned exactly on that data. Therefore, we need to test on an independent new test set.
 
-![train_and_test_sets](https://developers.google.com/machine-learning/crash-course/images/PartitionTwoSets.svg)
+{:refdef: style="text-align: center;"}
+![train_and_test_sets](https://developers.google.com/machine-learning/crash-course/images/PartitionTwoSets.svg){:height="50px" width="500px"}
+{: refdef}
 
 How can we affect performance on the test set when we get to observe only the training set? If the training and the test set are collected arbitrarily, there is indeed little we can do. If we are allowed to make some assumptions about how the training and test set are collected, then we can make some progress. These assumptions are collectively known as the **i.i.d. assumptions**, and they imply that the examples in each dataset are independent from each other, and that the train set and the test set are identically distributed, i.e. drawn from the same probability distribution. This probabilistic framework and the i.i.d. assumptions allow us to mathematically study the relationship between training error and test error. [[Deep Learning - pag. 111]](http://www.deeplearningbook.org/)
 
 Note however that when we have to train a machine learning algorithm, the latter has many settings called **hyperparameters** (e.g. $\lambda$ in weight decay). In order to select the best value for each hyperparameter, we need a set of samples on which tune our model. That's why, for the same reason that took us to split the dataset in training set and test set, it is good practice to split the dataset into one more set, called **validation set**.
 
-![train_validation_test](https://developers.google.com/machine-learning/crash-course/images/PartitionThreeSets.svg)
+{:refdef: style="text-align: center;"}
+![train_validation_test](https://developers.google.com/machine-learning/crash-course/images/PartitionThreeSets.svg){:height="80px" width="550px"}
+{: refdef}
 
 Finally all the preparation is done. Summarizing:
 
@@ -101,9 +107,13 @@ K-fold cross-validation is much faster than LOO, but it is more (pessimistically
 
 How can we know that our network is overfitting? Overfitting networks show a monotone training error trend (on average with SGD) as the number of gradient descent iterations $k$, but they lose generalization at some point...
 
-![underfitting_overfitting](https://i.ibb.co/Rz8fcYW/1-x-Ah-Q9-ULYqm-NOx-RU4e-MXQ.png)
+{:refdef: style="text-align: center;"}
+![underfitting_overfitting](https://i.ibb.co/Rz8fcYW/1-x-Ah-Q9-ULYqm-NOx-RU4e-MXQ.png){:height="500px" width="500px"}
+{: refdef}
 
-*Image taken from https://towardsdatascience.com/cross-validation-70289113a072*
+{:refdef: style="text-align: center;"}
+Image taken from *https://towardsdatascience.com/cross-validation-70289113a072*
+{: refdef}
 
 Every time the error on the validation set improves, we store a copy of the model parameters. When the training algorithm terminates, we return these parameters, rather than the latest parameters. The algorithm terminates when no parameters have improved over the best recorded validation error for some pre-specified number of iterations. It is probably the most commonly used form of regularization in deep learning. Its popularity is due both to its effectiveness and its simplicity.
 
@@ -149,9 +159,13 @@ Dropout is one of the most simple but efficient techniques to regularize neural 
 
 Ok, so one could think of using this approach also in neural networks. Here is the problem: with very large neural networks this becomes easily impractical. Dropout provides an inexpensive approximation to training and evaluating a bagged ensemble of exponentially many neural networks. By turning off randomly some neurons, we force to learn an independent feature preventing hidden units to rely on other units (co-adaptation). Specifically, to train with dropout, we use a minibatch-based learning algorithm that makes small steps, such as stochastic gradient descent. Each time we load an example into a minibatch, we randomly sample a different **binary mask** to apply to all of the input and hidden units in the network. The mask for each unit is sampled independently from all of the others. The probability of sampling a mask value of one (causing a unit to be included) is a hyperparameter fixed before training begins.
 
-![dropout](https://i.ibb.co/XXHjSLy/dropout.png)
+{:refdef: style="text-align: center;"}
+![dropout](https://i.ibb.co/XXHjSLy/dropout.png){:height="500px" width="600px"}
+{: refdef}
 
-*Image taken from [Defensive Dropout for Hardening Deep Neural Networks under Adversarial Attacks](https://arxiv.org/pdf/1809.05165.pdf)*
+{:refdef: style="text-align: center;"}
+Image taken from *[Defensive Dropout for Hardening Deep Neural Networks under Adversarial Attacks](https://arxiv.org/pdf/1809.05165.pdf)*
+{: refdef}
 
 Note that there are two important differences between dropout and bagging: 
 

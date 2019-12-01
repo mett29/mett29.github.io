@@ -18,7 +18,9 @@ In this post we will talk about **activation functions**, explaining what they a
 
 # Activation Functions
 
-![activation_function](https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/ArtificialNeuronModel_english.png/1024px-ArtificialNeuronModel_english.png)
+{:refdef: style="text-align: center;"}
+![activation_function](https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/ArtificialNeuronModel_english.png/1024px-ArtificialNeuronModel_english.png){:height="400px" width="600px"}
+{: refdef}
 
 There are many design choices that we can take when we are building a parametric machine learning model trained with gradient descent optimization. However, there is one specific design choice which is characteristic of Neural Networks: how to choose the type of hidden unit to use in the hidden layers of the model.
 
@@ -29,7 +31,9 @@ There are many design choices that we can take when we are building a parametric
 
 ## Logistic Sigmoid and Hyperbolic Tangent
 
-![sigmoid](https://upload.wikimedia.org/wikipedia/commons/5/53/Sigmoid-function-2.svg)
+{:refdef: style="text-align: center;"}
+![sigmoid](https://upload.wikimedia.org/wikipedia/commons/5/53/Sigmoid-function-2.svg){:height="400px" width="500px"}
+{: refdef}
 
 Why do we like **sigmoid function**? Essentially because it’s easy to work with and has all the nice properties of activation functions: it’s non-linear, continuously differentiable, monotonic, and has a fixed output range.
 
@@ -37,7 +41,9 @@ However, there is a serious drawback. Unlike piecewise linear units, sigmoidal u
 
 That's why when a sigmoidal activation function must be used, the **hyperbolic tangent** activation function typically performs better than the logistic sigmoid. Tanh squashes a real-valued number to the range [-1, 1]. It’s non-linear. But unlike Sigmoid, its output is zero-centered. Therefore, in practice the tanh non-linearity is always preferred to the sigmoid nonlinearity.
 
-![tanh](https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Hyperbolic_Tangent.svg/1280px-Hyperbolic_Tangent.svg.png)
+{:refdef: style="text-align: center;"}
+![tanh](https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Hyperbolic_Tangent.svg/1280px-Hyperbolic_Tangent.svg.png){:height="350px" width="350px"}
+{: refdef}
 
 It resembles the identity function more closely, in the sense that $tanh(0) = 0$ while $\sigma(0) = \frac{1}{2}$. For this reason, training a deep neural network with this activation functions resembles training a linear model, thus making the training process easier. 
 
@@ -47,7 +53,9 @@ Note however that Tanh still has the vanishing gradient problem.
 
 This is nowadays the most used activation function. Despite its name and appearance, it’s not linear and provides the same benefits as Sigmoid but with better performance.
 
-![relu](https://i.ibb.co/DKx1L4M/relu.png)
+{:refdef: style="text-align: center;"}
+![relu](https://i.ibb.co/DKx1L4M/relu.png){:height="300px" width="300px"}
+{: refdef}
 
 Rectified linear units are easy to optimize because they are so similar to linear units. The only difference between a linear unit and a rectified linear unit is that a rectified linear unit outputs zero across half its domain. This makes the derivatives through a rectified linear unit remain large whenever the unit is active. The gradients are not only large but also consistent.
 
@@ -68,12 +76,20 @@ Of course, there are also possible disadvantages:
 
 **Leaky ReLUs** allow a small, positive gradient when the unit is not active. It is a fix for the "dying ReLU" problem.
 
+{:refdef: style="text-align: center;"}
 ![leaky_formula](https://i.ibb.co/bFpxzyL/leaky-relu-formula.png)
+{: refdef}
 
-![leaky_relu](https://i.ibb.co/t30yKgv/leaky-relu.png)
+{:refdef: style="text-align: center;"}
+![leaky_relu](https://i.ibb.co/t30yKgv/leaky-relu.png){:height="250px" width="250px"}
+{: refdef}
 
-**Exponential Linear Unit** is a function that tend to converge cost to zero faster and produce more accurate results. Different to other activation functions, ELU has a extra alpha constant which should be positive number (tuned by hand).
+**Exponential Linear Unit** is a function that tends to converge cost to zero faster and produce more accurate results. Different to other activation functions, ELU has a extra alpha constant which should be positive number (tuned by hand).
 
+{:refdef: style="text-align: center;"}
 ![elu_formula](https://i.ibb.co/R4YHkfP/elu-formula.png)
+{: refdef}
 
-![elu](https://i.ibb.co/G00Tsqq/elu.png)
+{:refdef: style="text-align: center;"}
+![elu](https://i.ibb.co/G00Tsqq/elu.png){:height="250px" width="250px"}
+{: refdef}
