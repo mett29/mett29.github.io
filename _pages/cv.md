@@ -12,8 +12,8 @@ Download the PDF version of my full CV from [here](http://mett29.github.io/files
 
 Education
 ======
-* B.S. in Computer Science Engineering, Polytechnic of Milan, 2018
 * M.S. in Computer Science Engineering (Artificial Intelligence and Machine Learning), Polytechnic of Milan, 2020
+* B.S. in Computer Science Engineering, Polytechnic of Milan, 2018
 
 Work experience
 ======
@@ -25,6 +25,11 @@ Projects
 ======
 * Shor's Algorithm - Research Project (code [here](https://github.com/mett29/Shor-s-Algorithm))
 * Sagrada - Final project of my B.S. (code [here](https://github.com/mett29/ing-sw-2018-lambertucci-losavio-mancassola))
+
+Github and Kaggle
+======
+* [Github](https://github.com/mett29)
+* [Kaggle](https://www.kaggle.com/matt29)
 
 Online Courses
 ======
