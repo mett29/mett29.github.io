@@ -13,7 +13,7 @@ tags:
 
 In this post we will talk about how **error functions** are used in Neural Networks and how they are selected according to the task we have to solve.
 
-**Disclaimer:** *the following notes were written following the slides provided by the professor Matteucci at Polytechnic of Milan.*
+**Disclaimer:** *These notes are for the most part a collection of concepts taken from the slides of the 'Artificial Neural Networks and Deep Learning' course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.*
 
 # Error Functions
 

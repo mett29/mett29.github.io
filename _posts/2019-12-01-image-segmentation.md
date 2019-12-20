@@ -12,7 +12,7 @@ tags:
 
 In this post I will explain **Image Segmentation**, focusing on the architecture of the models used to perform this task. Fully Convolutional Networks and U-Net will be at the center of the discussion.
 
-**Disclaimer:** *These notes are for the most part a collection of concepts taken from the slides of the 'Artificial Neural Networks and Deep Learning' course at Polytechnic of Milan, the book 'Deep Learning' (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam. I also thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.*
+**Disclaimer:** *These notes are for the most part a collection of concepts taken from the slides of the 'Artificial Neural Networks and Deep Learning' course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.*
 
 # Image Segmentation
 
@@ -286,3 +286,10 @@ In the U-Net paper, instead, they claim that data augmentation
 > is essential to teach the network the desired invariance and robustness properties, when only few training samples are available. [...] Especially random elastic deformations of the training samples seem to be the key concept to train a segmentation network with very few annotated images.
 
 Indeed, the two scenario are pretty different, so as always data augmentation must be performed according to the problem we're facing.
+
+## References
+
+- [Fully Convolutional Networks for Semantic Segmentation](https://people.eecs.berkeley.edu/~jonlong/long_shelhamer_fcn.pdf)
+- [U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/pdf/1505.04597.pdf)
+- [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/)
+- [Jeremy Jordan website - Semantic Segmentation](https://www.jeremyjordan.me/semantic-segmentation/)

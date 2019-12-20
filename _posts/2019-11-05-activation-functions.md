@@ -14,7 +14,7 @@ tags:
 
 In this post we will talk about **activation functions**, explaining what they are and what are the most commonly used (e.g. ReLU).
 
-**Disclaimer:** *These notes are for the most part a collection of concepts taken from the slides of the 'Artificial Neural Networks and Deep Learning' course at Polytechnic of Milan, the book 'Deep Learning' (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam. I also thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.*
+**Disclaimer:** *These notes are for the most part a collection of concepts taken from the slides of the 'Artificial Neural Networks and Deep Learning' course at Polytechnic of Milan, the book 'Deep Learning' (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.*
 
 # Activation Functions
 
