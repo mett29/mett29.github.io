@@ -1,6 +1,7 @@
 ---
 permalink: /
 title: "About me - Mattia Mancassola"
+layout: archive
 excerpt: "About me"
 author_profile: true
 redirect_from: 
@@ -18,6 +19,7 @@ Hi, I’m Mattia. I'm 23 and I'm a MSc student of Computer Science Engineering a
             <li>{{"[Bias and Variance Tradeoff](/posts/2019/10/bias_variance_tradeoff/)" | markdownify}}</li>
             <li>{{"[PAC Learning and VC Dimension](/posts/2019/10/pac_learning_and_vc_dimension/)" | markdownify}}</li>
             <li>{{"[Kernel Methods](/posts/2019/10/kernel_methods/)" | markdownify}}</li>
+            <li>{{"Support Vector Machines (coming soon...)" | markdownify}}</li>
         </ul>
     <li><b>Neural Networks and Deep Learning</b></li>
         <ul>

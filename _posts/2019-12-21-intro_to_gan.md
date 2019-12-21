@@ -24,7 +24,7 @@ Generative models, indeed, capture the joint probability $P(X,Y)$, telling us ho
 I will assume that autoencoders are a familiar architecture to the reader, and in the future I'll probably write a specific post about them. In the meanwhile, it is enough to know that an autoencoder is a specific type of neural network, which is trained to attempt to **copy its input to its output**. Even if it can sound strange, these models are very useful, since they allow to have an internal and lower-dimension representation of the input data. In fact, the original use of autoencoders was dimensionality reduction and feature learning.
 
 {:refdef: style="text-align: center;"}
-![autoencoder]({% link images/autoencoder.png %}){:height="400px" width="450px"}
+![autoencoder]({% link images/autoencoder.png %}){:height="500px" width="550px"}
 {: refdef}
 
 In recent years, autoencoders have started to be used also as generative models. The idea is the following:
