@@ -1,6 +1,6 @@
 ---
 title: 'Object Localization and Detection'
-date: 2019-12-20
+date: 2019-12-18
 permalink: /posts/2019/12/object_localization_and_detection/
 usemathjax: true
 tags:

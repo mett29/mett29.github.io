@@ -24,5 +24,6 @@ Welcome to the much more ordered list of posts present on the blog!
             <li>{{"[Introduction to CNN](/posts/2019/11/intro_to_cnn/)" | markdownify}}</li>
             <li>{{"[Image Segmentation](/posts/2019/12/image_segmentation/)" | markdownify}}</li>
             <li>{{"[Object Localization and Detection](/posts/2019/12/object_localization_and_detection/)" | markdownify}}</li>
+            <li>{{"[Introduction to GAN](/posts/2019/12/intro_to_gan/)" | markdownify}}</li>
         </ul>
 </ol>
