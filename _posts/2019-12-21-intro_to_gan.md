@@ -1,5 +1,5 @@
 ---
-title: 'Introduction to GANs'
+title: 'Introduction to GAN'
 date: 2019-12-21
 permalink: /posts/2019/12/intro_to_gan/
 usemathjax: true
