@@ -155,8 +155,6 @@ Go on [https://distill.pub/2016/augmented-rnns/](https://distill.pub/2016/augmen
 Credits [https://distill.pub/2016/augmented-rnns/](https://distill.pub/2016/augmented-rnns/)
 {: refdef}
 
-<hr>
-
 ### Attentional Interfaces
 
 Now that we have seen how Neural Turing Machines work, we won't have any problem in applying the concept of attention to sequence-to-sequence models.
@@ -201,8 +199,6 @@ $$
       \boldsymbol{v_a}^T tanh(\boldsymbol{W_1}\boldsymbol{h_t} + \boldsymbol{W_2}\boldsymbol{\bar{h}_s}),              & \text{Bahdanau's additive style}
   \end{cases}
 $$
-
-<hr>
 
 ## Transformers
 
