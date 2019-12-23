@@ -192,13 +192,9 @@ $$
   \boldsymbol{a_t} = f(\boldsymbol{c_t}, \boldsymbol{h_t}) = tanh(\boldsymbol{W_c}[\boldsymbol{c_t};\boldsymbol{h_t}])
 $$
 
-$$
-  score(\boldsymbol{h_t}, \boldsymbol{\bar{h}_s}) =
-  \begin{cases}
-      \boldsymbol{h_t}^T\boldsymbol{W}\boldsymbol{\bar{h}_s}, & \text{Luong's multiplicative style} \\
-      \boldsymbol{v_a}^T tanh(\boldsymbol{W_1}\boldsymbol{h_t} + \boldsymbol{W_2}\boldsymbol{\bar{h}_s}),              & \text{Bahdanau's additive style}
-  \end{cases}
-$$
+{:refdef: style="text-align: center;"}
+![score_equation]({% link images/score_equation.png %}){:height="450px" width="550px"}
+{: refdef}
 
 ## Transformers
 
