@@ -27,5 +27,6 @@ Welcome to the much more ordered list of posts present on the blog!
             <li>{{"[Object Localization and Detection](/posts/2019/12/object_localization_and_detection/)" | markdownify}}</li>
             <li>{{"[Introduction to GAN](/posts/2019/12/intro_to_gan/)" | markdownify}}</li>
             <li>{{"[Introduction to RNN and LSTM](/posts/2019/12/intro_to_rnn_and_lstm/)" | markdownify}}</li>
+            <li>{{"[Seq2Seq models and the Attention mechanism](/posts/2019/12/seq2seq_and_attention/)" | markdownify}}</li>
         </ul>
 </ol>
