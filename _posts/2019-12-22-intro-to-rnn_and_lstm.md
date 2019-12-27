@@ -41,15 +41,11 @@ Much as convolutional neural networks are neural networks specialized for proces
 The blue part in the above image is the so-called **context network**. In the context network new neurons are added in the hidden layer and their output is not only connected to the output layer, but it is also delayed and connected again to the hidden layer (in the following time step).
 
 $$
-    g^t(x_n|w) = g\Big(\sum_{j=0}^{J} w_{1j}^{(2)} \cdot h_j^t(\cdot) + \sum_{b=0}^{B} v_{1b}^{(2)} \cdot c_b^t(\cdot)\Big)
+    y^t = g(\sum_{j}^{J} W_j \cdot h(\sum_{i}^{I} w_{ji} \cdot x_i^t + \sum_{b}^{B} v_{jb} \cdot c_b^{t-1}) + \sum_{b}^{B} W_b + h(\sum_{i}^{I} v_{bi} \cdot x_i^t + \sum_{b'}^{B} v_{bb'} \cdot c_{b'}^{t-1}))
 $$
 
 $$
-    h_j^t(\cdot) = h_j^t \Big(\sum_{j=0}^{J} w_{ji}^{(1)} \cdot x_{i,n} + \sum_{b=0}^{B} v_{jb}^{(1)} \cdot c_b^{t-1} \Big)
-$$
-
-$$
-    c_b^t(\cdot) = c_b^t \Big(\sum_{j=0}^{J} v_{bi}^{(1)} \cdot x_{i,n} + \sum_{b'=0}^{B} v_{bb'}^{(1)} \cdot c_{b'}^{t-1} \Big)
+    c_b^t = h(\sum_{i}^{I} v_{bi} \cdot x_i^t + \sum_{b'}^{B} v_{bb'} \cdot c_{b'}^{t-1})
 $$
 
 But how do we train this neural network? Because of the context network, we cannot use backpropagation anymore. However, we can see the context network as a feedforward neural network, if we **unroll** it.
@@ -58,21 +54,39 @@ But how do we train this neural network? Because of the context network, we cann
 
 Backpropagation Through Time is the way in which we can train our RNN. As said, the idea is the following:
 
-- Perform network unroll for $U$ steps.
-- Initialize $V, V_B$ replicas to be the same.
-- Compute gradients and update replicas with the average of their gradients, because if we apply the usual update method we would have different values for the same weights in different time steps.
-
-$$
-    V = V - \mu \cdot \frac{1}{U} \sum_{0}^{U-1} V^{t-u}
-$$
-
-$$
-    V_B = V_B - \mu \cdot \frac{1}{U} \sum_{0}^{U-1} V_B^{t-u}
-$$
+- Perform network unroll for $U$ steps
 
 {:refdef: style="text-align: center;"}
 ![BPTT]({% link images/BPTT.png %}){:height="500px" width="700px"}
 {: refdef}
+
+- All the weights are trained with gradient descent, so at a generic time step $\tau$:
+
+$$
+    v_{bi}^{t-\tau} = v_{bi}^{t-\tau} - \eta \frac{\partial E}{\partial v_{bi}^{t-\tau}}
+$$
+
+$$
+    v_{bb'}^{t-\tau} = v_{bb'}^{t-\tau} - \eta \frac{\partial E}{\partial v_{bb'}^{t-\tau}}
+$$
+
+$$
+    v_{jb}^{t-\tau} = v_{jb}^{t-\tau} - \eta \frac{\partial E}{\partial v_{jb}^{t-\tau}}
+$$
+
+- Average the weights, since if we apply the usual update method we would have different values for the same weights in different time steps.
+
+$$
+    v_{bi} = \frac{1}{U + 1} \sum_{\tau=0}^{U} v_{bi}^{t-\tau}
+$$
+
+$$
+    v_{bb'} = \frac{1}{U + 1} \sum_{\tau=0}^{U} v_{bb'}^{t-\tau}
+$$
+
+$$
+    v_{jb} = \frac{1}{U + 1} \sum_{\tau=0}^{U} v_{jb}^{t-\tau}
+$$
 
 ### Vanishing Gradient
 

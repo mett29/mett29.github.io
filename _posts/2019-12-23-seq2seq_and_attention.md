@@ -294,8 +294,8 @@ Image from [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
 
 ## References
 
-- ["Neural Turing Machines" - Graves, Wayne, Danihelka - Google DeepMind](https://arxiv.org/pdf/1410.5401.pdf)
-- ["Attention Is All You Need"- NIPS 2017](https://arxiv.org/abs/1706.03762)
+- [Neural Turing Machines - Graves, Wayne, Danihelka - Google DeepMind](https://arxiv.org/pdf/1410.5401.pdf)
+- [Attention Is All You Need- NIPS 2017](https://arxiv.org/abs/1706.03762)
 - [Olah & Carter, "Attention and Augmented Recurrent Neural Networks", Distill, 2016](https://distill.pub/2016/augmented-rnns/)
 - [Alammar, Jay (2018). The Illustrated Transformer [Blog post]](http://jalammar.github.io/illustrated-transformer/)
 - [Andrej Karpathy - RNN Effectiveness](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)

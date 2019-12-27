@@ -156,7 +156,7 @@ Let's analyze it.
 - Each layer takes as input and returns a volume
 
 {:refdef: style="text-align: center;"}
-![volumes]({% link images/cnn_volumes.png %})
+![volumes]({% link images/cnn_volumes.png %}){:height="200px" width="400px"}
 {: refdef}
 
 ### Convolutional layer
@@ -172,7 +172,7 @@ Visualizing what just described:
 {: refdef}
 
 {:refdef: style="text-align: center;"}
-Towards Data Science - A Comprehensive Guide to Convolutional Neural Networks - https://bit.ly/34AMuct
+Credits: Towards Data Science - [A Comprehensive Guide to Convolutional Neural Networks](https://bit.ly/34AMuct)
 {: refdef}
 
 Two things to notice from the above image:
@@ -187,7 +187,7 @@ Moreover, note that in this representation the volume of the output has not incr
 The goal of pooling layers is pretty simple: reduce the spatial size of the volume. This is done by subsampling the input image, usually using the **MAX** operation. In addition to reducing the computational load, the memory usage and the number of parameters, pooling also makes neural networks a bit more tolerant with respect to image shift, which can greatly improve the stastical efficiency of the network under the assumption that the function that the layer learns is invariant to small translations. Also in this layer we can define the size and the stride.
 
 {:refdef: style="text-align: center;"}
-![max_pooling]({% link images/max_pooling.jpg %})
+![max_pooling]({% link images/max_pooling.jpg %}){:height="300px" width="500px"}
 {: refdef}
 
 ### And then?

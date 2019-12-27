@@ -59,9 +59,9 @@ As far as we have seen until now, our training dataset must be composed of annot
 
 The idea is to perform localization by getting rid of the annotated bounding boxes.
 
-**The Global Average Pooling revisited**
+<u>The Global Average Pooling revisited</u>
 
-**Reference paper:** *[Learning Deep Features for Discriminative Localization](http://cnnlocalization.csail.mit.edu/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf)*
+Reference paper: *[Learning Deep Features for Discriminative Localization](http://cnnlocalization.csail.mit.edu/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf)*
 
 > While this technique was previously proposed as a means for regularizing training, we find that it actually builds a generic localizable deep representation that exposes the implicit attention of CNNs on an image. Despite the apparent simplicity of global average pooling, we are able to achieve 37.1% top-5 error for object localization on ILSVRC 2014 without training on any bounding box annotation.
 
@@ -187,7 +187,7 @@ Image from [Fast R-CNN](https://arxiv.org/pdf/1504.08083.pdf)
 
 So, we can say that the main advantage of this solution is that it is possible to **backpropagate through the whole network**, and thus train it in an **end-to-end** manner. Both the training and testing phase are much faster than in R-CNN.
 
-> The inefficiency of backpropagation in R-CNN and SPPnet networks is due to the fact thet each training sample (i.e. each RoI) comes from a different image, and since RoI may have a very large receptive field, the training inputs are very large (often the entire image). 
+> The inefficiency of backpropagation in R-CNN and SPPnet networks is due to the fact that each training sample (i.e. each RoI) comes from a different image, and since RoI may have a very large receptive field, the training inputs are very large (often the entire image). 
 
 >  In Fast RCNN training, stochastic gradient descent (SGD) minibatches are sampled hierarchically, first by sampling N images and then by sampling R/N RoIs from each image. Critically, RoIs from the same image share computation and memory in the forward and backward passes.
 
@@ -286,9 +286,9 @@ YOLO is incredibly faster than all the other methods we have seen. One limitatio
 
 ## References
 
-- [Learning Deep Features for Discriminative Localization](http://cnnlocalization.csail.mit.edu/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf)
-- [Rich feature hierarchies for accurate object detection and semantic segmentation](https://arxiv.org/pdf/1311.2524.pdf)
-- [Fast R-CNN](https://arxiv.org/pdf/1504.08083.pdf)
-- [Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf)
-- [You Only Look Once: Unified, Real-Time Object Detection](https://arxiv.org/pdf/1506.02640.pdf)
+- [B. Zhou, A. Khosla, A. Lapedriza, A. Oliva, A. Torralba - Learning Deep Features for Discriminative Localization](http://cnnlocalization.csail.mit.edu/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf)
+- [R. Girshick, J. Donahue, T. Darrell, J. Malik - Rich feature hierarchies for accurate object detection and semantic segmentation](https://arxiv.org/pdf/1311.2524.pdf)
+- [Ross Girshick - Fast R-CNN](https://arxiv.org/pdf/1504.08083.pdf)
+- [S. Ren, K. He, R. Girshick, J. Sun - Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf)
+- [J. Redmon, S. Divvala, R. Girshick, A. Farhadi - You Only Look Once: Unified, Real-Time Object Detection](https://arxiv.org/pdf/1506.02640.pdf)
 - [Object Localization and Detection](https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/object_localization_and_detection.html)
