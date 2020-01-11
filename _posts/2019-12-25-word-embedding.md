@@ -107,7 +107,7 @@ Essentially, the skip-gram model is trained to predict the probabilities of a wo
 
 Paper: *[Linguistic Regularities in Continuous Space Word Representations](https://www.aclweb.org/anthology/N13-1090.pdf)*
 
-It was shown that a simple method like the **Vector Offset Method** is very effective in solving analogy questions, like $a:b = c:d$ where $d$ is unknown. It works as follows: find the embedding vectors $x_a,x_b,x_c$ (all normalized to unit norm) and then compute $y = x_b - x_a + x_c$. $y$ will be the continuous representation of the work we expect to be the best answer. Since no word might exist at that exact position, we search for the word whose embedding vector has the greatest cosine similarity to $y$:
+It was shown that a simple method like the **Vector Offset Method** is very effective in solving analogy questions, like $a:b = c:d$ where $d$ is unknown. It works as follows: find the embedding vectors $x_a,x_b,x_c$ (all normalized to unit norm) and then compute $y = x_b - x_a + x_c$. $y$ will be the continuous representation of the word we expect to be the best answer. Since no word might exist at that exact position, we search for the word whose embedding vector has the greatest cosine similarity to $y$:
 
 $$
     w^* = argmax_w \frac{x_w y}{||x_w||||y||}
@@ -127,7 +127,7 @@ $$
     w_{king} - w_{man} + w_{woman} \cong w_{queen} \\
     w_{paris} - w_{france} + w_{italy} \cong w_{rome} \\
     w_{einstein} - w_{scientist} + w_{painter} \cong w_{picasso} \\
-    w_{his} - w_{he} + w_{her} \cong w_{her} \\
+    w_{his} - w_{he} + w_{she} \cong w_{her} \\
     w_{cu} - w_{copper} + w_{gold} \cong w_{au}
 $$
 

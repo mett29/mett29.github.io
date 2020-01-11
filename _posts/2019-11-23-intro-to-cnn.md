@@ -152,7 +152,7 @@ The above architecture is the LeNet-5, a pioneering 7-level convolutional networ
 Let's analyze it. 
 
 - An image passing through a CNN is transformed in a sequence of volumes
-- As the depth increases, the height and width of the volume increases
+- As the depth increases, the height and width of the volume decreases
 - Each layer takes as input and returns a volume
 
 {:refdef: style="text-align: center;"}
@@ -184,7 +184,7 @@ Moreover, note that in this representation the volume of the output has not incr
 
 ### Pooling layer
 
-The goal of pooling layers is pretty simple: reduce the spatial size of the volume. This is done by subsampling the input image, usually using the **MAX** operation. In addition to reducing the computational load, the memory usage and the number of parameters, pooling also makes neural networks a bit more tolerant with respect to image shift, which can greatly improve the stastical efficiency of the network under the assumption that the function that the layer learns is invariant to small translations. Also in this layer we can define the size and the stride.
+The goal of pooling layers is pretty simple: reduce the spatial size of the volume. This is done by subsampling the input image, usually using the **MAX** operation. In addition to reducing the computational load, the memory usage and the number of parameters, pooling also makes neural networks a bit more tolerant with respect to image shift, which can greatly improve the statistical efficiency of the network under the assumption that the function that the layer learns is invariant to small translations. Also in this layer we can define the size and the stride.
 
 {:refdef: style="text-align: center;"}
 ![max_pooling]({% link images/max_pooling.jpg %}){:height="300px" width="500px"}
