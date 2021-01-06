@@ -8,11 +8,11 @@ redirect_from:
 ---
 
 {% include base_path %}
-Download the PDF version of my full CV from [here](http://mett29.github.io/files/CV.pdf).
+Reach me on [LinkedIn](https://www.linkedin.com/in/mattiamancassola/) for further information.
 
 Education
 ======
-* M.S. in Computer Science Engineering (Artificial Intelligence and Machine Learning), Polytechnic of Milan, 2020
+* M.S. in Computer Science Engineering (Artificial Intelligence and Machine Learning), Polytechnic of Milan, April 2021
 * B.S. in Computer Science Engineering, Polytechnic of Milan, 2018
 
 Work experience
@@ -20,11 +20,20 @@ Work experience
 * Summer 2014: Web Developer
   * SERMATECH SRL
   * Website development using HTML5, CSS3, Javascript, PHP and Bootstrap library
+
+Languages
+======
+* Italian: 5/5 (native speaker)
+* English: 4/5 (professional level)
+* German: 2/5 (currently learning - basic level)
   
 Projects
 ======
-* Shor's Algorithm - Research Project (code [here](https://github.com/mett29/Shor-s-Algorithm))
-* Sagrada - Final project of my B.S. (code [here](https://github.com/mett29/ing-sw-2018-lambertucci-losavio-mancassola))
+* Shor's Algorithm - Research Project (more info and code [here](https://github.com/mett29/Shor-s-Algorithm))
+* Sagrada - Final project of my B.S. (more info and code [here](https://github.com/mett29/ing-sw-2018-lambertucci-losavio-mancassola))
+* An analysis of the digital divide in Italy and Europe (more info and code [here](https://github.com/mett29/DataViz))
+* FolklorItalia (more info and code [here](https://folkloritalia2020.herokuapp.com/))
+* VocalChess (more info and code [here](https://github.com/mett29/VocalChess))
 
 Github and Kaggle
 ======
