@@ -9,7 +9,7 @@ redirect_from:
   - /about.html
 ---
 
-Hi, I’m Mattia. I'm 24 and I'm a MSc student of Computer Science Engineering at Polytechnic of Milan, where I'm following the "Artificial Intelligence and Machine Learning" track.
+Hi, I’m Mattia. I'm an M.Sc. graduate of Computer Science Engineering at the Polytechnic Institute of Milan, where I followed the Artificial Intelligence and Machine Learning track.
 
 <ol type="I">
     <li><b>Machine Learning</b></li>

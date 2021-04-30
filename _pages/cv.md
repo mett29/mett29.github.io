@@ -12,8 +12,8 @@ Reach me on [LinkedIn](https://www.linkedin.com/in/mattiamancassola/) for furthe
 
 Education
 ======
-* M.S. in Computer Science Engineering (Artificial Intelligence and Machine Learning), Polytechnic of Milan, April 2021
-* B.S. in Computer Science Engineering, Polytechnic of Milan, 2018
+* M.Sc. in Computer Science Engineering (Artificial Intelligence and Machine Learning), Polytechnic of Milan, April 2021
+* B.Sc. in Computer Science Engineering, Polytechnic of Milan, March 2019
 
 Work experience
 ======
