@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>perceptron on Matt Log</title>
-    <link>/tags/perceptron/</link>
+    <link>https://mett29.github.io/tags/perceptron/</link>
     <description>Recent content in perceptron on Matt Log</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 30 Sep 2019 21:40:08 +0200</lastBuildDate><atom:link href="/tags/perceptron/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 30 Sep 2019 21:40:08 +0200</lastBuildDate><atom:link href="https://mett29.github.io/tags/perceptron/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Linear Classification</title>
-      <link>/posts/linear-classification/</link>
+      <link>https://mett29.github.io/posts/linear-classification/</link>
       <pubDate>Mon, 30 Sep 2019 21:40:08 +0200</pubDate>
       
-      <guid>/posts/linear-classification/</guid>
+      <guid>https://mett29.github.io/posts/linear-classification/</guid>
       <description>In this post we will talk about Linear Classification, explaining some of the main methods which are at the basis of this task.
 Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &amp;lsquo;Pattern Recognition and Machine Learning&#39;.
 Linear Classification The goal in classification is to take an input vector $x$ and to assign it to one of $K$ discrete classes $C_k$ where $k = 1,&amp;hellip;,K$.</description>

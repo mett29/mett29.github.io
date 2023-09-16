@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>VC dimension on Matt Log</title>
-    <link>/tags/vc-dimension/</link>
+    <link>https://mett29.github.io/tags/vc-dimension/</link>
     <description>Recent content in VC dimension on Matt Log</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 19 Oct 2019 18:30:08 +0200</lastBuildDate><atom:link href="/tags/vc-dimension/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 19 Oct 2019 18:30:08 +0200</lastBuildDate><atom:link href="https://mett29.github.io/tags/vc-dimension/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>PAC learning and VC dimension</title>
-      <link>/posts/pac-learning-vc-dimension/</link>
+      <link>https://mett29.github.io/posts/pac-learning-vc-dimension/</link>
       <pubDate>Sat, 19 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/posts/pac-learning-vc-dimension/</guid>
+      <guid>https://mett29.github.io/posts/pac-learning-vc-dimension/</guid>
       <description>In this post we will talk about PAC Learning and VC Dimension, explaining what they are and why they are useful in Machine Learning.
 Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &amp;lsquo;Pattern Recognition and Machine Learning&#39;.
 PAC-Learning and VC-Dimension PAC-Learning In Probably Approximately Correct Learning, the learner receives samples and must select a generalization function (called the hypothesis) from a certain class of possible functions.</description>

@@ -2,647 +2,647 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Tags on Matt Log</title>
-    <link>/tags/</link>
+    <link>https://mett29.github.io/tags/</link>
     <description>Recent content in Tags on Matt Log</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 25 Dec 2019 22:55:08 +0200</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 25 Dec 2019 22:55:08 +0200</lastBuildDate><atom:link href="https://mett29.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CBOW</title>
-      <link>/tags/cbow/</link>
+      <link>https://mett29.github.io/tags/cbow/</link>
       <pubDate>Wed, 25 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/cbow/</guid>
+      <guid>https://mett29.github.io/tags/cbow/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Skip-gram</title>
-      <link>/tags/skip-gram/</link>
+      <link>https://mett29.github.io/tags/skip-gram/</link>
       <pubDate>Wed, 25 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/skip-gram/</guid>
+      <guid>https://mett29.github.io/tags/skip-gram/</guid>
       <description></description>
     </item>
     
     <item>
       <title>word embedding</title>
-      <link>/tags/word-embedding/</link>
+      <link>https://mett29.github.io/tags/word-embedding/</link>
       <pubDate>Wed, 25 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/word-embedding/</guid>
+      <guid>https://mett29.github.io/tags/word-embedding/</guid>
       <description></description>
     </item>
     
     <item>
       <title>word2vec</title>
-      <link>/tags/word2vec/</link>
+      <link>https://mett29.github.io/tags/word2vec/</link>
       <pubDate>Wed, 25 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/word2vec/</guid>
+      <guid>https://mett29.github.io/tags/word2vec/</guid>
       <description></description>
     </item>
     
     <item>
       <title>attention</title>
-      <link>/tags/attention/</link>
+      <link>https://mett29.github.io/tags/attention/</link>
       <pubDate>Mon, 23 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/attention/</guid>
+      <guid>https://mett29.github.io/tags/attention/</guid>
       <description></description>
     </item>
     
     <item>
       <title>neural turing machine</title>
-      <link>/tags/neural-turing-machine/</link>
+      <link>https://mett29.github.io/tags/neural-turing-machine/</link>
       <pubDate>Mon, 23 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/neural-turing-machine/</guid>
+      <guid>https://mett29.github.io/tags/neural-turing-machine/</guid>
       <description></description>
     </item>
     
     <item>
       <title>seq2seq</title>
-      <link>/tags/seq2seq/</link>
+      <link>https://mett29.github.io/tags/seq2seq/</link>
       <pubDate>Mon, 23 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/seq2seq/</guid>
+      <guid>https://mett29.github.io/tags/seq2seq/</guid>
       <description></description>
     </item>
     
     <item>
       <title>transformer</title>
-      <link>/tags/transformer/</link>
+      <link>https://mett29.github.io/tags/transformer/</link>
       <pubDate>Mon, 23 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/transformer/</guid>
+      <guid>https://mett29.github.io/tags/transformer/</guid>
       <description></description>
     </item>
     
     <item>
       <title>LSTM</title>
-      <link>/tags/lstm/</link>
+      <link>https://mett29.github.io/tags/lstm/</link>
       <pubDate>Sun, 22 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/lstm/</guid>
+      <guid>https://mett29.github.io/tags/lstm/</guid>
       <description></description>
     </item>
     
     <item>
       <title>RNN</title>
-      <link>/tags/rnn/</link>
+      <link>https://mett29.github.io/tags/rnn/</link>
       <pubDate>Sun, 22 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/rnn/</guid>
+      <guid>https://mett29.github.io/tags/rnn/</guid>
       <description></description>
     </item>
     
     <item>
       <title>sequence modeling</title>
-      <link>/tags/sequence-modeling/</link>
+      <link>https://mett29.github.io/tags/sequence-modeling/</link>
       <pubDate>Sun, 22 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/sequence-modeling/</guid>
+      <guid>https://mett29.github.io/tags/sequence-modeling/</guid>
       <description></description>
     </item>
     
     <item>
       <title>autoencoders</title>
-      <link>/tags/autoencoders/</link>
+      <link>https://mett29.github.io/tags/autoencoders/</link>
       <pubDate>Sat, 21 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/autoencoders/</guid>
+      <guid>https://mett29.github.io/tags/autoencoders/</guid>
       <description></description>
     </item>
     
     <item>
       <title>GAN</title>
-      <link>/tags/gan/</link>
+      <link>https://mett29.github.io/tags/gan/</link>
       <pubDate>Sat, 21 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/gan/</guid>
+      <guid>https://mett29.github.io/tags/gan/</guid>
       <description></description>
     </item>
     
     <item>
       <title>generative models</title>
-      <link>/tags/generative-models/</link>
+      <link>https://mett29.github.io/tags/generative-models/</link>
       <pubDate>Sat, 21 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/generative-models/</guid>
+      <guid>https://mett29.github.io/tags/generative-models/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Fast R-CNN</title>
-      <link>/tags/fast-r-cnn/</link>
+      <link>https://mett29.github.io/tags/fast-r-cnn/</link>
       <pubDate>Wed, 18 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/fast-r-cnn/</guid>
+      <guid>https://mett29.github.io/tags/fast-r-cnn/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Faster R-CNN</title>
-      <link>/tags/faster-r-cnn/</link>
+      <link>https://mett29.github.io/tags/faster-r-cnn/</link>
       <pubDate>Wed, 18 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/faster-r-cnn/</guid>
+      <guid>https://mett29.github.io/tags/faster-r-cnn/</guid>
       <description></description>
     </item>
     
     <item>
       <title>object detection</title>
-      <link>/tags/object-detection/</link>
+      <link>https://mett29.github.io/tags/object-detection/</link>
       <pubDate>Wed, 18 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/object-detection/</guid>
+      <guid>https://mett29.github.io/tags/object-detection/</guid>
       <description></description>
     </item>
     
     <item>
       <title>object localization</title>
-      <link>/tags/object-localization/</link>
+      <link>https://mett29.github.io/tags/object-localization/</link>
       <pubDate>Wed, 18 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/object-localization/</guid>
+      <guid>https://mett29.github.io/tags/object-localization/</guid>
       <description></description>
     </item>
     
     <item>
       <title>R-CNN</title>
-      <link>/tags/r-cnn/</link>
+      <link>https://mett29.github.io/tags/r-cnn/</link>
       <pubDate>Wed, 18 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/r-cnn/</guid>
+      <guid>https://mett29.github.io/tags/r-cnn/</guid>
       <description></description>
     </item>
     
     <item>
       <title>YOLO</title>
-      <link>/tags/yolo/</link>
+      <link>https://mett29.github.io/tags/yolo/</link>
       <pubDate>Wed, 18 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/yolo/</guid>
+      <guid>https://mett29.github.io/tags/yolo/</guid>
       <description></description>
     </item>
     
     <item>
       <title>CNN</title>
-      <link>/tags/cnn/</link>
+      <link>https://mett29.github.io/tags/cnn/</link>
       <pubDate>Sun, 01 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/cnn/</guid>
+      <guid>https://mett29.github.io/tags/cnn/</guid>
       <description></description>
     </item>
     
     <item>
       <title>FCN</title>
-      <link>/tags/fcn/</link>
+      <link>https://mett29.github.io/tags/fcn/</link>
       <pubDate>Sun, 01 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/fcn/</guid>
+      <guid>https://mett29.github.io/tags/fcn/</guid>
       <description></description>
     </item>
     
     <item>
       <title>image segmentation</title>
-      <link>/tags/image-segmentation/</link>
+      <link>https://mett29.github.io/tags/image-segmentation/</link>
       <pubDate>Sun, 01 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/image-segmentation/</guid>
+      <guid>https://mett29.github.io/tags/image-segmentation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>U-Net</title>
-      <link>/tags/u-net/</link>
+      <link>https://mett29.github.io/tags/u-net/</link>
       <pubDate>Sun, 01 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/u-net/</guid>
+      <guid>https://mett29.github.io/tags/u-net/</guid>
       <description></description>
     </item>
     
     <item>
       <title>convolution</title>
-      <link>/tags/convolution/</link>
+      <link>https://mett29.github.io/tags/convolution/</link>
       <pubDate>Sat, 23 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/convolution/</guid>
+      <guid>https://mett29.github.io/tags/convolution/</guid>
       <description></description>
     </item>
     
     <item>
       <title>image classification</title>
-      <link>/tags/image-classification/</link>
+      <link>https://mett29.github.io/tags/image-classification/</link>
       <pubDate>Sat, 23 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/image-classification/</guid>
+      <guid>https://mett29.github.io/tags/image-classification/</guid>
       <description></description>
     </item>
     
     <item>
       <title>pooling</title>
-      <link>/tags/pooling/</link>
+      <link>https://mett29.github.io/tags/pooling/</link>
       <pubDate>Sat, 23 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/pooling/</guid>
+      <guid>https://mett29.github.io/tags/pooling/</guid>
       <description></description>
     </item>
     
     <item>
       <title>receptive field</title>
-      <link>/tags/receptive-field/</link>
+      <link>https://mett29.github.io/tags/receptive-field/</link>
       <pubDate>Sat, 23 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/receptive-field/</guid>
+      <guid>https://mett29.github.io/tags/receptive-field/</guid>
       <description></description>
     </item>
     
     <item>
       <title>batch normalization</title>
-      <link>/tags/batch-normalization/</link>
+      <link>https://mett29.github.io/tags/batch-normalization/</link>
       <pubDate>Sun, 17 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/batch-normalization/</guid>
+      <guid>https://mett29.github.io/tags/batch-normalization/</guid>
       <description></description>
     </item>
     
     <item>
       <title>activation functions</title>
-      <link>/tags/activation-functions/</link>
+      <link>https://mett29.github.io/tags/activation-functions/</link>
       <pubDate>Tue, 05 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/activation-functions/</guid>
+      <guid>https://mett29.github.io/tags/activation-functions/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ELU</title>
-      <link>/tags/elu/</link>
+      <link>https://mett29.github.io/tags/elu/</link>
       <pubDate>Tue, 05 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/elu/</guid>
+      <guid>https://mett29.github.io/tags/elu/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Leaky ReLU</title>
-      <link>/tags/leaky-relu/</link>
+      <link>https://mett29.github.io/tags/leaky-relu/</link>
       <pubDate>Tue, 05 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/leaky-relu/</guid>
+      <guid>https://mett29.github.io/tags/leaky-relu/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ReLU</title>
-      <link>/tags/relu/</link>
+      <link>https://mett29.github.io/tags/relu/</link>
       <pubDate>Tue, 05 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/relu/</guid>
+      <guid>https://mett29.github.io/tags/relu/</guid>
       <description></description>
     </item>
     
     <item>
       <title>sigmoid</title>
-      <link>/tags/sigmoid/</link>
+      <link>https://mett29.github.io/tags/sigmoid/</link>
       <pubDate>Tue, 05 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/sigmoid/</guid>
+      <guid>https://mett29.github.io/tags/sigmoid/</guid>
       <description></description>
     </item>
     
     <item>
       <title>tanh</title>
-      <link>/tags/tanh/</link>
+      <link>https://mett29.github.io/tags/tanh/</link>
       <pubDate>Tue, 05 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/tanh/</guid>
+      <guid>https://mett29.github.io/tags/tanh/</guid>
       <description></description>
     </item>
     
     <item>
       <title>cross-validation</title>
-      <link>/tags/cross-validation/</link>
+      <link>https://mett29.github.io/tags/cross-validation/</link>
       <pubDate>Wed, 30 Oct 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/cross-validation/</guid>
+      <guid>https://mett29.github.io/tags/cross-validation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>dropout</title>
-      <link>/tags/dropout/</link>
+      <link>https://mett29.github.io/tags/dropout/</link>
       <pubDate>Wed, 30 Oct 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/dropout/</guid>
+      <guid>https://mett29.github.io/tags/dropout/</guid>
       <description></description>
     </item>
     
     <item>
       <title>early stopping</title>
-      <link>/tags/early-stopping/</link>
+      <link>https://mett29.github.io/tags/early-stopping/</link>
       <pubDate>Wed, 30 Oct 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/early-stopping/</guid>
+      <guid>https://mett29.github.io/tags/early-stopping/</guid>
       <description></description>
     </item>
     
     <item>
       <title>overfitting</title>
-      <link>/tags/overfitting/</link>
+      <link>https://mett29.github.io/tags/overfitting/</link>
       <pubDate>Wed, 30 Oct 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/overfitting/</guid>
+      <guid>https://mett29.github.io/tags/overfitting/</guid>
       <description></description>
     </item>
     
     <item>
       <title>weight decay</title>
-      <link>/tags/weight-decay/</link>
+      <link>https://mett29.github.io/tags/weight-decay/</link>
       <pubDate>Wed, 30 Oct 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/weight-decay/</guid>
+      <guid>https://mett29.github.io/tags/weight-decay/</guid>
       <description></description>
     </item>
     
     <item>
       <title>backpropagation</title>
-      <link>/tags/backpropagation/</link>
+      <link>https://mett29.github.io/tags/backpropagation/</link>
       <pubDate>Mon, 28 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/backpropagation/</guid>
+      <guid>https://mett29.github.io/tags/backpropagation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>crossentropy</title>
-      <link>/tags/crossentropy/</link>
+      <link>https://mett29.github.io/tags/crossentropy/</link>
       <pubDate>Mon, 28 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/crossentropy/</guid>
+      <guid>https://mett29.github.io/tags/crossentropy/</guid>
       <description></description>
     </item>
     
     <item>
       <title>error function</title>
-      <link>/tags/error-function/</link>
+      <link>https://mett29.github.io/tags/error-function/</link>
       <pubDate>Mon, 28 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/error-function/</guid>
+      <guid>https://mett29.github.io/tags/error-function/</guid>
       <description></description>
     </item>
     
     <item>
       <title>gradient descent</title>
-      <link>/tags/gradient-descent/</link>
+      <link>https://mett29.github.io/tags/gradient-descent/</link>
       <pubDate>Mon, 28 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/gradient-descent/</guid>
+      <guid>https://mett29.github.io/tags/gradient-descent/</guid>
       <description></description>
     </item>
     
     <item>
       <title>MSE</title>
-      <link>/tags/mse/</link>
+      <link>https://mett29.github.io/tags/mse/</link>
       <pubDate>Mon, 28 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/mse/</guid>
+      <guid>https://mett29.github.io/tags/mse/</guid>
       <description></description>
     </item>
     
     <item>
       <title>gaussian process</title>
-      <link>/tags/gaussian-process/</link>
+      <link>https://mett29.github.io/tags/gaussian-process/</link>
       <pubDate>Thu, 24 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/gaussian-process/</guid>
+      <guid>https://mett29.github.io/tags/gaussian-process/</guid>
       <description></description>
     </item>
     
     <item>
       <title>kernel methods</title>
-      <link>/tags/kernel-methods/</link>
+      <link>https://mett29.github.io/tags/kernel-methods/</link>
       <pubDate>Thu, 24 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/kernel-methods/</guid>
+      <guid>https://mett29.github.io/tags/kernel-methods/</guid>
       <description></description>
     </item>
     
     <item>
       <title>kernel trick</title>
-      <link>/tags/kernel-trick/</link>
+      <link>https://mett29.github.io/tags/kernel-trick/</link>
       <pubDate>Thu, 24 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/kernel-trick/</guid>
+      <guid>https://mett29.github.io/tags/kernel-trick/</guid>
       <description></description>
     </item>
     
     <item>
       <title>radial basis function</title>
-      <link>/tags/radial-basis-function/</link>
+      <link>https://mett29.github.io/tags/radial-basis-function/</link>
       <pubDate>Thu, 24 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/radial-basis-function/</guid>
+      <guid>https://mett29.github.io/tags/radial-basis-function/</guid>
       <description></description>
     </item>
     
     <item>
       <title>agnostic learning</title>
-      <link>/tags/agnostic-learning/</link>
+      <link>https://mett29.github.io/tags/agnostic-learning/</link>
       <pubDate>Sat, 19 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/agnostic-learning/</guid>
+      <guid>https://mett29.github.io/tags/agnostic-learning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>PAC learning</title>
-      <link>/tags/pac-learning/</link>
+      <link>https://mett29.github.io/tags/pac-learning/</link>
       <pubDate>Sat, 19 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/pac-learning/</guid>
+      <guid>https://mett29.github.io/tags/pac-learning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>VC dimension</title>
-      <link>/tags/vc-dimension/</link>
+      <link>https://mett29.github.io/tags/vc-dimension/</link>
       <pubDate>Sat, 19 Oct 2019 18:30:08 +0200</pubDate>
       
-      <guid>/tags/vc-dimension/</guid>
+      <guid>https://mett29.github.io/tags/vc-dimension/</guid>
       <description></description>
     </item>
     
     <item>
       <title>bagging</title>
-      <link>/tags/bagging/</link>
+      <link>https://mett29.github.io/tags/bagging/</link>
       <pubDate>Thu, 17 Oct 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/bagging/</guid>
+      <guid>https://mett29.github.io/tags/bagging/</guid>
       <description></description>
     </item>
     
     <item>
       <title>bias-variance tradeoff</title>
-      <link>/tags/bias-variance-tradeoff/</link>
+      <link>https://mett29.github.io/tags/bias-variance-tradeoff/</link>
       <pubDate>Thu, 17 Oct 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/bias-variance-tradeoff/</guid>
+      <guid>https://mett29.github.io/tags/bias-variance-tradeoff/</guid>
       <description></description>
     </item>
     
     <item>
       <title>boosting</title>
-      <link>/tags/boosting/</link>
+      <link>https://mett29.github.io/tags/boosting/</link>
       <pubDate>Thu, 17 Oct 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/boosting/</guid>
+      <guid>https://mett29.github.io/tags/boosting/</guid>
       <description></description>
     </item>
     
     <item>
       <title>dimensionality reduction</title>
-      <link>/tags/dimensionality-reduction/</link>
+      <link>https://mett29.github.io/tags/dimensionality-reduction/</link>
       <pubDate>Thu, 17 Oct 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/dimensionality-reduction/</guid>
+      <guid>https://mett29.github.io/tags/dimensionality-reduction/</guid>
       <description></description>
     </item>
     
     <item>
       <title>feature selection</title>
-      <link>/tags/feature-selection/</link>
+      <link>https://mett29.github.io/tags/feature-selection/</link>
       <pubDate>Thu, 17 Oct 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/feature-selection/</guid>
+      <guid>https://mett29.github.io/tags/feature-selection/</guid>
       <description></description>
     </item>
     
     <item>
       <title>model selection</title>
-      <link>/tags/model-selection/</link>
+      <link>https://mett29.github.io/tags/model-selection/</link>
       <pubDate>Thu, 17 Oct 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/model-selection/</guid>
+      <guid>https://mett29.github.io/tags/model-selection/</guid>
       <description></description>
     </item>
     
     <item>
       <title>PCA</title>
-      <link>/tags/pca/</link>
+      <link>https://mett29.github.io/tags/pca/</link>
       <pubDate>Thu, 17 Oct 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/pca/</guid>
+      <guid>https://mett29.github.io/tags/pca/</guid>
       <description></description>
     </item>
     
     <item>
       <title>regularization</title>
-      <link>/tags/regularization/</link>
+      <link>https://mett29.github.io/tags/regularization/</link>
       <pubDate>Thu, 17 Oct 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/regularization/</guid>
+      <guid>https://mett29.github.io/tags/regularization/</guid>
       <description></description>
     </item>
     
     <item>
       <title>confusion matrix</title>
-      <link>/tags/confusion-matrix/</link>
+      <link>https://mett29.github.io/tags/confusion-matrix/</link>
       <pubDate>Mon, 30 Sep 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/confusion-matrix/</guid>
+      <guid>https://mett29.github.io/tags/confusion-matrix/</guid>
       <description></description>
     </item>
     
     <item>
       <title>KNN</title>
-      <link>/tags/knn/</link>
+      <link>https://mett29.github.io/tags/knn/</link>
       <pubDate>Mon, 30 Sep 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/knn/</guid>
+      <guid>https://mett29.github.io/tags/knn/</guid>
       <description></description>
     </item>
     
     <item>
       <title>linear classification</title>
-      <link>/tags/linear-classification/</link>
+      <link>https://mett29.github.io/tags/linear-classification/</link>
       <pubDate>Mon, 30 Sep 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/linear-classification/</guid>
+      <guid>https://mett29.github.io/tags/linear-classification/</guid>
       <description></description>
     </item>
     
     <item>
       <title>logistic regression</title>
-      <link>/tags/logistic-regression/</link>
+      <link>https://mett29.github.io/tags/logistic-regression/</link>
       <pubDate>Mon, 30 Sep 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/logistic-regression/</guid>
+      <guid>https://mett29.github.io/tags/logistic-regression/</guid>
       <description></description>
     </item>
     
     <item>
       <title>naive bayes</title>
-      <link>/tags/naive-bayes/</link>
+      <link>https://mett29.github.io/tags/naive-bayes/</link>
       <pubDate>Mon, 30 Sep 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/naive-bayes/</guid>
+      <guid>https://mett29.github.io/tags/naive-bayes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>perceptron</title>
-      <link>/tags/perceptron/</link>
+      <link>https://mett29.github.io/tags/perceptron/</link>
       <pubDate>Mon, 30 Sep 2019 21:40:08 +0200</pubDate>
       
-      <guid>/tags/perceptron/</guid>
+      <guid>https://mett29.github.io/tags/perceptron/</guid>
       <description></description>
     </item>
     
     <item>
       <title>bayesian linear regression</title>
-      <link>/tags/bayesian-linear-regression/</link>
+      <link>https://mett29.github.io/tags/bayesian-linear-regression/</link>
       <pubDate>Wed, 25 Sep 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/bayesian-linear-regression/</guid>
+      <guid>https://mett29.github.io/tags/bayesian-linear-regression/</guid>
       <description></description>
     </item>
     
     <item>
       <title>lasso</title>
-      <link>/tags/lasso/</link>
+      <link>https://mett29.github.io/tags/lasso/</link>
       <pubDate>Wed, 25 Sep 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/lasso/</guid>
+      <guid>https://mett29.github.io/tags/lasso/</guid>
       <description></description>
     </item>
     
     <item>
       <title>linear regression</title>
-      <link>/tags/linear-regression/</link>
+      <link>https://mett29.github.io/tags/linear-regression/</link>
       <pubDate>Wed, 25 Sep 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/linear-regression/</guid>
+      <guid>https://mett29.github.io/tags/linear-regression/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ridge</title>
-      <link>/tags/ridge/</link>
+      <link>https://mett29.github.io/tags/ridge/</link>
       <pubDate>Wed, 25 Sep 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/ridge/</guid>
+      <guid>https://mett29.github.io/tags/ridge/</guid>
       <description></description>
     </item>
     
     <item>
       <title>SGD</title>
-      <link>/tags/sgd/</link>
+      <link>https://mett29.github.io/tags/sgd/</link>
       <pubDate>Wed, 25 Sep 2019 22:55:08 +0200</pubDate>
       
-      <guid>/tags/sgd/</guid>
+      <guid>https://mett29.github.io/tags/sgd/</guid>
       <description></description>
     </item>
     

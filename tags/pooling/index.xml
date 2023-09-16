@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>pooling on Matt Log</title>
-    <link>/tags/pooling/</link>
+    <link>https://mett29.github.io/tags/pooling/</link>
     <description>Recent content in pooling on Matt Log</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Nov 2019 22:55:08 +0200</lastBuildDate><atom:link href="/tags/pooling/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 23 Nov 2019 22:55:08 +0200</lastBuildDate><atom:link href="https://mett29.github.io/tags/pooling/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Introduction to CNN</title>
-      <link>/posts/intro-to-cnn/</link>
+      <link>https://mett29.github.io/posts/intro-to-cnn/</link>
       <pubDate>Sat, 23 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/posts/intro-to-cnn/</guid>
+      <guid>https://mett29.github.io/posts/intro-to-cnn/</guid>
       <description>In this post I will give you an introduction to Convolutional Neural Networks (CNN). We will see the reasons behind the success of this architecture and the latter will be analyzed layer by layer.
 Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan, the book &amp;lsquo;Deep Learning&amp;rsquo; (Goodfellow-et-al-2016) and from some other online resources.</description>
     </item>

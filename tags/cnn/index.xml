@@ -2,27 +2,27 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>CNN on Matt Log</title>
-    <link>/tags/cnn/</link>
+    <link>https://mett29.github.io/tags/cnn/</link>
     <description>Recent content in CNN on Matt Log</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 01 Dec 2019 22:55:08 +0200</lastBuildDate><atom:link href="/tags/cnn/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 01 Dec 2019 22:55:08 +0200</lastBuildDate><atom:link href="https://mett29.github.io/tags/cnn/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Image Segmentation</title>
-      <link>/posts/image-segmentation/</link>
+      <link>https://mett29.github.io/posts/image-segmentation/</link>
       <pubDate>Sun, 01 Dec 2019 22:55:08 +0200</pubDate>
       
-      <guid>/posts/image-segmentation/</guid>
+      <guid>https://mett29.github.io/posts/image-segmentation/</guid>
       <description>In this post I will explain Image Segmentation, focusing on the architecture of the models used to perform this task. Fully Convolutional Networks and U-Net will be at the center of the discussion.
 Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.</description>
     </item>
     
     <item>
       <title>Introduction to CNN</title>
-      <link>/posts/intro-to-cnn/</link>
+      <link>https://mett29.github.io/posts/intro-to-cnn/</link>
       <pubDate>Sat, 23 Nov 2019 22:55:08 +0200</pubDate>
       
-      <guid>/posts/intro-to-cnn/</guid>
+      <guid>https://mett29.github.io/posts/intro-to-cnn/</guid>
       <description>In this post I will give you an introduction to Convolutional Neural Networks (CNN). We will see the reasons behind the success of this architecture and the latter will be analyzed layer by layer.
 Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan, the book &amp;lsquo;Deep Learning&amp;rsquo; (Goodfellow-et-al-2016) and from some other online resources.</description>
     </item>

@@ -10,15 +10,15 @@
 <meta name="description" content="In this post I will introduce the Object Localization and Detection task, starting from the most straightforward solutions, to the best models that reached state-of-the-art performances, i.e. R-CNN, Fast R-CNN, Faster R-CNN and YOLO.
 Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.">
 <meta name="author" content="">
-<link rel="canonical" href="/posts/object-localization-and-detection/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<link rel="canonical" href="https://mett29.github.io/posts/object-localization-and-detection/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.0f21954db480b5bf5a45ab9ac4b9a7141baaef4db07466e008890636dc132e5d.css" integrity="sha256-DyGVTbSAtb9aRauaxLmnFBuq702wdGbgCIkGNtwTLl0=" rel="preload stylesheet" as="style">
 <script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
     onload="hljs.initHighlightingOnLoad();"></script>
-<link rel="icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="mask-icon" href="safari-pinned-tab.svg">
+<link rel="icon" href="https://mett29.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://mett29.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://mett29.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://mett29.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://mett29.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
 <noscript>
@@ -82,7 +82,7 @@ Disclaimer: These notes are for the most part a collection of concepts taken fro
 <meta property="og:description" content="In this post I will introduce the Object Localization and Detection task, starting from the most straightforward solutions, to the best models that reached state-of-the-art performances, i.e. R-CNN, Fast R-CNN, Faster R-CNN and YOLO.
 Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/posts/object-localization-and-detection/" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="https://mett29.github.io/posts/object-localization-and-detection/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2019-12-18T22:55:08+02:00" />
 <meta property="article:modified_time" content="2019-12-18T22:55:08+02:00" />
 
@@ -99,9 +99,9 @@ Disclaimer: These notes are for the most part a collection of concepts taken fro
   "itemListElement": [, 
     {
       "@type": "ListItem",
-      "position":  3 ,
+      "position":  2 ,
       "name": "Object Localization and Detection",
-      "item": "/posts/object-localization-and-detection/"
+      "item": "https://mett29.github.io/posts/object-localization-and-detection/"
     }
   ]
 }
@@ -123,14 +123,14 @@ Disclaimer: These notes are for the most part a collection of concepts taken fro
   "dateModified": "2019-12-18T22:55:08+02:00",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "/posts/object-localization-and-detection/"
+    "@id": "https://mett29.github.io/posts/object-localization-and-detection/"
   },
   "publisher": {
     "@type": "Organization",
     "name": "Matt Log",
     "logo": {
       "@type": "ImageObject",
-      "url": "favicon.ico"
+      "url": "https://mett29.github.io/favicon.ico"
     }
   }
 }
@@ -152,7 +152,7 @@ Disclaimer: These notes are for the most part a collection of concepts taken fro
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <a href="https://mett29.github.io/" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -178,12 +178,12 @@ Disclaimer: These notes are for the most part a collection of concepts taken fro
         </div>
         <ul id="menu">
             <li>
-                <a href="/archive/" title="Archive">
+                <a href="https://mett29.github.io/archive/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="/tags/" title="Tags">
+                <a href="https://mett29.github.io/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
@@ -416,19 +416,19 @@ $$</p>
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="/tags/fast-r-cnn/">Fast R-CNN</a></li>
-      <li><a href="/tags/faster-r-cnn/">Faster R-CNN</a></li>
-      <li><a href="/tags/object-detection/">object detection</a></li>
-      <li><a href="/tags/object-localization/">object localization</a></li>
-      <li><a href="/tags/r-cnn/">R-CNN</a></li>
-      <li><a href="/tags/yolo/">YOLO</a></li>
+      <li><a href="https://mett29.github.io/tags/fast-r-cnn/">Fast R-CNN</a></li>
+      <li><a href="https://mett29.github.io/tags/faster-r-cnn/">Faster R-CNN</a></li>
+      <li><a href="https://mett29.github.io/tags/object-detection/">object detection</a></li>
+      <li><a href="https://mett29.github.io/tags/object-localization/">object localization</a></li>
+      <li><a href="https://mett29.github.io/tags/r-cnn/">R-CNN</a></li>
+      <li><a href="https://mett29.github.io/tags/yolo/">YOLO</a></li>
     </ul>
   </footer>
 </article>
     </main>
     
 <footer class="footer">
-    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>&copy; 2023 <a href="https://mett29.github.io/">Matt Log</a></span>
     <span>
         Powered by
         <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
