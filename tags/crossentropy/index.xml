@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>crossentropy on Matt Log</title>
+    <link>/tags/crossentropy/</link>
+    <description>Recent content in crossentropy on Matt Log</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 28 Oct 2019 18:30:08 +0200</lastBuildDate><atom:link href="/tags/crossentropy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Error Functions in NNs</title>
+      <link>/posts/error-functions/</link>
+      <pubDate>Mon, 28 Oct 2019 18:30:08 +0200</pubDate>
+      
+      <guid>/posts/error-functions/</guid>
+      <description>In this post we will talk about how error functions are used in Neural Networks and how they are selected according to the task we have to solve.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</description>
+    </item>
+    
+  </channel>
+</rss>

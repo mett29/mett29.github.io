@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Posts on Matt Log</title>
+    <link>/posts/</link>
+    <description>Recent content in Posts on Matt Log</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 25 Dec 2019 22:55:08 +0200</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Word Embedding</title>
+      <link>/posts/word-embedding/</link>
+      <pubDate>Wed, 25 Dec 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/word-embedding/</guid>
+      <description>In this post I will give you a brief introduction about Word Embedding, a technique used in NLP as an efficient representation of words.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</description>
+    </item>
+    
+    <item>
+      <title>Seq2Seq models and the Attention mechanism</title>
+      <link>/posts/seq2seq-and-attention/</link>
+      <pubDate>Mon, 23 Dec 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/seq2seq-and-attention/</guid>
+      <description>The path followed in this post is: sequence-to-sequence models $\rightarrow$ neural turing machines $\rightarrow$ attentional interfaces $\rightarrow$ transformers. This post is dense of stuff, but I tried to keep it as simple as possible, without losing important details!
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan, the book &amp;lsquo;Deep Learning&amp;rsquo; (Goodfellow-et-al-2016) and from some other online resources.</description>
+    </item>
+    
+    <item>
+      <title>Introduction to RNN and LSTM</title>
+      <link>/posts/intro-to-rnn/</link>
+      <pubDate>Sun, 22 Dec 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/intro-to-rnn/</guid>
+      <description>In this post I will go through Recurrent Neural Networks (RNNs) and Long-Short Term Memories (LSTMs), explaining why RNNs are not enough to deal with sequence modeling and how LSTMs solve those problems.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan, the book &amp;lsquo;Deep Learning&amp;rsquo; (Goodfellow-et-al-2016) and from some other online resources.</description>
+    </item>
+    
+    <item>
+      <title>Introduction to GAN</title>
+      <link>/posts/intro-to-gan/</link>
+      <pubDate>Sat, 21 Dec 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/intro-to-gan/</guid>
+      <description>In this post I will give you an introduction to Generative Adversarial Networks, explaining the reasons behind their architecture and how they are trained.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan, the book &amp;lsquo;Deep Learning&amp;rsquo; (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</description>
+    </item>
+    
+    <item>
+      <title>Object Localization and Detection</title>
+      <link>/posts/object-localization-and-detection/</link>
+      <pubDate>Wed, 18 Dec 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/object-localization-and-detection/</guid>
+      <description>In this post I will introduce the Object Localization and Detection task, starting from the most straightforward solutions, to the best models that reached state-of-the-art performances, i.e. R-CNN, Fast R-CNN, Faster R-CNN and YOLO.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.</description>
+    </item>
+    
+    <item>
+      <title>Image Segmentation</title>
+      <link>/posts/image-segmentation/</link>
+      <pubDate>Sun, 01 Dec 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/image-segmentation/</guid>
+      <description>In this post I will explain Image Segmentation, focusing on the architecture of the models used to perform this task. Fully Convolutional Networks and U-Net will be at the center of the discussion.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.</description>
+    </item>
+    
+    <item>
+      <title>Introduction to CNN</title>
+      <link>/posts/intro-to-cnn/</link>
+      <pubDate>Sat, 23 Nov 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/intro-to-cnn/</guid>
+      <description>In this post I will give you an introduction to Convolutional Neural Networks (CNN). We will see the reasons behind the success of this architecture and the latter will be analyzed layer by layer.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan, the book &amp;lsquo;Deep Learning&amp;rsquo; (Goodfellow-et-al-2016) and from some other online resources.</description>
+    </item>
+    
+    <item>
+      <title>Batch Normalization</title>
+      <link>/posts/batch-normalization/</link>
+      <pubDate>Sun, 17 Nov 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/batch-normalization/</guid>
+      <description>In this post we will talk about batch normalization, explaining what it is and how it works!
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan, the book &amp;lsquo;Deep Learning&amp;rsquo; (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</description>
+    </item>
+    
+    <item>
+      <title>Activation Functions</title>
+      <link>/posts/activation-functions/</link>
+      <pubDate>Tue, 05 Nov 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/activation-functions/</guid>
+      <description>In this post we will talk about activation functions, explaining what they are and what are the most commonly used (e.g. ReLU).
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan, the book &amp;lsquo;Deep Learning&amp;rsquo; (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</description>
+    </item>
+    
+    <item>
+      <title>Overfitting in NNs</title>
+      <link>/posts/overfitting/</link>
+      <pubDate>Wed, 30 Oct 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/overfitting/</guid>
+      <description>In this post we will talk about the problem of overfitting, explaining what it is, what are its causes and how we can deal with it. More precisely, the following techniques will be explained: early stopping, weight decay and dropout.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan, the book &amp;lsquo;Deep Learning&amp;rsquo; (Goodfellow-et-al-2016) and from some other online resources.</description>
+    </item>
+    
+    <item>
+      <title>Error Functions in NNs</title>
+      <link>/posts/error-functions/</link>
+      <pubDate>Mon, 28 Oct 2019 18:30:08 +0200</pubDate>
+      
+      <guid>/posts/error-functions/</guid>
+      <description>In this post we will talk about how error functions are used in Neural Networks and how they are selected according to the task we have to solve.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &amp;lsquo;Artificial Neural Networks and Deep Learning&amp;rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</description>
+    </item>
+    
+    <item>
+      <title>Kernel Methods</title>
+      <link>/posts/kernel-methods/</link>
+      <pubDate>Thu, 24 Oct 2019 18:30:08 +0200</pubDate>
+      
+      <guid>/posts/kernel-methods/</guid>
+      <description>In this post we will talk about Kernel Methods, explaining the math behind them in order to understand how powerful they are and for what tasks they can be used in an efficient way.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &amp;lsquo;Pattern Recognition and Machine Learning&#39;.
+Kernel Methods Kernel methods are non-parametric and memory-based (e.g. K-NN), i.</description>
+    </item>
+    
+    <item>
+      <title>PAC learning and VC dimension</title>
+      <link>/posts/pac-learning-vc-dimension/</link>
+      <pubDate>Sat, 19 Oct 2019 18:30:08 +0200</pubDate>
+      
+      <guid>/posts/pac-learning-vc-dimension/</guid>
+      <description>In this post we will talk about PAC Learning and VC Dimension, explaining what they are and why they are useful in Machine Learning.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &amp;lsquo;Pattern Recognition and Machine Learning&#39;.
+PAC-Learning and VC-Dimension PAC-Learning In Probably Approximately Correct Learning, the learner receives samples and must select a generalization function (called the hypothesis) from a certain class of possible functions.</description>
+    </item>
+    
+    <item>
+      <title>Bias-Variance Tradeoff and Model Selection</title>
+      <link>/posts/bias-variance-and-model-selection/</link>
+      <pubDate>Thu, 17 Oct 2019 21:40:08 +0200</pubDate>
+      
+      <guid>/posts/bias-variance-and-model-selection/</guid>
+      <description>In this post we will talk about the Bias-Variance tradeoff, explaining where it comes from and how we can manage it, introducing techniques for model selection (feature selection, regularization, dimensionality reduction) and model ensemble (bagging and boosting).
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &amp;lsquo;Pattern Recognition and Machine Learning&#39;.
+Bias-Variance trade-off and Model Selection No Free Lunch Theorems Define $Acc_G(L)$ as the generalization accuracy of the learner $L$, which is the accuracy of $L$ on non-training samples.</description>
+    </item>
+    
+    <item>
+      <title>Linear Classification</title>
+      <link>/posts/linear-classification/</link>
+      <pubDate>Mon, 30 Sep 2019 21:40:08 +0200</pubDate>
+      
+      <guid>/posts/linear-classification/</guid>
+      <description>In this post we will talk about Linear Classification, explaining some of the main methods which are at the basis of this task.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &amp;lsquo;Pattern Recognition and Machine Learning&#39;.
+Linear Classification The goal in classification is to take an input vector $x$ and to assign it to one of $K$ discrete classes $C_k$ where $k = 1,&amp;hellip;,K$.</description>
+    </item>
+    
+    <item>
+      <title>Linear Regression</title>
+      <link>/posts/linear-regression/</link>
+      <pubDate>Wed, 25 Sep 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/linear-regression/</guid>
+      <description>In this post we will analyze Linear Regression Models in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is regularization.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &amp;lsquo;Pattern Recognition and Machine Learning&#39;.
+The goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\boldsymbol{x}$ of input variables.</description>
+    </item>
+    
+  </channel>
+</rss>

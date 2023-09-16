@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>radial basis function on Matt Log</title>
+    <link>/tags/radial-basis-function/</link>
+    <description>Recent content in radial basis function on Matt Log</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 24 Oct 2019 18:30:08 +0200</lastBuildDate><atom:link href="/tags/radial-basis-function/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kernel Methods</title>
+      <link>/posts/kernel-methods/</link>
+      <pubDate>Thu, 24 Oct 2019 18:30:08 +0200</pubDate>
+      
+      <guid>/posts/kernel-methods/</guid>
+      <description>In this post we will talk about Kernel Methods, explaining the math behind them in order to understand how powerful they are and for what tasks they can be used in an efficient way.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &amp;lsquo;Pattern Recognition and Machine Learning&#39;.
+Kernel Methods Kernel methods are non-parametric and memory-based (e.g. K-NN), i.</description>
+    </item>
+    
+  </channel>
+</rss>

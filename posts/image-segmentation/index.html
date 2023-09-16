@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Image Segmentation | Matt Log</title>
+<meta name="keywords" content="CNN, image segmentation, FCN, U-Net">
+<meta name="description" content="In this post I will explain Image Segmentation, focusing on the architecture of the models used to perform this task. Fully Convolutional Networks and U-Net will be at the center of the discussion.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/image-segmentation/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Image Segmentation" />
+<meta property="og:description" content="In this post I will explain Image Segmentation, focusing on the architecture of the models used to perform this task. Fully Convolutional Networks and U-Net will be at the center of the discussion.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/image-segmentation/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-12-01T22:55:08+02:00" />
+<meta property="article:modified_time" content="2019-12-01T22:55:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Image Segmentation"/>
+<meta name="twitter:description" content="In this post I will explain Image Segmentation, focusing on the architecture of the models used to perform this task. Fully Convolutional Networks and U-Net will be at the center of the discussion.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Image Segmentation",
+      "item": "/posts/image-segmentation/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Image Segmentation",
+  "name": "Image Segmentation",
+  "description": "In this post I will explain Image Segmentation, focusing on the architecture of the models used to perform this task. Fully Convolutional Networks and U-Net will be at the center of the discussion.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the \u0026lsquo;Artificial Neural Networks and Deep Learning\u0026rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.",
+  "keywords": [
+    "CNN", "image segmentation", "FCN", "U-Net"
+  ],
+  "articleBody": "In this post I will explain Image Segmentation, focusing on the architecture of the models used to perform this task. Fully Convolutional Networks and U-Net will be at the center of the discussion.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the ‘Artificial Neural Networks and Deep Learning’ course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.\nImage Segmentation In the last post, we introduced CNNs and their use in image classification. Image segmentation is not so different, that’s why I suggest you to read the ‘Introduction to CNN’ first if you haven’t already done it.\nIndeed, if in image classification we want to assign a label to a whole image, in image segmentation we want to assign a label to every pixel in an image such that pixels with the same label share certain visual characteristics.\nFully Convolutional Networks Paper: Fully Convolutional Networks for Semantic Segmentation\nIn order to understand the differences between a CNN and a FCN let’s analyze the architectures:\nAs we can see from the above image, a typical CNN can be seen as a stack of convolutional and pooling layers, ended by a fully connected layer, which is a standard Multi-Layer Perceptron. With an architecture like this, if we feed an input image with a larger size w.r.t. the one used for the training, the model would not work, because even if the convolutional part is size independent, the final fully connnected layer has a fixed input size.\nHowever, the FC is linear, so it can be represented as a convolution. More precisely, citing the paper:\n The fully connected layers of these nets have fixed dimensions and throw away spatial coordinates. However, these fully connected layers can also be viewed as convolutions with kernels that cover their entire input regions. Doing so casts them into fully convolutional networks that take input of any size and output classification maps.\n Fully Convolutional Networks for Semantic Segmentation\n  So, assuming to have a fully connected layer like this:\nthis can be represented as a 2D convolutional layer against $L$ filters having size $1 \\times 1 \\times N$.\nOk, but what do we obtain as output now? Well, for each output class we obtain an image having lower resolution than the input image and class probabilities for the receptive field of each pixel: heatmaps.\nImage from the paper Fully Convolutional Networks for Semantic Segmentation\nConsider for example the heatmap that corresponds to the “wheel” class: it’s telling us how much likely in the receptive field associated to this pixel there is something that looks like a wheel.\nApproaches to segmentation Direct heatmap predictions Image from the paper Fully Convolutional Networks for Semantic Segmentation\nThe idea here is that we can take the last volume in the network, which is the output of our CNN, having depth 1000. We slice this volume 1000 times and for each slice, namely for each class, we take the argmax, through which we obtain an image that contains in each pixel the index of the slice referring to the most probable class. What’s the drawback of this approach? It is a very coarse estimate, since going through the convolution we are losing a lot of spatial resolution.\nThe shift and stitch As we have seen, mapping the output directly to the input will cause resolution to look patchy. The idea behind the shift and stitch method is to take the same input and to shift it a bit multiple times, computing a heatmap for all $f^2$ possible shifts. We then map predictions from the heatmaps to the image (each pixel in the heatmap provides prediction of the central pixel of the receptive field). Finally, we interleave the heatmaps to form an image as large as the input.\nOne might think of it as taking multiple (shifted) low resolution images of an object and combining (stitch) them to get a higher resolution image.\nI found an image from this website which can help to get the idea:\nAssume that your FCN is a $2 \\times 2$ max pooling layer. Every time the input (the black pixels) is shifted, you obtain a different heatmap ($3 \\times 3$). At the end, you take all the heatmaps and you stitch them together.\nAlthough performing this transformation naively increases the cost by a factor of $f^2$, there is an efficient implementation through the à trous algorithm. However, the upsampling part is very rigid: we would like to learn also this part.\nOnly convolutions Another approach would be that of using only convolutional and activation layers, without any subsampling. Two problems:\n very small receptive field very inefficient, since convolutions at original image resolution will be very expensive  Upsampling Ok, so what can we do? There is a clear tradeoff here: on the one hand we need to go deep to extract high level information on the image, on the other hand we want to stay local to not lose spatial resolution in the prediction.\n Semantic segmentation faces an inherent tension between semantics and location:\n   global information resolves what local information resolves where   The good news is that upsampling filters can be learned during training, since linear upsampling of a factor $f$ can be implemented as a convolution against a filter with a fractional stride $1/f$.\nCS231n: Convolutional Neural Networks for Visual Recognition\nCS231n: Convolutional Neural Networks for Visual Recognition\nOne problem with these three approaches is that there are no parameters, so they are not learnable. Let’s see something that is learnable.\nTranspose convolution With transpose convolution we’re changing the role of the filter. Indeed, suppose for example to have an input image of size $5 \\times 5 \\times 1$ and a filter of size $3 \\times 3 \\times 1$ with stride $2 \\times 2$ and padding VALID. The output will be a $2 \\times 2$ image.\nOk, now we want to upsample this output to the original image. In order to do so, by using the same filter of size $3 \\times 3$, we multiply each value of our $2 \\times 2$ image with the values of the filter. This procedure is repeated for each pixel of the input image, moving the filter according to the stride (2 in our example).\nCS231n: Convolutional Neural Networks for Visual Recognition\nSkip connections Nice, so we have finished! Not really, these are the results obtained by the authors of the paper:\nImage from the paper Fully Convolutional Networks for Semantic Segmentation\nWhere 32 is the number of times the image has been upsampled.\nAs we can see, the result is not very good. This means that this upsampling is not able to recover all the spatial information. Where can we grab this information? We need higher resolution information about the content of the image, so a good starting point would be to go in the shallow layers. This is the reason for which skip connections were introduced.\n Combining fine layers and coarse layers lets the model make local predictions that respect global structure.\n Fully Convolutional Networks for Semantic Segmentation\n  The idea is to combine the upsampled output of one layer in the upsampling part of the network with the unchanged output of a previous layer in the downsampling part of the network by adding them together. The result of this sum will be upsampled again and summed with a shallower layer in the downsampling part, and so on.\nhttps://www.jeremyjordan.me/semantic-segmentation/\nAs written in the paper, this process yields 3 models:\n Train first the lowest resolution network (FCN-32s) Then the weights of the next network (FCN-16s) are initialized with (FCN-32s) The same for FCN-8s  Image from the paper Fully Convolutional Networks for Semantic Segmentation\nTraining a F-CNN (and segmentation networks) Patch-based way  Prepare a training set for a classification network Crop as many patches from annotated images and assign to each patch label corresponding to the patch center Train a CNN for classification from scratches, or fine-tune a pre-trained model over the segmentation classes Once trained the network, move the FC layers to $1 \\times 1$ convolutions Train the upsampling filters  The classification network is trained to minimize the classification loss $l$ over a mini-batch:\n$$ \\hat{\\theta} = min_{\\theta} \\sum_{\\boldsymbol{x_j}} l(\\boldsymbol{x_j},\\theta) $$\nwhere $\\boldsymbol{x_j}$ belongs to a mini-batch.\nBatches of patches are randomly assembled during training and it is possible to resample patches for solving class imbalance. However, this approach is very inefficient, since convolutions on overlapping patches are repeated multiple times.\nFull-image way $$ \\hat{\\theta} = min_{\\theta} \\sum_{\\boldsymbol{x_j}} l(\\boldsymbol{x_j},\\theta) $$\nThe loss function is the same, but in this case $\\boldsymbol{x_j}$ are all the pixels in a region of the input image and the loss is evaluated over the corresponding labels.\nIn the previous approach if you want to classify a whole image you have to crop multiple patches, so if you have input images of size $500 \\times 500$ and you train your network to classify patches of size $90 \\times 90$ to recover the value of the label which is in the central pixel. This means that in practice you have to compute the same convolution multiple times.\nInstead, if you directly train your network in order to perform segmentation and to provide as output the image of the labels, and if you compute the loss by comparing the output labels with the ground truth, you have to compute convolution only once, because you’re moving the whole image through the network.\nThe drawback of the full-image approach, however, is that we are losing the randomness of the minibatches which is present in the patch-based way (due to the fact they can be randomly selected). Although, we can recover this randomness to make the estimated loss a bit stochastic by using some random masks, excluding some pixels when computing the loss:\n$$ minimize \\sum_{\\boldsymbol{x_j}} M(\\boldsymbol{x_j}) l(\\boldsymbol{x_j},\\theta) $$\nbeing $M(\\boldsymbol{x_j})$ a binary random variable.\nAnother problem is the class imbalance. With patch-wise training this is not a problem, since we can repeat the same patch multiple times to adjust the difference in terms of number of samples. Instead, with full-image approach this is not possible. Also in this case we can compensate by weighting the loss:\n$$ minimize \\sum_{\\boldsymbol{x_j}} w(\\boldsymbol{x_j}) l(\\boldsymbol{x_j},\\theta) $$\nbeing $w(\\boldsymbol{x_j})$ a weight that takes into account the true label of $\\boldsymbol{x_j}$.\nU-Net Paper: U-Net: Convolutional Networks for Biomedical Image Segmentation\nThis paper was published in the same period of time as the previous one, although this seems to be a bit more famous. The concepts behind the architecture of this model are exactly the ones we’ve discussed so far. However, there are some interesting details.\nImage from the paper U-Net: Convolutional Networks for Biomedical Image Segmentation\nIt is pretty obvious the reason for which it was called U-Net.\n The contracting path follows the typical architecture of a convolutional network. It consists of the repeated application of two 3x3 convolutions (unpadded convolutions), each followed by a rectified linear unit (ReLU) and a 2x2 max pooling operation with stride 2 for downsampling. At each downsampling step we double the number of feature channels. Every step in the expansive path consists of an upsampling of the feature map followed by a 2x2 convolution (“up-convolution”) that halves the number of feature channels, a concatenation with the correspondingly cropped feature map from the contracting path, and two 3x3 convolutions, each followed by a ReLU. The cropping is necessary due to the loss of border pixels in every convolution. At the final layer a 1x1 convolution is used to map each 64-component feature vector to the desired number of classes. In total the network has 23 convolutional layers.\n U-Net: Convolutional Networks for Biomedical Image Segmentation\n  Note indeed that a major difference w.r.t. (long et al. 2015) is that U-Net uses a large number of feature channels in the upsampling part, leading the network to become symmetric.\nAnother interesting detail is how the information coming from the skip connections are combined with the one coming from the upsampling path: they are concatenated and then mixed in a learnable manner through convolution.\nTraining The network was trained using a full-image approach with the following weighted loss function:\n$$ \\hat{\\theta} = min_{\\theta} \\sum_{\\boldsymbol{x_j}} w(\\boldsymbol{x_j}) l(\\boldsymbol{x_j},\\theta) $$\nwhere the weight\n$$ w(\\boldsymbol{x}) = w_c(\\boldsymbol{x}) + w_0 e^{-\\frac{(d_1(\\boldsymbol{x}) + d_2(\\boldsymbol{x}))^2}{2\\sigma^2}} $$\n $w_c$ is used to balance class proportions (since it’s a full-image approach) $d_1$ is the distance to the border of the closest cell $d_2$ is the distance to the border of the second closest cell  The second term is indeed used to enhance classification performance at borders of different objects, that in the scenario in which this network was used by the authors of the paper was very useful.\nData augmentation An interesting fact is that if in the first paper the authors said that data augmentation\n yielded no noticeable improvement\n In the U-Net paper, instead, they claim that data augmentation\n is essential to teach the network the desired invariance and robustness properties, when only few training samples are available. […] Especially random elastic deformations of the training samples seem to be the key concept to train a segmentation network with very few annotated images.\n Indeed, the two scenario are pretty different, so as always data augmentation must be performed according to the problem we’re facing.\nReferences  Fully Convolutional Networks for Semantic Segmentation U-Net: Convolutional Networks for Biomedical Image Segmentation CS231n: Convolutional Neural Networks for Visual Recognition Jeremy Jordan website - Semantic Segmentation  ",
+  "wordCount" : "2271",
+  "inLanguage": "en",
+  "datePublished": "2019-12-01T22:55:08+02:00",
+  "dateModified": "2019-12-01T22:55:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/image-segmentation/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Image Segmentation
+    </h1>
+    <div class="post-meta"><span title='2019-12-01 22:55:08 +0200 +0200'>December 1, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post I will explain <strong>Image Segmentation</strong>, focusing on the architecture of the models used to perform this task. Fully Convolutional Networks and U-Net will be at the center of the discussion.</p>
+<p><strong>Disclaimer:</strong> <em>These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.</em></p>
+<h1 id="image-segmentation">Image Segmentation<a hidden class="anchor" aria-hidden="true" href="#image-segmentation">#</a></h1>
+<p>In the last post, we introduced CNNs and their use in image classification. Image segmentation is not so different, that&rsquo;s why I suggest you to read the &lsquo;Introduction to CNN&rsquo; first if you haven&rsquo;t already done it.</p>
+<p>Indeed, if in image classification we want to assign a label to a whole image, in image segmentation we want to <strong>assign a label to every pixel in an image</strong> such that pixels with the same label share certain visual characteristics.</p>
+<h2 id="fully-convolutional-networks">Fully Convolutional Networks<a hidden class="anchor" aria-hidden="true" href="#fully-convolutional-networks">#</a></h2>
+<p><em><strong>Paper: <a href="https://people.eecs.berkeley.edu/~jonlong/long_shelhamer_fcn.pdf">Fully Convolutional Networks for Semantic Segmentation</a></strong></em></p>
+<p>In order to understand the differences between a CNN and a FCN let&rsquo;s analyze the architectures:</p>
+
+
+<img src="/img/image-segmentation/cnn-wiki.png" style="display: block; margin-left: auto; margin-right: auto;">
+
+<p>As we can see from the above image, a typical CNN can be seen as a stack of convolutional and pooling layers, ended by a fully connected layer, which is a standard Multi-Layer Perceptron. With an architecture like this, if we feed an input image with a larger size w.r.t. the one used for the training, the model would not work, because even if the convolutional part is size independent, the final fully connnected layer has a fixed input size.</p>
+<p>However, the FC is <strong>linear</strong>, so it can be represented as a convolution. More precisely, citing the paper:</p>
+<blockquote>
+<p>The fully connected layers of these nets have fixed dimensions and throw away spatial coordinates. However, these fully connected layers can also be viewed as convolutions with kernels that cover their entire input regions. Doing so casts them into fully convolutional networks that take input of any size and output classification maps.</p>
+<blockquote>
+<p>Fully Convolutional Networks for Semantic Segmentation</p>
+</blockquote>
+</blockquote>
+<p>So, assuming to have a fully connected layer like this:</p>
+
+
+<img src="/img/image-segmentation/fc-layer.png" style="display: block; margin-left: auto; margin-right: auto;">
+
+<p>this can be represented as a 2D convolutional layer against $L$ filters having size $1 \times 1 \times N$.</p>
+<p>Ok, but what do we obtain as output now? Well, for each output class we obtain an image having lower resolution than the input image and class probabilities for the receptive field of each pixel: <strong>heatmaps</strong>.</p>
+
+
+<img src="/img/image-segmentation/fcn-paper.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px; height: 300px;">
+<p style="text-align: center">Image from the paper Fully Convolutional Networks for Semantic Segmentation</p>
+
+<p>Consider for example the heatmap that corresponds to the &ldquo;wheel&rdquo; class: it&rsquo;s telling us how much likely in the receptive field associated to this pixel there is something that looks like a wheel.</p>
+<h2 id="approaches-to-segmentation">Approaches to segmentation<a hidden class="anchor" aria-hidden="true" href="#approaches-to-segmentation">#</a></h2>
+<h3 id="direct-heatmap-predictions">Direct heatmap predictions<a hidden class="anchor" aria-hidden="true" href="#direct-heatmap-predictions">#</a></h3>
+
+
+<img src="/img/image-segmentation/direct-heatmap.png" style="display: block; margin-left: auto; margin-right: auto; width: 550px; height: 200px;">
+<p style="text-align: center">Image from the paper Fully Convolutional Networks for Semantic Segmentation</p>
+
+<p>The idea here is that we can take the last volume in the network, which is the output of our CNN, having depth 1000. We slice this volume 1000 times and for each slice, namely for each class, we take the argmax, through which we obtain an image that contains in each pixel the index of the slice referring to the most probable class.
+What&rsquo;s the drawback of this approach? It is a very coarse estimate, since going through the convolution we are losing a lot of spatial resolution.</p>
+<h3 id="the-shift-and-stitch">The shift and stitch<a hidden class="anchor" aria-hidden="true" href="#the-shift-and-stitch">#</a></h3>
+<p>As we have seen, mapping the output directly to the input will cause resolution to look patchy. The idea behind the shift and stitch method is to take the same input and to shift it a bit multiple times, computing a heatmap for all $f^2$ possible shifts. We then map predictions from the heatmaps to the image (each pixel in the heatmap provides prediction of the central pixel of the receptive field). Finally, we interleave the heatmaps to form an image as large as the input.</p>
+<p>One might think of it as taking multiple (shifted) low resolution images of an object and combining (stitch) them to get a higher resolution image.</p>
+<p>I found an image from this <a href="https://www.jianshu.com/p/e534e2be5d7d">website</a> which can help to get the idea:</p>
+
+
+<img src="/img/image-segmentation/shift-and-stitch.png" style="display: block; margin-left: auto; margin-right: auto;">
+
+<p>Assume that your FCN is a $2 \times 2$ max pooling layer. Every time the input (the black pixels) is shifted, you obtain a different heatmap ($3 \times 3$). At the end, you take all the heatmaps and you stitch them together.</p>
+<p>Although performing this transformation naively increases the cost by a factor of $f^2$, there is an efficient implementation through the à trous algorithm. However, the upsampling part is very rigid: we would like to learn also this part.</p>
+<h3 id="only-convolutions">Only convolutions<a hidden class="anchor" aria-hidden="true" href="#only-convolutions">#</a></h3>
+<p>Another approach would be that of using only convolutional and activation layers, without any subsampling. Two problems:</p>
+<ul>
+<li>very small receptive field</li>
+<li>very inefficient, since convolutions at original image resolution will be very expensive</li>
+</ul>
+<h2 id="upsampling">Upsampling<a hidden class="anchor" aria-hidden="true" href="#upsampling">#</a></h2>
+<p>Ok, so what can we do? There is a clear tradeoff here: on the one hand we need to go <strong>deep</strong> to extract high level information on the image, on the other hand we want to stay <strong>local</strong> to not lose <strong>spatial resolution</strong> in the prediction.</p>
+<blockquote>
+<p>Semantic segmentation faces an inherent tension between semantics and location:</p>
+</blockquote>
+<blockquote>
+<ul>
+<li>global information resolves <strong>what</strong></li>
+<li>local information resolves <strong>where</strong></li>
+</ul>
+</blockquote>
+
+
+<img src="/img/image-segmentation/upsampling.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px; height: 250px;">
+
+<p>The good news is that upsampling filters can be learned during training, since linear upsampling of a factor $f$ can be implemented as a convolution against a filter with a fractional stride $1/f$.</p>
+
+
+<img src="/img/image-segmentation/upsampling-examples.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center"><a href="http://cs231n.stanford.edu/">CS231n: Convolutional Neural Networks for Visual Recognition</a></p>
+
+
+
+<img src="/img/image-segmentation/max-unpooling.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center"><a href="http://cs231n.stanford.edu/">CS231n: Convolutional Neural Networks for Visual Recognition</a></p>
+
+<p>One problem with these three approaches is that there are no parameters, so they are not learnable. Let&rsquo;s see something that is learnable.</p>
+<h3 id="transpose-convolution">Transpose convolution<a hidden class="anchor" aria-hidden="true" href="#transpose-convolution">#</a></h3>
+<p>With transpose convolution we&rsquo;re changing the role of the filter. Indeed, suppose for example to have an input image of size $5 \times 5 \times 1$ and a filter of size $3 \times 3 \times 1$ with stride $2 \times 2$ and padding VALID. The output will be a $2 \times 2$ image.</p>
+<p>Ok, now we want to upsample this output to the original image. In order to do so, by using the same filter of size $3 \times 3$, we multiply each value of our $2 \times 2$ image with the values of the filter. This procedure is repeated for each pixel of the input image, moving the filter according to the stride (2 in our example).</p>
+
+
+<img src="/img/image-segmentation/transpose-convolution.png" style="display: block; margin-left: auto; margin-right: auto; width: 600px; height: 250px;">
+<p style="text-align: center"><a href="http://cs231n.stanford.edu/">CS231n: Convolutional Neural Networks for Visual Recognition</a></p>
+
+<h2 id="skip-connections">Skip connections<a hidden class="anchor" aria-hidden="true" href="#skip-connections">#</a></h2>
+<p>Nice, so we have finished! Not really, these are the results obtained by the authors of the paper:</p>
+
+
+<img src="/img/image-segmentation/fcn-32.png" style="display: block; margin-left: auto; margin-right: auto; width: 280px; height: 200px;">
+<p style="text-align: center">Image from the paper Fully Convolutional Networks for Semantic Segmentation</p>
+
+<p>Where 32 is the number of times the image has been upsampled.</p>
+<p>As we can see, the result is not very good. This means that this upsampling is not able to recover all the spatial information. Where can we grab this information? We need higher resolution information about the content of the image, so a good starting point would be to go in the shallow layers. This is the reason for which <strong>skip connections</strong> were introduced.</p>
+<blockquote>
+<p>Combining fine layers and coarse layers lets the model make local predictions that respect global structure.</p>
+<blockquote>
+<p>Fully Convolutional Networks for Semantic Segmentation</p>
+</blockquote>
+</blockquote>
+<p>The idea is to combine the upsampled output of one layer in the upsampling part of the network with the unchanged output of a previous layer in the downsampling part of the network by adding them together. The result of this sum will be upsampled again and summed with a shallower layer in the downsampling part, and so on.</p>
+
+
+<img src="/img/image-segmentation/skip-connections.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center"><a href="https://www.jeremyjordan.me/semantic-segmentation/">https://www.jeremyjordan.me/semantic-segmentation/</a></p>
+
+<p>As written in the paper, this process yields 3 models:</p>
+<ul>
+<li>Train first the lowest resolution network (FCN-32s)</li>
+<li>Then the weights of the next network (FCN-16s) are initialized with (FCN-32s)</li>
+<li>The same for FCN-8s</li>
+</ul>
+
+
+<img src="/img/image-segmentation/results.png" style="display: block; margin-left: auto; margin-right: auto; width: 450px; height: 200px;">
+<p style="text-align: center">Image from the paper Fully Convolutional Networks for Semantic Segmentation</p>
+
+<h2 id="training-a-f-cnn-and-segmentation-networks">Training a F-CNN (and segmentation networks)<a hidden class="anchor" aria-hidden="true" href="#training-a-f-cnn-and-segmentation-networks">#</a></h2>
+<h3 id="patch-based-way">Patch-based way<a hidden class="anchor" aria-hidden="true" href="#patch-based-way">#</a></h3>
+<ul>
+<li>Prepare a training set for a classification network</li>
+<li>Crop as many patches from annotated images and assign to each patch label corresponding to the patch center</li>
+<li>Train a CNN for classification from scratches, or fine-tune a pre-trained model over the segmentation classes</li>
+<li>Once trained the network, move the FC layers to $1 \times 1$ convolutions</li>
+<li>Train the upsampling filters</li>
+</ul>
+<p>The classification network is trained to minimize the classification loss $l$ over a mini-batch:</p>
+<p>$$
+\hat{\theta} = min_{\theta} \sum_{\boldsymbol{x_j}} l(\boldsymbol{x_j},\theta)
+$$</p>
+<p>where $\boldsymbol{x_j}$ belongs to a mini-batch.</p>
+<p>Batches of patches are randomly assembled during training and it is possible to resample patches for solving class imbalance. However, this approach is very inefficient, since convolutions on overlapping patches are repeated multiple times.</p>
+<h3 id="full-image-way">Full-image way<a hidden class="anchor" aria-hidden="true" href="#full-image-way">#</a></h3>
+<p>$$
+\hat{\theta} = min_{\theta} \sum_{\boldsymbol{x_j}} l(\boldsymbol{x_j},\theta)
+$$</p>
+<p>The loss function is the same, but in this case $\boldsymbol{x_j}$ are all the pixels in a region of the input image and the loss is evaluated over the corresponding labels.</p>
+<p>In the previous approach if you want to classify a whole image you have to crop multiple patches, so if you have input images of size $500 \times 500$ and you train your network to classify patches of size $90 \times 90$ to recover the value of the label which is in the central pixel. This means that in practice you have to compute the same convolution <strong>multiple times</strong>.</p>
+<p>Instead, if you directly train your network in order to perform segmentation and to provide as output the image of the labels, and if you compute the loss by comparing the output labels with the ground truth, you have to compute convolution <strong>only once</strong>, because you&rsquo;re moving the whole image through the network.</p>
+<p>The drawback of the full-image approach, however, is that we are losing the <strong>randomness</strong> of the minibatches which is present in the patch-based way (due to the fact they can be randomly selected). Although, we can recover this randomness to make the estimated loss a bit stochastic by using some random masks, excluding some pixels when computing the loss:</p>
+<p>$$
+minimize \sum_{\boldsymbol{x_j}} M(\boldsymbol{x_j}) l(\boldsymbol{x_j},\theta)
+$$</p>
+<p>being $M(\boldsymbol{x_j})$ a binary random variable.</p>
+<p>Another problem is the class imbalance. With patch-wise training this is not a problem, since we can repeat the same patch multiple times to adjust the difference in terms of number of samples. Instead, with full-image approach this is not possible. Also in this case we can compensate by weighting the loss:</p>
+<p>$$
+minimize \sum_{\boldsymbol{x_j}} w(\boldsymbol{x_j}) l(\boldsymbol{x_j},\theta)
+$$</p>
+<p>being $w(\boldsymbol{x_j})$ a weight that takes into account the true label of $\boldsymbol{x_j}$.</p>
+<h2 id="u-net">U-Net<a hidden class="anchor" aria-hidden="true" href="#u-net">#</a></h2>
+<p><em><strong>Paper: <a href="https://arxiv.org/pdf/1505.04597.pdf">U-Net: Convolutional Networks for Biomedical Image Segmentation</a></strong></em></p>
+<p>This paper was published in the same period of time as the previous one, although this seems to be a bit more famous. The concepts behind the architecture of this model are exactly the ones we&rsquo;ve discussed so far. However, there are some interesting details.</p>
+
+
+<img src="/img/image-segmentation/u-net.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Image from the paper U-Net: Convolutional Networks for Biomedical Image Segmentation</p>
+
+<p>It is pretty obvious the reason for which it was called <strong>U-Net</strong>.</p>
+<blockquote>
+<p>The contracting path follows the typical architecture of a convolutional network. It consists of the repeated application of two 3x3 convolutions (unpadded convolutions), each followed by a rectified linear unit (ReLU) and a 2x2 max pooling operation with stride 2 for downsampling. At each downsampling step we double the number of feature channels. Every step in the expansive path consists of an upsampling of the feature map followed by a 2x2 convolution (“up-convolution”) that halves the number of feature channels, a concatenation with the correspondingly cropped feature map from the contracting path, and two 3x3 convolutions, each followed by a ReLU. The cropping is necessary due to the loss of border pixels in every convolution. At the final layer a 1x1 convolution is used to map each 64-component feature vector to the desired number of classes. In total the network has 23 convolutional layers.</p>
+<blockquote>
+<p>U-Net: Convolutional Networks for Biomedical Image Segmentation</p>
+</blockquote>
+</blockquote>
+<p>Note indeed that a major difference w.r.t. <em>(long et al. 2015)</em> is that U-Net uses a large number of feature channels in the upsampling part, leading the network to become <strong>symmetric</strong>.</p>
+<p>Another interesting detail is how the information coming from the skip connections are combined with the one coming from the upsampling path: they are <strong>concatenated</strong> and then <strong>mixed in a learnable manner</strong> through convolution.</p>
+<h3 id="training">Training<a hidden class="anchor" aria-hidden="true" href="#training">#</a></h3>
+<p>The network was trained using a full-image approach with the following weighted loss function:</p>
+<p>$$
+\hat{\theta} = min_{\theta} \sum_{\boldsymbol{x_j}} w(\boldsymbol{x_j}) l(\boldsymbol{x_j},\theta)
+$$</p>
+<p>where the weight</p>
+<p>$$
+w(\boldsymbol{x}) = w_c(\boldsymbol{x}) + w_0 e^{-\frac{(d_1(\boldsymbol{x}) + d_2(\boldsymbol{x}))^2}{2\sigma^2}}
+$$</p>
+<ul>
+<li>$w_c$ is used to balance class proportions (since it&rsquo;s a full-image approach)</li>
+<li>$d_1$ is the distance to the border of the closest cell</li>
+<li>$d_2$ is the distance to the border of the second closest cell</li>
+</ul>
+<p>The second term is indeed used to enhance classification performance at borders of different objects, that in the scenario in which this network was used by the authors of the paper was very useful.</p>
+<h3 id="data-augmentation">Data augmentation<a hidden class="anchor" aria-hidden="true" href="#data-augmentation">#</a></h3>
+<p>An interesting fact is that if in the first paper the authors said that data augmentation</p>
+<blockquote>
+<p>yielded no noticeable improvement</p>
+</blockquote>
+<p>In the U-Net paper, instead, they claim that data augmentation</p>
+<blockquote>
+<p>is essential to teach the network the desired invariance and robustness properties, when only few training samples are available. [&hellip;] Especially random elastic deformations of the training samples seem to be the key concept to train a segmentation network with very few annotated images.</p>
+</blockquote>
+<p>Indeed, the two scenario are pretty different, so as always data augmentation must be performed according to the problem we&rsquo;re facing.</p>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ul>
+<li><a href="https://people.eecs.berkeley.edu/~jonlong/long_shelhamer_fcn.pdf">Fully Convolutional Networks for Semantic Segmentation</a></li>
+<li><a href="https://arxiv.org/pdf/1505.04597.pdf">U-Net: Convolutional Networks for Biomedical Image Segmentation</a></li>
+<li><a href="http://cs231n.stanford.edu/">CS231n: Convolutional Neural Networks for Visual Recognition</a></li>
+<li><a href="https://www.jeremyjordan.me/semantic-segmentation/">Jeremy Jordan website - Semantic Segmentation</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/cnn/">CNN</a></li>
+      <li><a href="/tags/fcn/">FCN</a></li>
+      <li><a href="/tags/image-segmentation/">image segmentation</a></li>
+      <li><a href="/tags/u-net/">U-Net</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Linear Regression | Matt Log</title>
+<meta name="keywords" content="linear regression, SGD, ridge, lasso, regularization, bayesian linear regression">
+<meta name="description" content="In this post we will analyze Linear Regression Models in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is regularization.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+The goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\boldsymbol{x}$ of input variables.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/linear-regression/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Linear Regression" />
+<meta property="og:description" content="In this post we will analyze Linear Regression Models in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is regularization.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+The goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\boldsymbol{x}$ of input variables." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/linear-regression/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-09-25T22:55:08+02:00" />
+<meta property="article:modified_time" content="2019-09-25T22:55:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Linear Regression"/>
+<meta name="twitter:description" content="In this post we will analyze Linear Regression Models in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is regularization.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+The goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\boldsymbol{x}$ of input variables."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Linear Regression",
+      "item": "/posts/linear-regression/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Linear Regression",
+  "name": "Linear Regression",
+  "description": "In this post we will analyze Linear Regression Models in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is regularization.\nDisclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book \u0026lsquo;Pattern Recognition and Machine Learning'.\nThe goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\\boldsymbol{x}$ of input variables.",
+  "keywords": [
+    "linear regression", "SGD", "ridge", "lasso", "regularization", "bayesian linear regression"
+  ],
+  "articleBody": "In this post we will analyze Linear Regression Models in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is regularization.\nDisclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book ‘Pattern Recognition and Machine Learning'.\nThe goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\\boldsymbol{x}$ of input variables.\nLinear models are simple and ofter provide an adequate and interpretable description of how the inputs affect the output. They can sometimes outperform fancier nonlinear models, especially in situations with small numbers of training cases, low signal-to-noise or sparse data.\nThe simplest form of linear regression models are also linear functions of the input variables:\n$$ y(x,w) = w_0 + \\sum_{j=1}^{D-1}w_jx_j $$\nwhere the $w_j$'s are unknows parameters or coefficients and the variables ${x_j}$ can come from different sources.\nHowever, this formulation imposes significant limitations on the model. That is why we can generalize a bit introducing the so called basis functions, i.e. linear combinations of fixed nonlinear functions of the input variables:\n$$ y(x,w) = w_0 + \\sum_{j=1}^{M-1}w_j\\phi_j(x) $$\nUsing nonlinar basis functions, we allow the function $y(x,w)$ to be a nonlinear function of the input vector $\\boldsymbol{x}$. It is important to underline that still the model is linear in $\\boldsymbol{w}$, which brings some simplifications.\nSome examples of basis functions are the following:\n  Polynomial $\\rightarrow \\phi_j(x) = x^j$\n  Gaussian $\\rightarrow \\phi_j(x) = e^{-\\frac{(x-\\mu_j)^2}{2\\sigma^2}}$\n  Sigmoidal $\\rightarrow \\phi_j(x) = \\frac{1}{1+e^{(\\mu_j-x)/\\sigma}}$\n  How can we estimate $\\boldsymbol{w}$? Typically what we have is a set of training data $(x_1, y_1)…(x_N,y_N)$ from which we estimate the parameters $\\boldsymbol{w}$.\nA common choice to do this estimation is least squares, with which we minimize the residual sum of squares:\n$$ RSS(\\boldsymbol{w}) = \\sum_{n=1}^{N}(y(x_n, \\boldsymbol{w}) - t_n)^2 $$\nActually, for convenience, the loss function is usually described as:\n$$ E(\\boldsymbol{w}) = \\frac{1}{2}RSS(\\boldsymbol{w}) = \\frac{1}{2}\\sum_{n=1}^{N}(y(x_n, \\boldsymbol{w}) - t_n)^2 $$\nObservation: it is a nonnegative quantity, that can be zero only if the function $y(x,\\boldsymbol{w})$ passes exactly through each data point.\nNow that we have our loss function we have to minimize it, hence choose $\\boldsymbol{w}$ so that $E(\\boldsymbol{w})$ is as small as possible. Since the error function is a quadratic function of the coefficients $\\boldsymbol{w}$, its derivative with respect to them will be linear, and so the minimization has a unique solution, denoted by $\\boldsymbol{w^*}$.\nLet’s start by saying that the residual sum of squares $RSS$ can be also written as the sum of the $l_2$-norm of the vector of the residual errors:\n$$ RSS(\\boldsymbol{w}) = ||\\epsilon||_2^2 = \\sum^{N}\\epsilon_i^2 = \\epsilon^T\\epsilon $$\nThis formulation simplifies the way in which we will write $RSS$ in its matrix form.\nLet $\\Phi = (\\phi(x_1), \\phi(x_2), …, \\phi(x_N))^T$ and $t = (t_1, …, t_N)^T$.\n$\\epsilon = \\boldsymbol{t}-\\Phi\\boldsymbol{w}$\nSo, from the previous $RSS$ formula, we can write:\n$$ L(\\boldsymbol{w}) = \\frac{1}{2}RSS(\\boldsymbol{w}) = \\frac{1}{2}(\\boldsymbol{t}-\\Phi\\boldsymbol{w})^T(\\boldsymbol{t}-\\Phi\\boldsymbol{w}) $$\nFinally, we can obtain the minimum imposing the gradient to be zero and the curvature to have all the eigenvalues  0.\n First derivative  $$ \\frac{\\partial L(\\boldsymbol{w})}{\\partial \\boldsymbol{w}} = -\\Phi^T(\\boldsymbol{t}-\\Phi\\boldsymbol{w}) $$\n Second derivative  $$ \\frac{\\partial^2 L(\\boldsymbol{w})}{\\partial \\boldsymbol{w} \\partial \\boldsymbol{w}^T} = \\Phi^T\\Phi $$\nIf we assume that $\\Phi^T\\Phi$ is nonsingular (hence invertible), it is symmetric and positive semi-definite, so all the eigenvalues are $\\geq 0$.\nSetting the gradient to zero gives\n$$ \\displaylines{-\\Phi^T(\\boldsymbol{t}-\\Phi\\boldsymbol{w}) = 0 \\\\ \\Phi^T\\Phi\\boldsymbol{w} = \\Phi^Tt \\\\ \\boldsymbol{w}_{OLS} = (\\Phi^T\\Phi)^{-1}\\Phi^Tt} $$\nDiscriminative approach What we have seen so far is called a direct approach, i.e. find a regression function directly from the training data by searching in the space of the model (changing the parameters).Now we will introduce a discriminative approach, where we model directly the conditional density $p(t|x)$.\nLet’s assume that the target variable $t$ is given by a deterministic function $y(x,w)$ with additive Gaussian noise:\n$$ t = y(x,w) + \\epsilon $$\nwhere $\\epsilon \\sim \\mathcal{N}(0,\\sigma^2)$\nHence $t \\sim \\mathcal{N}(y(x,w),\\sigma^2)$\nNow consider a data set of inputs $$X = {x_1, …, x_N}$$ with corresponding target values $t_1, …, t_N$. Under the assumption that these data points are independent and identically distributed (i.i.d.), the likelihood function is:\n$$ p(\\boldsymbol{t}|\\boldsymbol{X},\\boldsymbol{w},\\sigma^2) = \\prod_{n=1}^{N}\\mathcal{N}(t_n|\\boldsymbol{w}^T\\phi(x_n), \\sigma^2) = \\prod_{n=1}^{N}\\frac{1}{2\\pi\\sigma^2}e^{-\\frac{(t-y(x,w))^2}{2\\sigma^2}} $$\nRecall that if we assume a squared loss function then the optimal prediction for a new value of $x$ will be given by the conditional mean of the target variable. That is why now we need to use $\\boldsymbol{w}$ to approximate the mean of the Gaussian.\nThis can be done by finding the maximum likelihood:\n$$ \\displaylines{l(\\boldsymbol{w}) = ln \\ p(\\boldsymbol{t}|\\boldsymbol{X},\\boldsymbol{w},\\sigma^2) = \\sum_{n=1}^{N}ln \\ p(t_n|x_n,\\boldsymbol{w},\\sigma^2) \\\\ = -\\frac{N}{2}ln(2\\pi\\sigma^2) - \\frac{1}{2\\sigma^2}RSS(\\boldsymbol{w}) \\\\ = -\\frac{N}{2}ln(2\\pi\\sigma^2)-\\frac{1}{4\\sigma^2}(\\boldsymbol{t}-\\boldsymbol{w}\\Phi)^T(\\boldsymbol{t}-\\boldsymbol{w}\\Phi)} $$\nNow we compute the gradient:\n$$ \\displaylines{\\nabla ln \\ l(\\boldsymbol{W}) = -\\Phi^T(\\boldsymbol{t}-\\Phi\\boldsymbol{w}) = -\\Phi^T\\boldsymbol{t}+\\Phi^T\\Phi\\boldsymbol{w} = 0 \\\\ \\boldsymbol{w_{ML}} = (\\Phi^T\\Phi)^{-1}\\Phi^T\\boldsymbol{t}} $$\nwhich are known as the normal equations for the least squares problem. Here $\\Phi$ is a $NxM$ matrix, called the design matrix.\nThe quantity $(\\Phi^T\\Phi)^{-1}\\Phi^T$ is known as the Moore-Penrose pseudo-inverse of the matrix $\\Phi$. It can be seen as a generalization of the matrix inversion operation, since it applies also to nonsquare matrices.\nWhat happens when $\\Phi^T\\Phi$ is close to singular? Well, in that case a direct solution of the normal equations can lead to numerical difficulties, i.e. the resulting parameter values can have large magnitudes. Unfortunately, when dealing with real dataset, this situation often happens. One way to solve this issue is using the so called singular value decomposition.\nAnother way (very common), is the regularization, which prevents this issue to happen, ensuring that the matrix is nonsingular.\nLearning with stochastic gradient descent (SGD) Ok, at this point one could think that the technique we’ve seen so far is computationally expensive. And that is true. Indeed, we are processing the entire training set in one go, and this can be very costly if we’re dealing with a very large dataset.\nSo, in this case a good idea could be using an online algorithm, in which the gradient is computed one sample at a time.\nThe most famous and used algorithm is the stochastic gradient descent.\nThis algorithm updates the parameter vector $\\boldsymbol{w}$ in the following way:\n$$ \\boldsymbol{w}^{k+1} = \\boldsymbol{w}^k - \\eta\\nabla E_n $$\nwhere $k$ indicates the iteration number and $\\eta$ the learning rate. Choosing the right $\\eta$ is not an easy task, since if the value is too high or too low, it could prevent the algorithm to converge.\nRegularization Before talking about regularization it is worth to underline two concepts: underfitting and overfitting.\nAs we said before, linear models can be generalized using the basis functions, which increase the complexity of our model trying to overcome the limitations imposed by the simplest form of linear regression.\nThe problem lies in this “complexity”: how complex should our model be in order to fit the data in the best way? As often we have to find a tradeoff.\n A model with low complexity is usually not capable of fitting the data and so representing appropriately the true model, underfitting. A model with high complexity, instead, may fit very well the training data, but does not generalize on unseen data, overfitting.  As we will see there are techniques to overcome these issues, expecially overfitting. However we’ll have to deal with another tradeoff between variance and bias. One thing that reduces overfitting without any drawback is increasing the size of our dataset, but of course this is not always possible.\nRegularization consists of adding a penalty term to the loss function to discourage the coefficients from reaching large values.\nRidge regression $$ L(\\boldsymbol{w}) = \\frac{1}{2}\\sum_{n=1}^{N}{(t_n - \\boldsymbol{w}^T\\phi(x_n))^2} \\ + \\ \\frac{\\lambda}{2}\\boldsymbol{w}^T\\boldsymbol{w} $$\nThis particular choice of regularizer is known as ridge regression or weight decay, since in online learning algorithms it encourages weigth values to decay towards zero, unless supported by the data.\nThe advantage of Ridge regression is that the loss function remains quadratic in $\\boldsymbol{w}$, so its exact minimizer can be found in closed form.\nLasso regression $$ L(\\boldsymbol{w}) = \\frac{1}{2}\\sum_{n=1}^{N}{(t_n - \\boldsymbol{w}^T\\phi(x_n))^2} \\ + \\ \\frac{\\lambda}{2}||\\boldsymbol{w}||_1 $$\nIn this case no closed-form solution exists, however if $\\lambda$ is sufficiently large, some of the coefficients $w_j$ are driven to zero, leading to a sparse model.\nIn the picture above we can see where the origin of sparsity in Lasso comes from: the optimum value $\\boldsymbol{w}^*$ will probably be on one of the vertices, hence on the axes, where some features are zero (the features in the image are indicated as $\\beta_j$). $\\$ In cases of multi-correlation, i.e. many features are correlated with each other, this can be useful as the Lasso regression will set some of them to zero and leave the others to do their job.\nBayesian Linear Regression Till now we have adopted a frequentist approach, namely we’ve seen the probabilities in terms of frequencies of random, repeatable events. Sometimes, however, it’s not possible to repeat multiple times an event to obtain a notion of probability. Moreover, we’ve also seen that using maximum likelihood for setting the parameters we have the problem of the model complexity. Regularization is a good answer, but still, the choice of the basis functions remains important and also the value of $\\lambda$ is an incognita.\nHere the Bayesian approach comes into play. This approach can be splitted in the following steps:\n We enumerate all the reasonable models of the data and we assign a prior distribution $p(\\boldsymbol{w})$ to each of these models. We observe the data and we evaluate how probable the data was under each of these models, computing $p(D|\\boldsymbol{w})$. From the previous observation we compute a posterior distribution $p(\\boldsymbol{w}|D)$, which encapsulates everything that you have learned from the data regarding the possible models under consideration.  An important consideration is that this approach is not affected by the problem of overfitting and it also leads to automatic methods of determining model complexity using the training data alone.\nPosterior distribution $$ p(\\boldsymbol{w}|D) = \\frac{p(D|\\boldsymbol{w})p(\\boldsymbol{w})}{P(D)} $$\nwhere $P(D)$ is a normalizing constant.\nIn other words, the above formula means that\n$$ posterior \\propto likelihood \\cdot prior $$\nHere we can observe the two primary benefits of Bayesian Linear Regression:\n Priors: If we have domain knowledge, or a guess for what the model parameters should be, we can include them in our model, unlike in the frequentist approach which assumes everything there is to know about the parameters comes from the data. If we don’t have any estimates ahead of time, we can use non-informative priors for the parameters such as a normal distribution. Posterior: The result of performing Bayesian Linear Regression is a distribution of possible model parameters based on the data and the prior. This allows us to quantify our uncertainty about the model: if we have fewer data points, the posterior distribution will be more spread out.  The formulation of model parameters as distributions encapsulates the Bayesian worldview: we start out with an initial estimate, our prior, and as we gather more evidence, our model becomes less wrong. Bayesian reasoning is a natural extension of our intuition. Often, we have an initial hypothesis, and as we collect data that either supports or disproves our ideas, we change our model of the world.\nAnother important property of the Bayesian approach is that when new data are available, it is possible to use the posterior value as prior to compute the new posterior. This is true under the assumption of i.i.d. data and that the prior and posterior have the same distribution. This latter fact introduces the concept of conjugate priors:\nfor a given probability distribution, we can seek a prior that is conjugate to the likelihood function, so that the posterior has the same distribution as the prior. For example the prior of a Gaussian is a Gaussian and the prior of a Beta is a Bernoulli.\nBack to math As said, in the Bayesian approach the parameters are considered as drawn from some distribution. Assuming a Gaussian likelihood model, the conjugate prior is Gaussian too:\n$$ p(\\boldsymbol{w}) = \\mathcal{N}(\\boldsymbol{w}|\\boldsymbol{w_0},\\boldsymbol{S_0}) $$\nGiven the data $D$, we compute the posterior distribution, which is proportional to the product of the likelihood function and the prior and that is still a Gaussian:\n$$ p(\\boldsymbol{w}|\\boldsymbol{t},\\Phi,\\sigma^2) \\propto \\mathcal{N}(\\boldsymbol{w}|\\boldsymbol{w_0},\\boldsymbol{S_0})\\mathcal{N}(\\boldsymbol{t}|\\Phi\\boldsymbol{w},\\sigma^2\\boldsymbol{I_N}) = \\mathcal{N}(\\boldsymbol{w}|\\boldsymbol{w_N},\\boldsymbol{S_N}) $$\nwhere\n$$ \\displaylines{\\boldsymbol{w_N} = \\boldsymbol{S_N}(\\boldsymbol{S_0}^{-1}\\boldsymbol{w_0}+\\frac{\\Phi^T\\boldsymbol{t}}{\\sigma^2}) \\\\ \\boldsymbol{S_N}^{-1} = \\boldsymbol{S_0}^{-1} + \\frac{\\Phi^T\\Phi}{\\sigma^2}} $$\nSince the posterior distribution is Gaussian, its mode coincides with its mean, so $\\boldsymbol{w_N}$ is the MAP estimator. Notice that in many cases we may have little idea of what form the distribution should take. We may then seek a form or prior distribution, called a noninformative prior, which is intended to have as little influence on the posterior distribution as possible. This is sometimes referred to as “letting the data speak for themselves”.\nIn such cases, the value of $\\boldsymbol{S_0} \\rightarrow \\infty$, so\n$$ \\boldsymbol{S_N}^{-1} \\rightarrow 0 \\ + \\frac{\\Phi^T\\Phi}{\\sigma^2} \\Rightarrow \\boldsymbol{S_N} = \\sigma^2(\\Phi^T\\Phi)^{-1} \\Rightarrow \\boldsymbol{w_N} = \\sigma^2(\\Phi^T\\Phi)^{-1}\\frac{\\Phi^T\\boldsymbol{t}}{\\sigma^2} = (\\Phi^T\\Phi)^{-1}\\Phi^T\\boldsymbol{t} $$\nwhich is the ordinary least squares solution! So, $\\boldsymbol{w_N}$ reduces to the ML estimator. If $\\boldsymbol{w_0} = 0$ and $\\boldsymbol{S_0} = \\tau^2\\boldsymbol{I}$, then ${\\boldsymbol{w_N}}$ reduces to the ridge estimate, where $\\lambda = \\frac{\\sigma^2}{\\tau^2}$\nIndeed, doing ridge regression means doing bayesian linear regression when you put Gaussian prior centered in zero. Changing $\\lambda$ means changing $\\tau^2$, i.e. the variance of the prior.\nPredictive distribution Said this, in practice, we are not usually interested in the value of $\\boldsymbol{w}$ itself, but rather in making predictions of t for new values of x. This requires that we evaluate the predictive distribution defined by:\n$$ \\displaylines{p(t|x,D,\\sigma^2) = \\int\\mathcal{N}(t|\\boldsymbol{w}^T\\phi(x),\\sigma^2)\\mathcal{N}(\\boldsymbol{w}|\\boldsymbol{w_N},\\boldsymbol{S_N})d\\boldsymbol{w} = \\mathcal{N}(t|\\boldsymbol{w_N}^T\\phi(x),\\sigma_N^2(x)) \\\\ \\sigma_N^2(x) = \\sigma^2 + \\phi(x)^T\\boldsymbol{S_N}\\phi(x)} $$\nwhere $\\sigma^2$ represents the noise in the target values (irreducible noise) and $\\phi(x)^T\\boldsymbol{S_N}\\phi(x)$ the uncertainty associated with parameter values. As additional data points are observed, the second term becomes smaller and smaller. We can see this from this image:\nThe green curve represents the function $sin(2\\pi x)$, from which the data points are generated (with the addition of Gaussian noise). The red curve shows the mean of the corresponding Gaussian predictive distribution, while the pink region spans one standard deviation either side of the mean, and as we can see it never goes to zero, because of the intrinsic noise in the samples.\nReferences  Pattern Recognition and Machine Learning Introduction to Bayesian Linear Regression  ",
+  "wordCount" : "2376",
+  "inLanguage": "en",
+  "datePublished": "2019-09-25T22:55:08+02:00",
+  "dateModified": "2019-09-25T22:55:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/linear-regression/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Linear Regression
+    </h1>
+    <div class="post-meta"><span title='2019-09-25 22:55:08 +0200 CEST'>September 25, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post we will analyze <strong>Linear Regression Models</strong> in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is <strong>regularization</strong>.</p>
+<p><strong>Disclaimer:</strong> <em>the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;<a href="https://www.springer.com/gp/book/9780387310732">Pattern Recognition and Machine Learning</a>'.</em></p>
+<p>The goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\boldsymbol{x}$ of input variables.</p>
+<p>Linear models are simple and ofter provide an adequate and interpretable description of how the inputs affect the output. They can sometimes outperform fancier nonlinear models, especially in situations with small numbers of training cases, low signal-to-noise or sparse data.</p>
+<p>The simplest form of linear regression models are also linear functions of the input variables:</p>
+<p>$$
+y(x,w) = w_0 + \sum_{j=1}^{D-1}w_jx_j
+$$</p>
+<p>where the $w_j$'s are unknows parameters or coefficients and the variables ${x_j}$ can come from different sources.</p>
+<p>However, this formulation imposes significant limitations on the model. That is why we can generalize a bit introducing the so called <strong>basis functions</strong>, i.e. linear combinations of fixed nonlinear functions of the input variables:</p>
+<p>$$
+y(x,w) = w_0 + \sum_{j=1}^{M-1}w_j\phi_j(x)
+$$</p>
+<p>Using nonlinar basis functions, we allow the function $y(x,w)$ to be a nonlinear function of the input vector $\boldsymbol{x}$. It is important to underline that still the model is linear in $\boldsymbol{w}$, which brings some simplifications.</p>
+<p>Some examples of basis functions are the following:</p>
+<ul>
+<li>
+<p>Polynomial $\rightarrow \phi_j(x) = x^j$</p>
+</li>
+<li>
+<p>Gaussian $\rightarrow \phi_j(x) = e^{-\frac{(x-\mu_j)^2}{2\sigma^2}}$</p>
+</li>
+<li>
+<p>Sigmoidal $\rightarrow \phi_j(x) = \frac{1}{1+e^{(\mu_j-x)/\sigma}}$</p>
+</li>
+</ul>
+<h2 id="how-can-we-estimate-boldsymbolw">How can we estimate $\boldsymbol{w}$?<a hidden class="anchor" aria-hidden="true" href="#how-can-we-estimate-boldsymbolw">#</a></h2>
+<p>Typically what we have is a set of training data $(x_1, y_1)&hellip;(x_N,y_N)$ from which we estimate the parameters $\boldsymbol{w}$.</p>
+<p>A common choice to do this estimation is <strong>least squares</strong>, with which we minimize the residual sum of squares:</p>
+<p>$$
+RSS(\boldsymbol{w}) = \sum_{n=1}^{N}(y(x_n, \boldsymbol{w}) - t_n)^2
+$$</p>
+<p>Actually, for convenience, the loss function is usually described as:</p>
+<p>$$
+E(\boldsymbol{w}) = \frac{1}{2}RSS(\boldsymbol{w}) = \frac{1}{2}\sum_{n=1}^{N}(y(x_n, \boldsymbol{w}) - t_n)^2
+$$</p>
+<p>Observation: it is a nonnegative quantity, that can be zero only if the function $y(x,\boldsymbol{w})$ passes exactly through each data point.</p>
+
+
+<img src="/img/linear-regression/least-square.png" style="display: block; margin-left: auto; margin-right: auto;width: 400px;height: 400px;">
+
+<p>Now that we have our loss function we have to minimize it, hence choose $\boldsymbol{w}$ so that $E(\boldsymbol{w})$ is as small as possible. Since the error function is a quadratic function of the coefficients $\boldsymbol{w}$, its derivative with respect to them will be linear, and so the minimization has a unique solution, denoted by $\boldsymbol{w^*}$.</p>
+<p>Let&rsquo;s start by saying that the residual sum of squares $RSS$ can be also written as the sum of the $l_2$-norm of the vector of the residual errors:</p>
+<p>$$
+RSS(\boldsymbol{w}) = ||\epsilon||_2^2 = \sum^{N}\epsilon_i^2 = \epsilon^T\epsilon
+$$</p>
+<p>This formulation simplifies the way in which we will write $RSS$ in its matrix form.</p>
+<p>Let $\Phi = (\phi(x_1), \phi(x_2), &hellip;, \phi(x_N))^T$ and $t = (t_1, &hellip;, t_N)^T$.</p>
+<p>$\epsilon = \boldsymbol{t}-\Phi\boldsymbol{w}$</p>
+<p>So, from the previous $RSS$ formula, we can write:</p>
+<p>$$
+L(\boldsymbol{w}) = \frac{1}{2}RSS(\boldsymbol{w}) = \frac{1}{2}(\boldsymbol{t}-\Phi\boldsymbol{w})^T(\boldsymbol{t}-\Phi\boldsymbol{w})
+$$</p>
+<p>Finally, we can obtain the minimum imposing the gradient to be zero and the curvature to have all the eigenvalues &gt; 0.</p>
+<ul>
+<li>First derivative</li>
+</ul>
+<p>$$
+\frac{\partial L(\boldsymbol{w})}{\partial \boldsymbol{w}} = -\Phi^T(\boldsymbol{t}-\Phi\boldsymbol{w})
+$$</p>
+<ul>
+<li>Second derivative</li>
+</ul>
+<p>$$
+\frac{\partial^2 L(\boldsymbol{w})}{\partial \boldsymbol{w} \partial \boldsymbol{w}^T} = \Phi^T\Phi
+$$</p>
+<p>If we assume that $\Phi^T\Phi$ is nonsingular (hence invertible), it is symmetric and positive semi-definite, so all the eigenvalues are $\geq 0$.</p>
+<p>Setting the gradient to zero gives</p>
+<p>$$
+\displaylines{-\Phi^T(\boldsymbol{t}-\Phi\boldsymbol{w}) = 0 \\ \Phi^T\Phi\boldsymbol{w} = \Phi^Tt \\ \boldsymbol{w}_{OLS} = (\Phi^T\Phi)^{-1}\Phi^Tt}
+$$</p>
+<h1 id="discriminative-approach">Discriminative approach<a hidden class="anchor" aria-hidden="true" href="#discriminative-approach">#</a></h1>
+<p>What we have seen so far is called a <strong>direct approach</strong>, i.e. find a regression function directly from the training data by searching in the space of the model (changing the parameters).<!-- raw HTML omitted -->
+Now we will introduce a discriminative approach, where we model directly the conditional density $p(t|x)$.</p>
+<p>Let&rsquo;s assume that the target variable $t$ is given by a deterministic function $y(x,w)$ with additive Gaussian noise:</p>
+<p>$$
+t = y(x,w) + \epsilon
+$$</p>
+<p>where $\epsilon \sim \mathcal{N}(0,\sigma^2)$</p>
+<p>Hence $t \sim \mathcal{N}(y(x,w),\sigma^2)$</p>
+<p>Now consider a data set of inputs $$X = {x_1, &hellip;, x_N}$$ with corresponding target values $t_1, &hellip;, t_N$. Under the assumption that these data points are independent and identically distributed (i.i.d.), the likelihood function is:</p>
+<p>$$
+p(\boldsymbol{t}|\boldsymbol{X},\boldsymbol{w},\sigma^2) = \prod_{n=1}^{N}\mathcal{N}(t_n|\boldsymbol{w}^T\phi(x_n), \sigma^2) = \prod_{n=1}^{N}\frac{1}{2\pi\sigma^2}e^{-\frac{(t-y(x,w))^2}{2\sigma^2}}
+$$</p>
+<p>Recall that if we assume a squared loss function then the optimal prediction for a new value of $x$ will be given by the conditional mean of the target variable. That is why now we need to use $\boldsymbol{w}$ to approximate the mean of the Gaussian.</p>
+<p>This can be done by finding the <strong>maximum likelihood</strong>:</p>
+<p>$$
+\displaylines{l(\boldsymbol{w}) = ln \ p(\boldsymbol{t}|\boldsymbol{X},\boldsymbol{w},\sigma^2) = \sum_{n=1}^{N}ln \ p(t_n|x_n,\boldsymbol{w},\sigma^2) \\ = -\frac{N}{2}ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}RSS(\boldsymbol{w}) \\ = -\frac{N}{2}ln(2\pi\sigma^2)-\frac{1}{4\sigma^2}(\boldsymbol{t}-\boldsymbol{w}\Phi)^T(\boldsymbol{t}-\boldsymbol{w}\Phi)}
+$$</p>
+<p>Now we compute the gradient:</p>
+<p>$$
+\displaylines{\nabla ln \ l(\boldsymbol{W}) = -\Phi^T(\boldsymbol{t}-\Phi\boldsymbol{w}) = -\Phi^T\boldsymbol{t}+\Phi^T\Phi\boldsymbol{w} = 0 \\ \boldsymbol{w_{ML}} = (\Phi^T\Phi)^{-1}\Phi^T\boldsymbol{t}}
+$$</p>
+<p>which are known as the <strong>normal equations</strong> for the least squares problem. Here $\Phi$ is a $NxM$ matrix, called the <strong>design matrix</strong>.</p>
+<p>The quantity $(\Phi^T\Phi)^{-1}\Phi^T$ is known as the <strong>Moore-Penrose pseudo-inverse</strong> of the matrix $\Phi$. It can be seen as a generalization of the matrix inversion operation, since it applies also to nonsquare matrices.</p>
+<h2 id="what-happens-when-phitphi-is-close-to-singular">What happens when $\Phi^T\Phi$ is close to singular?<a hidden class="anchor" aria-hidden="true" href="#what-happens-when-phitphi-is-close-to-singular">#</a></h2>
+<p>Well, in that case a direct solution of the normal equations can lead to numerical difficulties, i.e. the resulting parameter values can have large magnitudes. Unfortunately, when dealing with real dataset, this situation often happens. One way to solve this issue is using the so called <strong>singular value decomposition</strong>.</p>
+<p>Another way (very common), is the <strong>regularization</strong>, which prevents this issue to happen, ensuring that the matrix is nonsingular.</p>
+<h2 id="learning-with-stochastic-gradient-descent-sgd">Learning with stochastic gradient descent (SGD)<a hidden class="anchor" aria-hidden="true" href="#learning-with-stochastic-gradient-descent-sgd">#</a></h2>
+<p>Ok, at this point one could think that the technique we&rsquo;ve seen so far is computationally expensive. And that is true. Indeed, we are processing the entire training set in one go, and this can be very costly if we&rsquo;re dealing with a very large dataset.</p>
+<p>So, in this case a good idea could be using an <strong>online</strong> algorithm, in which the gradient is computed one sample at a time.</p>
+<p>The most famous and used algorithm is the <strong>stochastic gradient descent</strong>.</p>
+<p>This algorithm updates the parameter vector $\boldsymbol{w}$ in the following way:</p>
+<p>$$
+\boldsymbol{w}^{k+1} = \boldsymbol{w}^k - \eta\nabla E_n
+$$</p>
+<p>where $k$ indicates the iteration number and $\eta$ the learning rate. Choosing the right $\eta$ is not an easy task, since if the value is too high or too low, it could prevent the algorithm to converge.</p>
+
+
+<img src="/img/linear-regression/gradient-descent.png" style="display: block; margin-left: auto; margin-right: auto;width: 550px;height: 400px;">
+
+<h1 id="regularization">Regularization<a hidden class="anchor" aria-hidden="true" href="#regularization">#</a></h1>
+<p>Before talking about regularization it is worth to underline two concepts: underfitting and overfitting.</p>
+<p>As we said before, linear models can be generalized using the basis functions, which increase the complexity of our model trying to overcome the limitations imposed by the simplest form of linear regression.</p>
+<p>The problem lies in this &ldquo;complexity&rdquo;: how complex should our model be in order to fit the data in the best way? As often we have to find a tradeoff.</p>
+<ul>
+<li>A model with low complexity is usually not capable of fitting the data and so representing appropriately the true model, <strong>underfitting</strong>.</li>
+<li>A model with high complexity, instead, may fit very well the training data, but does not generalize on unseen data, <strong>overfitting</strong>.</li>
+</ul>
+<p>As we will see there are techniques to overcome these issues, expecially overfitting. However we&rsquo;ll have to deal with another tradeoff between <strong>variance</strong> and <strong>bias</strong>. One thing that reduces overfitting without any drawback is increasing the size of our dataset, but of course this is not always possible.</p>
+<p>Regularization consists of adding a penalty term to the loss function to discourage the coefficients from reaching large values.</p>
+<h2 id="ridge-regression">Ridge regression<a hidden class="anchor" aria-hidden="true" href="#ridge-regression">#</a></h2>
+<p>$$
+L(\boldsymbol{w}) = \frac{1}{2}\sum_{n=1}^{N}{(t_n - \boldsymbol{w}^T\phi(x_n))^2} \ + \ \frac{\lambda}{2}\boldsymbol{w}^T\boldsymbol{w}
+$$</p>
+<p>This particular choice of regularizer is known as ridge regression or <strong>weight decay</strong>, since in online learning algorithms it encourages weigth values to decay towards zero, unless supported by the data.</p>
+<p>The advantage of Ridge regression is that the loss function remains quadratic in $\boldsymbol{w}$, so its exact minimizer can be found in closed form.</p>
+<h2 id="lasso-regression">Lasso regression<a hidden class="anchor" aria-hidden="true" href="#lasso-regression">#</a></h2>
+<p>$$
+L(\boldsymbol{w}) = \frac{1}{2}\sum_{n=1}^{N}{(t_n - \boldsymbol{w}^T\phi(x_n))^2} \ + \ \frac{\lambda}{2}||\boldsymbol{w}||_1
+$$</p>
+<p>In this case no closed-form solution exists, however if $\lambda$ is sufficiently large, some of the coefficients $w_j$ are driven to zero, leading to a sparse model.</p>
+
+
+<img src="/img/linear-regression/ridge-lasso.png" style="display: block; margin-left: auto; margin-right: auto;width: 650px;height: 400px;">
+
+<p>In the picture above we can see where the origin of sparsity in Lasso comes from: the optimum value $\boldsymbol{w}^*$ will probably be on one of the vertices, hence on the axes, where some features are zero (the features in the image are indicated as $\beta_j$). $\$
+In cases of multi-correlation, i.e. many features are correlated with each other, this can be useful as the Lasso regression will set some of them to zero and leave the others to do their job.</p>
+<h1 id="bayesian-linear-regression">Bayesian Linear Regression<a hidden class="anchor" aria-hidden="true" href="#bayesian-linear-regression">#</a></h1>
+<p>Till now we have adopted a frequentist approach, namely we&rsquo;ve seen the probabilities in terms of frequencies of random, repeatable events. Sometimes, however, it&rsquo;s not possible to repeat multiple times an event to obtain a notion of probability. Moreover, we&rsquo;ve also seen that using maximum likelihood for setting the parameters we have the problem of the model complexity. Regularization is a good answer, but still, the choice of the basis functions remains important and also the value of $\lambda$ is an incognita.</p>
+<p>Here the Bayesian approach comes into play. This approach can be splitted in the following steps:</p>
+<ol>
+<li>We enumerate all the reasonable models of the data and we assign a <strong>prior distribution</strong> $p(\boldsymbol{w})$ to each of these models.</li>
+<li>We observe the data and we evaluate how probable the data was under each of these models, computing $p(D|\boldsymbol{w})$.</li>
+<li>From the previous observation we compute a <strong>posterior distribution</strong> $p(\boldsymbol{w}|D)$, which encapsulates everything that you have learned from the data regarding the possible models under consideration.</li>
+</ol>
+<p>An important consideration is that this approach is not affected by the problem of overfitting and it also leads to automatic methods of determining model complexity using the training data alone.</p>
+<h2 id="posterior-distribution">Posterior distribution<a hidden class="anchor" aria-hidden="true" href="#posterior-distribution">#</a></h2>
+<p>$$
+p(\boldsymbol{w}|D) = \frac{p(D|\boldsymbol{w})p(\boldsymbol{w})}{P(D)}
+$$</p>
+<p>where $P(D)$ is a normalizing constant.</p>
+<p>In other words, the above formula means that</p>
+<p>$$
+posterior \propto likelihood \cdot prior
+$$</p>
+<p>Here we can observe the two primary benefits of Bayesian Linear Regression:</p>
+<ul>
+<li>Priors: If we have domain knowledge, or a guess for what the model parameters should be, we can include them in our model, unlike in the frequentist approach which assumes everything there is to know about the parameters comes from the data. If we don’t have any estimates ahead of time, we can use non-informative priors for the parameters such as a normal distribution.</li>
+<li>Posterior: The result of performing Bayesian Linear Regression is a distribution of possible model parameters based on the data and the prior. This allows us to quantify our uncertainty about the model: if we have fewer data points, the posterior distribution will be more spread out.</li>
+</ul>
+<p>The formulation of model parameters as distributions encapsulates the Bayesian worldview: we start out with an initial estimate, our prior, and as we gather more evidence, our model becomes less wrong. Bayesian reasoning is a natural extension of our intuition. Often, we have an initial hypothesis, and as we collect data that either supports or disproves our ideas, we change our model of the world.</p>
+<p>Another important property of the Bayesian approach is that when new data are available, it is possible to use the posterior value as prior to compute the new posterior. This is true under the assumption of i.i.d. data and that the prior and posterior have the same distribution. This latter fact introduces the concept of <strong>conjugate priors</strong>:</p>
+<p><em>for a given probability distribution, we can seek a prior that is conjugate to the likelihood function, so that the posterior has the same distribution as the prior. For example the prior of a Gaussian is a Gaussian and the prior of a Beta is a Bernoulli.</em></p>
+<h3 id="back-to-math">Back to math<a hidden class="anchor" aria-hidden="true" href="#back-to-math">#</a></h3>
+<p>As said, in the Bayesian approach the parameters are considered as drawn from some distribution. Assuming a Gaussian likelihood model, the conjugate prior is Gaussian too:</p>
+<p>$$
+p(\boldsymbol{w}) = \mathcal{N}(\boldsymbol{w}|\boldsymbol{w_0},\boldsymbol{S_0})
+$$</p>
+<p>Given the data $D$, we compute the posterior distribution, which is proportional to the product of the likelihood function and the prior and that is still a Gaussian:</p>
+<p>$$
+p(\boldsymbol{w}|\boldsymbol{t},\Phi,\sigma^2) \propto \mathcal{N}(\boldsymbol{w}|\boldsymbol{w_0},\boldsymbol{S_0})\mathcal{N}(\boldsymbol{t}|\Phi\boldsymbol{w},\sigma^2\boldsymbol{I_N}) = \mathcal{N}(\boldsymbol{w}|\boldsymbol{w_N},\boldsymbol{S_N})
+$$</p>
+<p>where</p>
+<p>$$
+\displaylines{\boldsymbol{w_N} = \boldsymbol{S_N}(\boldsymbol{S_0}^{-1}\boldsymbol{w_0}+\frac{\Phi^T\boldsymbol{t}}{\sigma^2}) \\ \boldsymbol{S_N}^{-1} = \boldsymbol{S_0}^{-1} + \frac{\Phi^T\Phi}{\sigma^2}}
+$$</p>
+<p>Since the posterior distribution is Gaussian, its mode coincides with its mean, so $\boldsymbol{w_N}$ is the MAP estimator. Notice that in many cases we may have little idea of what form the distribution should take. We may then seek a form or prior distribution, called a <strong>noninformative prior</strong>, which is intended to have as little influence on the posterior distribution as possible. This is sometimes referred to as <em>&ldquo;letting the data speak for themselves&rdquo;</em>.</p>
+<p>In such cases, the value of $\boldsymbol{S_0} \rightarrow \infty$, so</p>
+<p>$$
+\boldsymbol{S_N}^{-1} \rightarrow 0 \ + \frac{\Phi^T\Phi}{\sigma^2} \Rightarrow \boldsymbol{S_N} = \sigma^2(\Phi^T\Phi)^{-1} \Rightarrow \boldsymbol{w_N} = \sigma^2(\Phi^T\Phi)^{-1}\frac{\Phi^T\boldsymbol{t}}{\sigma^2} = (\Phi^T\Phi)^{-1}\Phi^T\boldsymbol{t}
+$$</p>
+<p>which is the ordinary least squares solution! So, $\boldsymbol{w_N}$ reduces to the ML estimator. If $\boldsymbol{w_0} = 0$ and $\boldsymbol{S_0} = \tau^2\boldsymbol{I}$, then ${\boldsymbol{w_N}}$ reduces to the ridge estimate, where $\lambda = \frac{\sigma^2}{\tau^2}$</p>
+<p>Indeed, doing ridge regression means doing bayesian linear regression when you put Gaussian prior centered in zero. Changing $\lambda$ means changing $\tau^2$, i.e. the variance of the prior.</p>
+<h2 id="predictive-distribution">Predictive distribution<a hidden class="anchor" aria-hidden="true" href="#predictive-distribution">#</a></h2>
+<p>Said this, in practice, we are not usually interested in the value of $\boldsymbol{w}$ itself, but rather in making predictions of <em>t</em> for new values of <em>x</em>. This requires that we evaluate the <strong>predictive distribution</strong> defined by:</p>
+<p>$$
+\displaylines{p(t|x,D,\sigma^2) = \int\mathcal{N}(t|\boldsymbol{w}^T\phi(x),\sigma^2)\mathcal{N}(\boldsymbol{w}|\boldsymbol{w_N},\boldsymbol{S_N})d\boldsymbol{w} = \mathcal{N}(t|\boldsymbol{w_N}^T\phi(x),\sigma_N^2(x)) \\ \sigma_N^2(x) = \sigma^2 + \phi(x)^T\boldsymbol{S_N}\phi(x)}
+$$</p>
+<p>where $\sigma^2$ represents the noise in the target values (irreducible noise) and $\phi(x)^T\boldsymbol{S_N}\phi(x)$ the uncertainty associated with parameter values. As additional data points are observed, the second term becomes smaller and smaller. We can see this from this image:</p>
+
+
+<img src="/img/linear-regression/posterior-distribution.png" style="display: block; margin-left: auto; margin-right: auto;width: 550px;height: 400px;">
+
+<p>The green curve represents the function $sin(2\pi x)$, from which the data points are generated (with the addition of Gaussian noise). The red curve shows the mean of the corresponding Gaussian predictive distribution, while the pink region spans one standard deviation either side of the mean, and as we can see it never goes to zero, because of the intrinsic noise in the samples.</p>
+<h1 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h1>
+<ul>
+<li><a href="https://www.springer.com/us/book/9780387310732">Pattern Recognition and Machine Learning</a></li>
+<li><a href="https://towardsdatascience.com/introduction-to-bayesian-linear-regression-e66e60791ea7">Introduction to Bayesian Linear Regression</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/regularization/">regularization</a></li>
+      <li><a href="/tags/bayesian-linear-regression/">bayesian linear regression</a></li>
+      <li><a href="/tags/lasso/">lasso</a></li>
+      <li><a href="/tags/linear-regression/">linear regression</a></li>
+      <li><a href="/tags/ridge/">ridge</a></li>
+      <li><a href="/tags/sgd/">SGD</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

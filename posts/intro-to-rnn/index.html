@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Introduction to RNN and LSTM | Matt Log</title>
+<meta name="keywords" content="sequence modeling, RNN, LSTM">
+<meta name="description" content="In this post I will go through Recurrent Neural Networks (RNNs) and Long-Short Term Memories (LSTMs), explaining why RNNs are not enough to deal with sequence modeling and how LSTMs solve those problems.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/intro-to-rnn/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Introduction to RNN and LSTM" />
+<meta property="og:description" content="In this post I will go through Recurrent Neural Networks (RNNs) and Long-Short Term Memories (LSTMs), explaining why RNNs are not enough to deal with sequence modeling and how LSTMs solve those problems.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/intro-to-rnn/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-12-22T22:55:08+02:00" />
+<meta property="article:modified_time" content="2019-12-22T22:55:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Introduction to RNN and LSTM"/>
+<meta name="twitter:description" content="In this post I will go through Recurrent Neural Networks (RNNs) and Long-Short Term Memories (LSTMs), explaining why RNNs are not enough to deal with sequence modeling and how LSTMs solve those problems.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Introduction to RNN and LSTM",
+      "item": "/posts/intro-to-rnn/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Introduction to RNN and LSTM",
+  "name": "Introduction to RNN and LSTM",
+  "description": "In this post I will go through Recurrent Neural Networks (RNNs) and Long-Short Term Memories (LSTMs), explaining why RNNs are not enough to deal with sequence modeling and how LSTMs solve those problems.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the \u0026lsquo;Artificial Neural Networks and Deep Learning\u0026rsquo; course at Polytechnic of Milan, the book \u0026lsquo;Deep Learning\u0026rsquo; (Goodfellow-et-al-2016) and from some other online resources.",
+  "keywords": [
+    "sequence modeling", "RNN", "LSTM"
+  ],
+  "articleBody": "In this post I will go through Recurrent Neural Networks (RNNs) and Long-Short Term Memories (LSTMs), explaining why RNNs are not enough to deal with sequence modeling and how LSTMs solve those problems.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the ‘Artificial Neural Networks and Deep Learning’ course at Polytechnic of Milan, the book ‘Deep Learning’ (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.\nSequence Modeling So far we have considered only “static” datasets, i.e. datasets where the time component is not present. However, we know that there are problems in which time cannot be ignored, like in the case we want to predict the next word given one or more previous words. Sequence modeling is the task of predicting what comes next, and to do this the current output must depend on the previous input and the length of the input is not fixed.\nThere exist different ways to deal with “dynamic” data:\n Memoryless models  Autoregressive models Feedforward Neural Networks   Models with memory  Linear dynamical systems Hidden Markov Models Recurrent Neural Networks …    We will focus on Recurrent Neural Networks (RNNs).\nRecurrent Neural Networks (RNNs) Much as convolutional neural networks are neural networks specialized for processing a grid of values like an image, recurrent neural networks are neural networks specialized for processing a sequence of values.\nThe blue part in the above image is the so-called context network. In the context network new neurons are added in the hidden layer and their output is not only connected to the output layer, but it is also delayed and connected again to the hidden layer (in the following time step).\n$$ y^t = g(\\sum_{j}^{J} W_j \\cdot h(\\sum_{i}^{I} w_{ji} \\cdot x_i^t + \\sum_{b}^{B} v_{jb} \\cdot c_b^{t-1}) + \\sum_{b}^{B} W_b + h(\\sum_{i}^{I} v_{bi} \\cdot x_i^t + \\sum_{b’}^{B} v_{bb’} \\cdot c_{b’}^{t-1})) $$\n$$ c_b^t = h(\\sum_{i}^{I} v_{bi} \\cdot x_i^t + \\sum_{b’}^{B} v_{bb’} \\cdot c_{b’}^{t-1}) $$\nBut how do we train this neural network? Because of the context network, we cannot use backpropagation anymore. However, we can see the context network as a feedforward neural network, if we unroll it.\nBackpropagation Through Time Backpropagation Through Time is the way in which we can train our RNN. As said, the idea is the following:\n Perform network unroll for $U$ steps   All the weights are trained with gradient descent, so at a generic time step $\\tau$:  $$ v_{bi}^{t-\\tau} = v_{bi}^{t-\\tau} - \\eta \\frac{\\partial E}{\\partial v_{bi}^{t-\\tau}} $$\n$$ v_{bb’}^{t-\\tau} = v_{bb’}^{t-\\tau} - \\eta \\frac{\\partial E}{\\partial v_{bb’}^{t-\\tau}} $$\n$$ v_{jb}^{t-\\tau} = v_{jb}^{t-\\tau} - \\eta \\frac{\\partial E}{\\partial v_{jb}^{t-\\tau}} $$\n Average the weights, since if we apply the usual update method we would have different values for the same weights in different time steps.  $$ v_{bi} = \\frac{1}{U + 1} \\sum_{\\tau=0}^{U} v_{bi}^{t-\\tau} $$\n$$ v_{bb’} = \\frac{1}{U + 1} \\sum_{\\tau=0}^{U} v_{bb’}^{t-\\tau} $$\n$$ v_{jb} = \\frac{1}{U + 1} \\sum_{\\tau=0}^{U} v_{jb}^{t-\\tau} $$\nVanishing Gradient We said that we unroll the network for $U$ steps, but how do we set this value? How much can we go back in time?\nThe answer is: not too much, and this is the biggest problem of RNNs.\nLet’s consider a simplified case in order to better understand why it does not work:\nBackpropagation over an entire sequence is computed as\n$$ \\frac{\\partial E}{\\partial w} = \\sum_{t=1}^{S} \\frac{\\partial E^t}{\\partial w} $$\n$$ \\frac{\\partial E^t}{\\partial w} = \\sum_{t=1}^{t} \\frac{\\partial E^t}{\\partial y^t} \\frac{\\partial y^t}{\\partial h^t} \\frac{\\partial h^t}{\\partial h^k} \\frac{\\partial h^k}{\\partial w} $$\n$$ \\frac{\\partial h^t}{\\partial h^k} = \\prod_{i=k+1}^{t} \\frac{\\partial h_i}{\\partial h_{i-1}} = \\prod_{i=k+1}^{t} v^{(1)} g’(h^{i-1}) $$\nIf we consider the norm of these terms\n$$ \\Big|\\Big|\\frac{\\partial h_i}{\\partial h_{i-1}}\\Big|\\Big| = ||v^{(1)}|| ||g’(h^{i-1})|| \\implies \\Big|\\Big|\\frac{\\partial h^t}{\\partial h^k}\\Big|\\Big| \\le (\\gamma_v \\cdot \\gamma_{g’})^{t-k} $$\nThe key point is that if $(\\gamma_v \\cdot \\gamma_{g’}) 1$, even if it is more rare.\nThis is a serious problem, because it essentially prevents our RNN to learn long-term dependencies (actually not very long, even with a 10-20 steps the problem can arise). This is especially true if we have sigmoid or tanh as activation functions, since they have a derivative smaller than $1$.\nThat is why a different activation function is used: the ReLU. We already discussed about ReLU in the post about activation functions, but the idea is pretty simple: it has derivative equal to $1$ for $x  0$ and equal to $0$ for $x dying neuron. In order to solve this issue, Leaky ReLU was invented.\nAnother approach used to combat the vanishing gradient problem is the use of Leaky Units, i.e. hidden units with linear self-connections. The use of a linear self-connection with a weight near $1$ is a way of ensuring that the unit can access values from the past. These units allow the network to accumulate information over a long duration. However, it could be useful for the network to forget an old state and what we would like to do is to not set this behaviour manually, but instead let the network learn to decide when to do it. This brings us to the next model.\nLong-Short Term Memories (LSTMs) Original paper: LSTM Can Solve Hard Long Time Lag Problems\nIn 1997 Hochreiter and Schmidhuber published a paper in which they proposed a new model that is able to deal with long sequences without incurring in the vanishing gradient problem.\nImage from http://www.deeplearningbook.org/\nThere are many artistic and cool images out there, but I found this very intuitive and useful to understand how a LSTM cell works. The important things to notice are:\n cells are connected recurrently to each other, replacing the standard hidden units the input value can be accumulated into the state if the sigmoidal input gate allows it the state unit has a linear self-loop (similar to the leaky units we discussed before) whose weight is controlled by the forget gate the output of the cell can be shut off by the output gate the state unit can also be used as an extra input to the gating units the black square indicates a delay of a single time step  RNNs vs LSTMs Important: from now on I will base my notes on the post on LSTMs written by Christopher Olah, which I highly recommend to read.\nImage from https://colah.github.io/posts/2015-08-Understanding-LSTMs/\nBefore going on, in this representation the state unit is the horizontal line running through the top of the diagram.\nForget gate The first thing we have to decide is if we want to keep the information in the cell state or if we want to throw it away. This is done by the forget gate, that for each number in the cell state will output a number between $0$ and $1$, by looking at $h_{t-1}$ and $x_t$.\nImage from https://colah.github.io/posts/2015-08-Understanding-LSTMs/\nThe input gate Here we have two different operations: the input gate decides which values we will update, while a tanh layer creates a vector of new candidate values that could be added to the state.\nImage from https://colah.github.io/posts/2015-08-Understanding-LSTMs/\nUpdate In this step we only need to update the cell state by putting together the values coming from the forget gate and the input gate.\nImage from https://colah.github.io/posts/2015-08-Understanding-LSTMs/\nOutput gate In the last step, the output is computed by taking the cell state, putting it through a tanh and multiplying it by a sigmoid gate (notice that this sigmoid gate is essentially equal to the initial forget gate, but of course with its own parameters).\nImage from https://colah.github.io/posts/2015-08-Understanding-LSTMs/\nLook on the Christopher Olah’s blog post to see some variations of LSTMs, such as Gated Recurrent Unit (GRU), in which the main difference is that a single gating unit simultaneously controls the forgetting factor and the decision to update the state unit.\nReferences  LSTM Can Solve Hard Long Time Lag Problems - Hochreiter and Schmidhuber Christopher Olah’s amazing blog post about LSTMs Deep Learning online book - Ian Goodfellow and Yoshua Bengio and Aaron Courville  ",
+  "wordCount" : "1446",
+  "inLanguage": "en",
+  "datePublished": "2019-12-22T22:55:08+02:00",
+  "dateModified": "2019-12-22T22:55:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/intro-to-rnn/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Introduction to RNN and LSTM
+    </h1>
+    <div class="post-meta"><span title='2019-12-22 22:55:08 +0200 +0200'>December 22, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post I will go through <strong>Recurrent Neural Networks (RNNs)</strong> and <strong>Long-Short Term Memories (LSTMs)</strong>, explaining why RNNs are not enough to deal with sequence modeling and how LSTMs solve those problems.</p>
+<p><strong>Disclaimer:</strong> <em>These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</em></p>
+<h1 id="sequence-modeling">Sequence Modeling<a hidden class="anchor" aria-hidden="true" href="#sequence-modeling">#</a></h1>
+<p>So far we have considered only &ldquo;static&rdquo; datasets, i.e. datasets where the time component is not present. However, we know that there are problems in which time cannot be ignored, like in the case we want to predict the next word given one or more previous words. Sequence modeling is the task of predicting what comes next, and to do this <strong>the current output must depend on the previous input</strong> and <strong>the length of the input is not fixed</strong>.</p>
+<p>There exist different ways to deal with &ldquo;dynamic&rdquo; data:</p>
+<ul>
+<li>Memoryless models
+<ul>
+<li>Autoregressive models</li>
+<li>Feedforward Neural Networks</li>
+</ul>
+</li>
+<li>Models with memory
+<ul>
+<li>Linear dynamical systems</li>
+<li>Hidden Markov Models</li>
+<li>Recurrent Neural Networks</li>
+<li>&hellip;</li>
+</ul>
+</li>
+</ul>
+<p>We will focus on <strong>Recurrent Neural Networks (RNNs)</strong>.</p>
+<h2 id="recurrent-neural-networks-rnns">Recurrent Neural Networks (RNNs)<a hidden class="anchor" aria-hidden="true" href="#recurrent-neural-networks-rnns">#</a></h2>
+<p>Much as convolutional neural networks are neural networks specialized for processing a grid of values like an image, recurrent neural networks are neural networks specialized for processing a sequence of values.</p>
+
+
+<img src="/img/intro-to-rnn/RNN.png" style="display: block; margin-left: auto; margin-right: auto; width: 400px; heigth: 500px;">
+
+<p>The blue part in the above image is the so-called <strong>context network</strong>. In the context network new neurons are added in the hidden layer and their output is not only connected to the output layer, but it is also delayed and connected again to the hidden layer (in the following time step).</p>
+<p>$$
+y^t = g(\sum_{j}^{J} W_j \cdot h(\sum_{i}^{I} w_{ji} \cdot x_i^t + \sum_{b}^{B} v_{jb} \cdot c_b^{t-1}) + \sum_{b}^{B} W_b + h(\sum_{i}^{I} v_{bi} \cdot x_i^t + \sum_{b&rsquo;}^{B} v_{bb&rsquo;} \cdot c_{b&rsquo;}^{t-1}))
+$$</p>
+<p>$$
+c_b^t = h(\sum_{i}^{I} v_{bi} \cdot x_i^t + \sum_{b&rsquo;}^{B} v_{bb&rsquo;} \cdot c_{b&rsquo;}^{t-1})
+$$</p>
+<p>But how do we train this neural network? Because of the context network, we cannot use backpropagation anymore. However, we can see the context network as a feedforward neural network, if we <strong>unroll</strong> it.</p>
+<h3 id="backpropagation-through-time">Backpropagation Through Time<a hidden class="anchor" aria-hidden="true" href="#backpropagation-through-time">#</a></h3>
+<p>Backpropagation Through Time is the way in which we can train our RNN. As said, the idea is the following:</p>
+<ul>
+<li>Perform network unroll for $U$ steps</li>
+</ul>
+
+
+<img src="/img/intro-to-rnn/BPTT.png" style="display: block; margin-left: auto; margin-right: auto; width: 700px; heigth: 400px;">
+
+<ul>
+<li>All the weights are trained with gradient descent, so at a generic time step $\tau$:</li>
+</ul>
+<p>$$
+v_{bi}^{t-\tau} = v_{bi}^{t-\tau} - \eta \frac{\partial E}{\partial v_{bi}^{t-\tau}}
+$$</p>
+<p>$$
+v_{bb&rsquo;}^{t-\tau} = v_{bb&rsquo;}^{t-\tau} - \eta \frac{\partial E}{\partial v_{bb&rsquo;}^{t-\tau}}
+$$</p>
+<p>$$
+v_{jb}^{t-\tau} = v_{jb}^{t-\tau} - \eta \frac{\partial E}{\partial v_{jb}^{t-\tau}}
+$$</p>
+<ul>
+<li>Average the weights, since if we apply the usual update method we would have different values for the same weights in different time steps.</li>
+</ul>
+<p>$$
+v_{bi} = \frac{1}{U + 1} \sum_{\tau=0}^{U} v_{bi}^{t-\tau}
+$$</p>
+<p>$$
+v_{bb&rsquo;} = \frac{1}{U + 1} \sum_{\tau=0}^{U} v_{bb&rsquo;}^{t-\tau}
+$$</p>
+<p>$$
+v_{jb} = \frac{1}{U + 1} \sum_{\tau=0}^{U} v_{jb}^{t-\tau}
+$$</p>
+<h3 id="vanishing-gradient">Vanishing Gradient<a hidden class="anchor" aria-hidden="true" href="#vanishing-gradient">#</a></h3>
+<p>We said that we unroll the network for $U$ steps, but how do we set this value? How much can we go back in time?</p>
+<p>The answer is: not too much, and this is the biggest problem of RNNs.</p>
+<p>Let&rsquo;s consider a simplified case in order to better understand why it does not work:</p>
+
+
+<img src="/img/intro-to-rnn/vanishing_gradient.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px; heigth: 200px;">
+
+<p>Backpropagation over an entire sequence is computed as</p>
+<p>$$
+\frac{\partial E}{\partial w} = \sum_{t=1}^{S} \frac{\partial E^t}{\partial w}
+$$</p>
+<p>$$
+\frac{\partial E^t}{\partial w} = \sum_{t=1}^{t} \frac{\partial E^t}{\partial y^t} \frac{\partial y^t}{\partial h^t} \frac{\partial h^t}{\partial h^k} \frac{\partial h^k}{\partial w}
+$$</p>
+<p>$$
+\frac{\partial h^t}{\partial h^k} = \prod_{i=k+1}^{t} \frac{\partial h_i}{\partial h_{i-1}} = \prod_{i=k+1}^{t} v^{(1)} g&rsquo;(h^{i-1})
+$$</p>
+<p>If we consider the norm of these terms</p>
+<p>$$
+\Big|\Big|\frac{\partial h_i}{\partial h_{i-1}}\Big|\Big| = ||v^{(1)}|| ||g&rsquo;(h^{i-1})|| \implies \Big|\Big|\frac{\partial h^t}{\partial h^k}\Big|\Big| \le (\gamma_v \cdot \gamma_{g&rsquo;})^{t-k}
+$$</p>
+<p>The key point is that if $(\gamma_v \cdot \gamma_{g&rsquo;}) &lt; 1$ the whole derivative converges to 0. This problem is called vanishing gradient, because as the gradient propagates over many stages it tends to vanish. There is also the opposite case, in which the gradient explodes, when $(\gamma_v \cdot \gamma_{g&rsquo;}) &gt; 1$, even if it is more rare.</p>
+<p>This is a serious problem, because it essentially prevents our RNN to learn long-term dependencies (actually not very long, even with a 10-20 steps the problem can arise). This is especially true if we have sigmoid or tanh as activation functions, since they have a derivative smaller than $1$.</p>
+<p>That is why a different activation function is used: the <strong>ReLU</strong>. We already discussed about ReLU in the post about activation functions, but the idea is pretty simple: it has derivative equal to $1$ for $x &gt; 0$ and equal to $0$ for $x &lt; 0$. This means that in the first case the gradient is propagated as it is, while in the second case it is not propagated at all. The latter fact, however, has a disadvantage: if the weights learned are such that $x &lt; 0$ for the entire input domain, the neuron never learns: this problem is known as <strong>dying neuron</strong>. In order to solve this issue, <strong>Leaky ReLU</strong> was invented.</p>
+<p>Another approach used to combat the vanishing gradient problem is the use of <strong>Leaky Units</strong>, i.e. hidden units with linear self-connections. The use of a linear self-connection with a weight near $1$ is a way of ensuring that the unit can access values from the past. These units allow the network to <em>accumulate</em> information over a long duration. However, it could be useful for the network to <em>forget</em> an old state and what we would like to do is to not set this behaviour manually, but instead let the network learn to decide when to do it. This brings us to the next model.</p>
+<h2 id="long-short-term-memories-lstms">Long-Short Term Memories (LSTMs)<a hidden class="anchor" aria-hidden="true" href="#long-short-term-memories-lstms">#</a></h2>
+<p><strong>Original paper:</strong> <em><a href="http://papers.nips.cc/paper/1215-lstm-can-solve-hard-long-time-lag-problems.pdf">LSTM Can Solve Hard Long Time Lag Problems</a></em></p>
+<p>In 1997 Hochreiter and Schmidhuber published a paper in which they proposed a new model that is able to deal with long sequences without incurring in the vanishing gradient problem.</p>
+
+
+<img src="/img/intro-to-rnn/LSTM_cell.png" style="display: block; margin-left: auto; margin-right: auto; width: 400px; height: 450px;">
+<p style="text-align: center">Image from <a href="http://www.deeplearningbook.org/">http://www.deeplearningbook.org/</a></p>
+
+<p>There are many artistic and cool images out there, but I found this very intuitive and useful to understand how a LSTM cell works. The important things to notice are:</p>
+<ul>
+<li>cells are connected recurrently to each other, replacing the standard hidden units</li>
+<li>the input value can be accumulated into the state if the sigmoidal input gate allows it</li>
+<li>the state unit has a linear self-loop (similar to the leaky units we discussed before) whose weight is controlled by the forget gate</li>
+<li>the output of the cell can be shut off by the output gate</li>
+<li>the state unit can also be used as an extra input to the gating units</li>
+<li>the black square indicates a delay of a single time step</li>
+</ul>
+<h3 id="rnns-vs-lstms">RNNs vs LSTMs<a hidden class="anchor" aria-hidden="true" href="#rnns-vs-lstms">#</a></h3>
+<p><strong>Important:</strong> <em>from now on I will base my notes on <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">the post on LSTMs written by Christopher Olah</a>, which I highly recommend to read.</em></p>
+
+
+<img src="/img/intro-to-rnn/RNN_vs_LSTM.png" style="display: block; margin-left: auto; margin-right: auto; width: 600px; height: 480px;">
+<p style="text-align: center">Image from <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">https://colah.github.io/posts/2015-08-Understanding-LSTMs/</a></p>
+
+<p>Before going on, in this representation the state unit is the horizontal line running through the top of the diagram.</p>
+<h3 id="forget-gate">Forget gate<a hidden class="anchor" aria-hidden="true" href="#forget-gate">#</a></h3>
+<p>The first thing we have to decide is if we want to keep the information in the cell state or if we want to throw it away. This is done by the <strong>forget gate</strong>, that for each number in the cell state will output a number between $0$ and $1$, by looking at $h_{t-1}$ and $x_t$.</p>
+
+
+<img src="/img/intro-to-rnn/forget_gate.png" style="display: block; margin-left: auto; margin-right: auto; width: 600px; height: 200px;">
+<p style="text-align: center">Image from <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">https://colah.github.io/posts/2015-08-Understanding-LSTMs/</a></p>
+
+<h3 id="the-input-gate">The input gate<a hidden class="anchor" aria-hidden="true" href="#the-input-gate">#</a></h3>
+<p>Here we have two different operations: the input gate decides which values we will update, while a tanh layer creates a vector of new candidate values that could be added to the state.</p>
+
+
+<img src="/img/intro-to-rnn/input_gate.png" style="display: block; margin-left: auto; margin-right: auto; width: 600px; height: 200px;">
+<p style="text-align: center">Image from <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">https://colah.github.io/posts/2015-08-Understanding-LSTMs/</a></p>
+
+<h3 id="update">Update<a hidden class="anchor" aria-hidden="true" href="#update">#</a></h3>
+<p>In this step we only need to update the cell state by putting together the values coming from the forget gate and the input gate.</p>
+
+
+<img src="/img/intro-to-rnn/memory_gate.png" style="display: block; margin-left: auto; margin-right: auto; width: 600px; height: 200px;">
+<p style="text-align: center">Image from <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">https://colah.github.io/posts/2015-08-Understanding-LSTMs/</a></p>
+
+<h3 id="output-gate">Output gate<a hidden class="anchor" aria-hidden="true" href="#output-gate">#</a></h3>
+<p>In the last step, the output is computed by taking the cell state, putting it through a tanh and multiplying it by a sigmoid gate (notice that this sigmoid gate is essentially equal to the initial forget gate, but of course with its own parameters).</p>
+
+
+<img src="/img/intro-to-rnn/output_gate.png" style="display: block; margin-left: auto; margin-right: auto; width: 600px; height: 200px;">
+<p style="text-align: center">Image from <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">https://colah.github.io/posts/2015-08-Understanding-LSTMs/</a></p>
+
+<p>Look on the <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Christopher Olah&rsquo;s blog post</a> to see some variations of LSTMs, such as <strong>Gated Recurrent Unit (GRU)</strong>, in which the main difference is that a single gating unit simultaneously controls the forgetting factor and the decision to update the state unit.</p>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ul>
+<li><a href="http://papers.nips.cc/paper/1215-lstm-can-solve-hard-long-time-lag-problems.pdf">LSTM Can Solve Hard Long Time Lag Problems - Hochreiter and Schmidhuber</a></li>
+<li><a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Christopher Olah&rsquo;s amazing blog post about LSTMs</a></li>
+<li><a href="http://www.deeplearningbook.org/">Deep Learning online book - Ian Goodfellow and Yoshua Bengio and Aaron Courville</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/lstm/">LSTM</a></li>
+      <li><a href="/tags/rnn/">RNN</a></li>
+      <li><a href="/tags/sequence-modeling/">sequence modeling</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

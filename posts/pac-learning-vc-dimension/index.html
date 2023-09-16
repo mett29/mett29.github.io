@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>PAC learning and VC dimension | Matt Log</title>
+<meta name="keywords" content="PAC learning, agnostic learning, VC dimension">
+<meta name="description" content="In this post we will talk about PAC Learning and VC Dimension, explaining what they are and why they are useful in Machine Learning.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+PAC-Learning and VC-Dimension PAC-Learning In Probably Approximately Correct Learning, the learner receives samples and must select a generalization function (called the hypothesis) from a certain class of possible functions.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/pac-learning-vc-dimension/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="PAC learning and VC dimension" />
+<meta property="og:description" content="In this post we will talk about PAC Learning and VC Dimension, explaining what they are and why they are useful in Machine Learning.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+PAC-Learning and VC-Dimension PAC-Learning In Probably Approximately Correct Learning, the learner receives samples and must select a generalization function (called the hypothesis) from a certain class of possible functions." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/pac-learning-vc-dimension/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-10-19T18:30:08+02:00" />
+<meta property="article:modified_time" content="2019-10-19T18:30:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="PAC learning and VC dimension"/>
+<meta name="twitter:description" content="In this post we will talk about PAC Learning and VC Dimension, explaining what they are and why they are useful in Machine Learning.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+PAC-Learning and VC-Dimension PAC-Learning In Probably Approximately Correct Learning, the learner receives samples and must select a generalization function (called the hypothesis) from a certain class of possible functions."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "PAC learning and VC dimension",
+      "item": "/posts/pac-learning-vc-dimension/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "PAC learning and VC dimension",
+  "name": "PAC learning and VC dimension",
+  "description": "In this post we will talk about PAC Learning and VC Dimension, explaining what they are and why they are useful in Machine Learning.\nDisclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book \u0026lsquo;Pattern Recognition and Machine Learning'.\nPAC-Learning and VC-Dimension PAC-Learning In Probably Approximately Correct Learning, the learner receives samples and must select a generalization function (called the hypothesis) from a certain class of possible functions.",
+  "keywords": [
+    "PAC learning", "agnostic learning", "VC dimension"
+  ],
+  "articleBody": "In this post we will talk about PAC Learning and VC Dimension, explaining what they are and why they are useful in Machine Learning.\nDisclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book ‘Pattern Recognition and Machine Learning'.\nPAC-Learning and VC-Dimension PAC-Learning In Probably Approximately Correct Learning, the learner receives samples and must select a generalization function (called the hypothesis) from a certain class of possible functions. The goal is that, with high probability (the “probably” part), the selected function will have low generalization error (the “approximately correct” part). The learner must be able to learn the concept given any arbitrary approximation ratio, probability of success, or distribution of the samples.\nLet’s focus on classification. Given:\n set of instances $X$ set of hypotheses $H$ (finite) set of possible target concepts $C$. Each concept $c$ corresponds to a boolean function $c:\\boldsymbol{X} \\rightarrow {0,1}$, which can be viewed as belonging to a certain class or not. training instances generated by a fixed, unknown probability distribution $\\mathcal{P}$ over $X$.  The learner observes a sequence $\\mathcal{D}$ of training samples $\\langle x, c(x) \\rangle$, for some target concept $c \\in C$ and it must output a hypothesis $h$ estimating $c$. $h$ is evaluated by its performance on subsequent instances drawn according to $\\mathcal{P}$\n$L_{true} = Pr_{x\\in\\mathcal{P}}[c(x)  h(x)]$\nInformally, the true error of $h$ is just the error rate we expect when applying $h$ to future instances drawn according to the probability distribution $\\mathcal{P}$.\nOur aim is to characterize classes of target concepts that can be reliably learned from a reasonable number of randomly drawn training examples and a reasonable amount of computation.\nWe might try to characterize the number of training examples needed to learn a hypothesis $h$ for which $L_{train}(h) = 0$. Unfortunately, it turns out this is futile in the setting we are considering, for two reasons.\n First, unless we provide training examples corresponding to every possible instance in $X$ (an unrealistic assumption), there may be multiple hypotheses consistent with the provided training examples, and the learner cannot be certain to pick the one corresponding to the target concept. Second, given that the training examples are drawn randomly, there will always be some nonzero probability that the training examples encountered by the learner will be misleading. (For example, although we might frequently see skiers of different heights, on any given day there is some small chance that all observed training examples will happen to be 2 meters tall).  To accommodate these two difficulties, we weaken our demands on the learner in two ways.\n First, we will not require that the learner output a zero error hypothesis: we will require only that its error be bounded by some constant $\\epsilon$, that can be made arbitrarily small. Second, we will not require that the learner succeed for every sequence of randomly drawn training examples: we will require only that its probability of failure be bounded by some constant $\\delta$, that can be made arbitrarily small.  In short, we require only that the learner probably learn a hypothesis that is approximately correct, hence the term probably approximately correct learning, or PAC learning for short.\nVersion spaces The version space $VS_{H,\\mathcal{D}}$ is the subset of hypothesis in $H$ consistent with training data $\\mathcal{D} (L_{train}=0)$. How likely is the learner to pick a bad hypothesis?\nTheorem\n*If the hypothesis space $H$ is finite and $\\mathcal{D}$ is a sequence of $N \\ge 1$ independent random examples of some target concept $c$, then for any $0 \\le \\epsilon \\le 1$, the probability that $VS_{H,\\mathcal{D}}$ contains a hypothesis error greater than $\\epsilon$ is less than $|H|e^{-\\epsilon N}$:*\n$$Pr(\\exists h \\in H : L_{train} = 0 \\land L_{true} \\ge \\epsilon) \\le |H|e^{-\\epsilon N}$$\nWe want this probability to be at most $\\delta$\n$$ |H|e^{-\\epsilon N} \\le \\delta $$, where $\\delta$ represents the confidence.\nWe can compute $N$ based on the other variables\n$$ N \\ge \\frac{1}{\\epsilon}(ln|H| + ln(\\frac{1}{\\delta})) $$ or equivalently $$ \\epsilon \\ge \\frac{1}{N}(ln|H| + ln(\\frac{1}{\\delta})) $$\nLet’s make a practical example to better understand the basic idea (credit to link): we want to learn the concept “medium-built person” from examples. We are given the height and weight of $N$ individuals, the training set. We are told for each $[height,weight]$ pair if it is or not of medium built. We would like to learn this concept, i.e. produce an algorithm that in the future answers correctly if a pair $[height,weight]$ represents/not a medium-built person. We are interested in knowing which value of $N$ to use if we want to learn this concept well.\nOur concern is to characterize what we mean by well or good when evaluating learned concepts. By imposing the above bound, we are able to say if a learned concept is good. Different degrees of “goodness” will correspond to different values of epsilon and delta.\nNote however that if we consider $M$ boolean features, there are $|C| = 2^M$ distinct concepts and hence $|H| = {2^2}^M$. This means that even if we have a logarithmic dependency on $|H|$, it is still exponential w.r.t. $M$.\nConsider a class $C$ of possible target concepts defined over a set of instances $X$ and a learner $L$ using hypothesis space $H$.\nDefinition\n$C$ is PAC-learnable if there exists an algorithm $L$ such that for every $c \\in C$, for any distribution $\\mathcal{P}$, for any $\\epsilon$ such that $0 \\le \\epsilon Definition\n$C$ is efficiently PAC-learnable by learner $L$ using $H$ if and only if for every $c \\in C$, for any distribution $\\mathcal{P}$, for any $\\epsilon$ such that $0 \\le \\epsilon In the above definition, we want $\\epsilon$ to be less than $\\frac{1}{2}$ . Well, this is pretty natural as we won’t be interested in the algorithms which have more than fifty percent chances of giving an inaccurate answer. Also, observe the strict inequality i.e. $\\epsilon Agnostic learning Now we know how many training examples suffice to ensure (with probability $(1-\\delta)$) that every hypothesis in $H$ having zero training error will have a true error of at most $\\epsilon$. Unfortunately, if $H$ does not contain the target concept $c$, then a zero-error hypothesis cannot always be found. In this case, the most we might ask of our learner is to output the hypothesis from $H$ that has the minimum error over the training examples. A learner that makes no assumption that the target concept is representable by $H$ and that simply finds the hypothesis with minimum training error, is often called an agnostic learner, because it makes no prior commitment about whether or not $C \\subseteq H$.\nWe have to find a new bound that takes in consideration this new scenario:\n$L_{true}(h) \\le L_{train}(h) + \\epsilon$\nWe will use the Hoeffding bound:\n$$ Pr(E[\\bar{X}] - \\bar{X}  \\epsilon) \\le e^{-2N\\epsilon^2} $$\n$$ Pr(\\exists h \\in H : L_{true}(h) - L_{train}(h)  \\epsilon) \\le |H|e^{-2N\\epsilon^2} $$\nLeading to\n$$ N \\ge \\frac{1}{2\\epsilon^2}(ln|H| + ln(\\frac{1}{\\delta})) $$\nThe bound can be used as a model selection method like cross-validation, with the benefit of using all the data but the drawback of having a pessimistic bound and that can be applied only if $|H|$ is finite.\nVC-Dimension In a continuous hypothesis space, in which $|H| = \\infty$, it is not possible to use the conclusions derived from PAC-learning. Here we consider a second measure of the complexity of $H$, called the Vapnik-Chervonenkis dimension of $H$, or $VC(H)$ for short.\nDefinition\nA dichotomy of a set $S$ is a partition of $S$ into two disjoint subsets.\nDefinition\nA set of instances $S$ is shattered by hypothesis space $H$ if and only if for every dichotomy of $S$ there exists some hypothesis in $H$ consistent with this dichotomy.\nNote that if a set of instances is not shattered by a hypothesis space, then there must be some concept (dichotomy) that can be defined over the instances, but that cannot be represented by the hypothesis space. The ability of H to shatter a set of instances is thus a measure of its capacity to represent target concepts defined over these instances.\nWhat if $H$ cannot shatter $X$, but can shatter some large subset $S$ of $X$? Intuitively, it seems reasonable to say that the larger the subset of $X$ that can be shattered, the more expressive H. The VC dimension of $H$ is precisely this measure:\nDefinition\nThe VC dimension, $VC(H)$, of hypothesis space $H$ defined over instance space $X$ is the size of the largest finite subset of $X$ shattered by $H$. If arbitrarily large finite sets of $X$ can be shattered by $H$, then $VC(H) \\equiv \\infty$.\nBased on VC-dimension the number of randomly drawn examples guaranteeing an error of at most $\\epsilon$ with probability at least $(1 − \\delta)$ is:\n$N \\ge \\frac{1}{\\epsilon}(4 log_2(\\frac{2}{\\delta}) + 8VC(H)log_2(\\frac{13}{\\epsilon}))$\nNote that just as in the bound from $N \\ge \\frac{1}{\\epsilon}(ln|H| + ln(\\frac{1}{\\delta}))$, the number of required training examples $N$ grows logarithmically in $\\frac{1}{\\delta}$. It now grows log times linear in $\\frac{1}{\\epsilon}$, rather than linearly. Significantly, the $ln|H|$ term in the earlier bound has now been replaced by the alternative measure of hypothesis space complexity, $VC(H)$ (recall $VC(H) \\le log_2|H|$).\nTheorem\nThe VC dimension of a hypothesis space $|H| Theorem\nConcept class $C$ with $VC(C) = \\infty$ is not PAC-learnable.\n",
+  "wordCount" : "1658",
+  "inLanguage": "en",
+  "datePublished": "2019-10-19T18:30:08+02:00",
+  "dateModified": "2019-10-19T18:30:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/pac-learning-vc-dimension/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      PAC learning and VC dimension
+    </h1>
+    <div class="post-meta"><span title='2019-10-19 18:30:08 +0200 CEST'>October 19, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post we will talk about <strong>PAC Learning and VC Dimension</strong>, explaining what they are and why they are useful in Machine Learning.</p>
+<p><strong>Disclaimer:</strong> <em>the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;<a href="https://www.springer.com/gp/book/9780387310732">Pattern Recognition and Machine Learning</a>'.</em></p>
+<h1 id="pac-learning-and-vc-dimension">PAC-Learning and VC-Dimension<a hidden class="anchor" aria-hidden="true" href="#pac-learning-and-vc-dimension">#</a></h1>
+<h2 id="pac-learning">PAC-Learning<a hidden class="anchor" aria-hidden="true" href="#pac-learning">#</a></h2>
+<p>In Probably Approximately Correct Learning, the learner receives samples and must select a generalization function (called the <em>hypothesis</em>) from a certain class of possible functions. The goal is that, with high probability (the &ldquo;probably&rdquo; part), the selected function will have low generalization error (the &ldquo;approximately correct&rdquo; part). The learner must be able to learn the concept given any arbitrary approximation ratio, probability of success, or distribution of the samples.</p>
+<p>Let&rsquo;s focus on classification. Given:</p>
+<ul>
+<li>set of instances $X$</li>
+<li>set of hypotheses $H$ (finite)</li>
+<li>set of possible target concepts $C$. Each concept $c$ corresponds to a boolean function $c:\boldsymbol{X} \rightarrow {0,1}$, which can be viewed as belonging to a certain class or not.</li>
+<li>training instances generated by a fixed, unknown probability distribution $\mathcal{P}$ over $X$.</li>
+</ul>
+<p>The learner observes a sequence $\mathcal{D}$ of training samples $\langle x, c(x) \rangle$, for some target concept $c \in C$ and it must output a hypothesis $h$ estimating $c$.
+$h$ is evaluated by its performance on subsequent instances drawn according to $\mathcal{P}$</p>
+<p>$L_{true} = Pr_{x\in\mathcal{P}}[c(x) &lt;&gt; h(x)]$</p>
+<p>Informally, the true error of $h$ is just the error rate we expect when applying $h$ to future instances drawn according to the probability distribution $\mathcal{P}$.</p>
+<p>Our aim is to characterize classes of target concepts that can be reliably learned from a reasonable number of randomly drawn training examples and a reasonable amount of computation.</p>
+<p>We might try to characterize the number of training examples needed to learn a hypothesis $h$ for which $L_{train}(h) = 0$. Unfortunately, it turns out this is futile in the setting we are considering, for two reasons.</p>
+<ul>
+<li>First, unless we provide training examples corresponding to every possible instance in $X$ (an unrealistic assumption), there may be multiple hypotheses consistent with the provided training examples, and the learner cannot be certain to pick the one corresponding to the target concept.</li>
+<li>Second, given that the training examples are drawn randomly, there will always be some nonzero probability that the training examples encountered by the learner will be misleading. (For example, although we might frequently see skiers of different heights, on any given day there is some small chance that all observed training examples will happen to be 2 meters tall).</li>
+</ul>
+<p>To accommodate these two difficulties, we weaken our demands on the learner in two ways.</p>
+<ul>
+<li>First, we will not require that the learner output a zero error hypothesis: we will require only that its error be bounded by some constant $\epsilon$, that can be made arbitrarily small.</li>
+<li>Second, we will not require that the learner succeed for every sequence of randomly drawn training examples: we will require only that its probability of failure be bounded by some constant $\delta$, that can be made arbitrarily small.</li>
+</ul>
+<p>In short, we require only that the learner <strong>probably</strong> learn a hypothesis that is <strong>approximately</strong> correct, hence the term probably approximately correct learning, or PAC learning for short.</p>
+<h3 id="version-spaces">Version spaces<a hidden class="anchor" aria-hidden="true" href="#version-spaces">#</a></h3>
+<p>The version space $VS_{H,\mathcal{D}}$ is the subset of hypothesis in $H$ consistent with training data $\mathcal{D} (L_{train}=0)$.
+How likely is the learner to pick a bad hypothesis?</p>
+<p><strong>Theorem</strong></p>
+<p>*If the hypothesis space $H$ is finite and $\mathcal{D}$ is a sequence of $N \ge 1$ independent random examples of some target concept $c$, then for any $0 \le \epsilon \le 1$, the probability that $VS_{H,\mathcal{D}}$ contains a hypothesis error greater than $\epsilon$ is less than $|H|e^{-\epsilon N}$:*</p>
+<p>$$Pr(\exists h \in H : L_{train} = 0 \land L_{true} \ge \epsilon) \le |H|e^{-\epsilon N}$$</p>
+<p>We want this probability to be at most $\delta$</p>
+<p>$$
+|H|e^{-\epsilon N} \le \delta
+$$, where $\delta$ represents the confidence.</p>
+<p>We can compute $N$ based on the other variables</p>
+<p>$$
+N \ge \frac{1}{\epsilon}(ln|H| + ln(\frac{1}{\delta}))
+$$
+or equivalently
+$$
+\epsilon \ge \frac{1}{N}(ln|H| + ln(\frac{1}{\delta}))
+$$</p>
+<p>Let&rsquo;s make a practical example to better understand the basic idea (credit to <a href="https://cis.temple.edu/~giorgio/cis587/readings/pac.html">link</a>):
+we want to learn the concept &ldquo;medium-built person&rdquo; from examples. We are given the height and weight of $N$ individuals, the <strong>training set</strong>. We are told for each $[height,weight]$ pair if it is or not of medium built. We would like to learn this concept, i.e. produce an algorithm that in the future answers correctly if a pair $[height,weight]$ represents/not a medium-built person. We are interested in knowing which value of $N$ to use if we want to learn this concept <strong>well</strong>.</p>
+<p>Our concern is to characterize what we mean by <strong>well</strong> or <strong>good</strong> when evaluating learned concepts.
+By imposing the above bound, we are able to say if a learned concept is good. Different degrees of &ldquo;goodness&rdquo; will correspond to different values of epsilon and delta.</p>
+<p>Note however that if we consider $M$ boolean features, there are $|C| = 2^M$ distinct concepts and hence $|H| = {2^2}^M$. This means that even if we have a logarithmic dependency on $|H|$, it is still exponential w.r.t. $M$.</p>
+<p>Consider a class $C$ of possible target concepts defined over a set of instances $X$ and a learner $L$ using hypothesis space $H$.</p>
+<p><strong>Definition</strong></p>
+<p>$C$ is <strong>PAC-learnable</strong> if there exists an algorithm $L$ such that for every $c \in C$, for any distribution $\mathcal{P}$, for any $\epsilon$ such that $0 \le \epsilon &lt; \frac{1}{2}$ and $\delta$ such that $0 \le \delta &lt; \frac{1}{2}$, with probability at least $1-\delta$, outputs an hypothesis $h \in H$ such that $L_{true}(h) \le \epsilon$ using a number of samples that is polynomial in $\frac{1}{\epsilon}$ and $\frac{1}{\delta}$.</p>
+<p><strong>Definition</strong></p>
+<p>$C$ is <strong>efficiently PAC-learnable</strong> by learner $L$ using $H$ if and only if for every $c \in C$, for any distribution $\mathcal{P}$, for any $\epsilon$ such that $0 \le \epsilon &lt; \frac{1}{2}$ and $\delta$ such that $0 \le \delta &lt; \frac{1}{2}$, with probability at least $1-\delta$, $L$ outputs an hypothesis $h \in H$ such that $L_{true}(h) \le \epsilon$ in time that is polynomial in $\frac{1}{\epsilon}, \frac{1}{\delta}, M$ and $size(c)$.</p>
+<p>In the above definition, we want $\epsilon$ to be less than $\frac{1}{2}$ . Well, this is pretty natural as we won’t be interested in the algorithms which have more than fifty percent chances of giving an inaccurate answer. Also, observe the strict inequality i.e. $\epsilon &lt; \frac{1}{2}$ . This is because  $\epsilon = \frac{1}{2}$ would be useless as it would be no better than generating the output with the toss of a coin.</p>
+<h3 id="agnostic-learning">Agnostic learning<a hidden class="anchor" aria-hidden="true" href="#agnostic-learning">#</a></h3>
+<p>Now we know how many training examples suffice to ensure (with probability $(1-\delta)$) that every hypothesis in $H$ having zero training error will have a true error of at most $\epsilon$. Unfortunately, if $H$ does not contain the target concept $c$, then a zero-error hypothesis cannot always be found.
+In this case, the most we might ask of our learner is to output the hypothesis from $H$ that has the minimum error over the training examples. A learner that makes no assumption that the target concept is representable by $H$ and that simply finds the hypothesis with minimum training error, is often called an <strong>agnostic learner</strong>, because it makes no prior commitment about whether or not $C \subseteq H$.</p>
+<p>We have to find a new bound that takes in consideration this new scenario:</p>
+<p>$L_{true}(h) \le L_{train}(h) + \epsilon$</p>
+<p>We will use the <strong>Hoeffding bound</strong>:</p>
+<p>$$
+Pr(E[\bar{X}] - \bar{X} &gt; \epsilon) \le e^{-2N\epsilon^2}
+$$</p>
+<p>$$
+Pr(\exists h \in H : L_{true}(h) - L_{train}(h) &gt; \epsilon) \le |H|e^{-2N\epsilon^2}
+$$</p>
+<p>Leading to</p>
+<p>$$
+N \ge \frac{1}{2\epsilon^2}(ln|H| + ln(\frac{1}{\delta}))
+$$</p>
+<p>The bound can be used as a model selection method like cross-validation, with the benefit of using all the data but the drawback of having a pessimistic bound and that can be applied only if $|H|$ is <strong>finite</strong>.</p>
+<h2 id="vc-dimension">VC-Dimension<a hidden class="anchor" aria-hidden="true" href="#vc-dimension">#</a></h2>
+<p>In a continuous hypothesis space, in which $|H| = \infty$, it is not possible to use the conclusions derived from PAC-learning.
+Here we consider a second measure of the complexity of $H$, called the Vapnik-Chervonenkis dimension of $H$, or $VC(H)$ for short.</p>
+<p><strong>Definition</strong></p>
+<p>A <strong>dichotomy</strong> of a set $S$ is a partition of $S$ into two disjoint subsets.</p>
+<p><strong>Definition</strong></p>
+<p>A set of instances $S$ is <strong>shattered</strong> by hypothesis space $H$ if and only if for every dichotomy of $S$ there
+exists some hypothesis in $H$ consistent with this dichotomy.</p>
+<p>Note that if a set of instances is not shattered by a hypothesis space, then there must be some concept (dichotomy) that can be defined over the instances, but that cannot be represented by the hypothesis space. The ability of H to shatter a set of instances is thus a measure of its capacity to represent target concepts defined over these instances.</p>
+<p>What if $H$ cannot shatter $X$, but can shatter some large subset $S$ of $X$? Intuitively, it seems reasonable to say that the larger the subset of $X$ that can be shattered, the more expressive H. The VC dimension of $H$ is precisely this measure:</p>
+<p><strong>Definition</strong></p>
+<p>The VC dimension, $VC(H)$, of hypothesis space $H$ defined over instance space $X$ is the size of the
+largest finite subset of $X$ shattered by $H$. If arbitrarily large finite sets of $X$ can be shattered by $H$, then $VC(H) \equiv \infty$.</p>
+<p>Based on VC-dimension the number of randomly drawn examples guaranteeing an error of at most $\epsilon$ with probability at least $(1 − \delta)$ is:</p>
+<p>$N \ge \frac{1}{\epsilon}(4 log_2(\frac{2}{\delta}) + 8VC(H)log_2(\frac{13}{\epsilon}))$</p>
+<p>Note that just as in the bound from $N \ge \frac{1}{\epsilon}(ln|H| + ln(\frac{1}{\delta}))$, the number of required training examples $N$ grows logarithmically in $\frac{1}{\delta}$. It now grows log times linear in $\frac{1}{\epsilon}$, rather than linearly. Significantly, the $ln|H|$ term in the earlier bound has now been replaced by the alternative measure of hypothesis space complexity, $VC(H)$ (recall $VC(H) \le log_2|H|$).</p>
+<p><strong>Theorem</strong></p>
+<p><em>The VC dimension of a hypothesis space $|H| &lt; \infty$ is bounded from above: $VC(H) \le log_2|H|$.</em></p>
+<p><strong>Theorem</strong></p>
+<p><em>Concept class $C$ with $VC(C) = \infty$ is not PAC-learnable.</em></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/agnostic-learning/">agnostic learning</a></li>
+      <li><a href="/tags/pac-learning/">PAC learning</a></li>
+      <li><a href="/tags/vc-dimension/">VC dimension</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

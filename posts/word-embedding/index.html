@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Word Embedding | Matt Log</title>
+<meta name="keywords" content="word embedding, word2vec, CBOW, Skip-gram">
+<meta name="description" content="In this post I will give you a brief introduction about Word Embedding, a technique used in NLP as an efficient representation of words.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/word-embedding/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Word Embedding" />
+<meta property="og:description" content="In this post I will give you a brief introduction about Word Embedding, a technique used in NLP as an efficient representation of words.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/word-embedding/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-12-25T22:55:08+02:00" />
+<meta property="article:modified_time" content="2019-12-25T22:55:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Word Embedding"/>
+<meta name="twitter:description" content="In this post I will give you a brief introduction about Word Embedding, a technique used in NLP as an efficient representation of words.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Word Embedding",
+      "item": "/posts/word-embedding/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Word Embedding",
+  "name": "Word Embedding",
+  "description": "In this post I will give you a brief introduction about Word Embedding, a technique used in NLP as an efficient representation of words.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the \u0026lsquo;Artificial Neural Networks and Deep Learning\u0026rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.",
+  "keywords": [
+    "word embedding", "word2vec", "CBOW", "Skip-gram"
+  ],
+  "articleBody": "In this post I will give you a brief introduction about Word Embedding, a technique used in NLP as an efficient representation of words.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the ‘Artificial Neural Networks and Deep Learning’ course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.\nWord Embedding  Word embedding is the collective name for a set of language modeling and feature learning techniques in natural language processing (NLP) where words or phrases from the vocabulary are mapped to vectors of real numbers. Conceptually it involves a mathematical embedding from a space with many dimensions per word to a continuous vector space with a much lower dimension.\n Wikipedia\n  The above description is pretty exaustive: we need an efficient way in which we can represent words so that they do not lose their meanings and relationships.\nBefore starting with word embedding, let’s see another approach: we can use a vector of size $V$, where $V$ is the number of unique words in our dictionary, for each word, setting the position where that word is present to $1$ and all the others to $0$.\n    1 2 3 4     woman 1 0 0 0   cat 0 1 0 0   pizza 0 0 1 0   word 0 0 0 1    Now, you can guess how big this table would be if we consider a real dictionary. This method is called one-hot encoding and it is clear computationally unfeasible when $V$ is large. Moreover, notice that using this encoding we are losing the relationships between words: if for example we consider the words cat and dog, we would like them to be close in an hypothetical space of words, while instead in this representation they are orthogonal (cat $\\perp$ dog), since their logical AND would result in a all zeros vector.\nWord embeddings are much better, since they are short and dense. The fact that they are short and dense is useful not only from a computationally point of view, but also because containing fewer parameters they may generalize better, reducing the risk of overfitting. In addition to this, unlike one-hot-encoding, they do not lose the relationships between words, and they can even disclose hidden semantic relationships, like the fact that the relationship between cat and kitten is the same as the one between dog and puppy.\nA Neural Probabilistic Language Model Paper: A Neural Probabilistic Language Model\nIn 2003 Bengio at al. published this paper, in which they proposed a new model able to\n fight the curse of dimensionality by learning a distributed representation for words which allows each training sentence to inform the model about an exponential number of semantically neighboring sentences.\n reaching a clear improvement w.r.t. the previous state-of-the-art n-gram models.\nIn the model the training set is a sequence $w_1,…,w_T$ of words $w_t \\in V$, being $V$ a large vocabulary. The goal is to learn a good model $f(w_t,…,w_{t-n+1}) = \\hat{P}(w_t|w_1^{t-1})$, i.e. a model that outputs the most likely word given the previous ones. Such a function is decomposed in two parts:\n a mapping $C$ from any element $i$ of $V$ to a real vector $C(i) \\in R^m$ a function $g$ (it could be a feed-forward neural network) that maps an input sequence of feature vectors for words in context to a conditional probability distribution over words in $V$ for the next word $w_t$:  $$ g(i, C(w_{t-1}),…,C(w_{t-n+1})) $$\nImage from A Neural Probabilistic Language Model\nThe reason for which I first described this model is that it is the base on which Mikolov et al. built what we know as Word2Vec.\nGoogle’s Word2Vec Paper: Efficient Estimation of Word Representations in Vector Space\nIn 2013 Mikolov at al. proposed two new model architectures for learning distributed representations of words that try to minimize computational complexity.\nContinuous Bag-of-Words Model CBOW is very similar to the Neural Network Language Model architecture briefly described before. The are three main differences:\n the non-linear hidden layer is removed, and with it also most of the computational complexity the projection layer is shared for all words (not just the projection matrix), thus all words get projected in the same position and their vectors are averaged it also uses words from future  Credits https://lilianweng.github.io/lil-log/2017/10/15/learning-word-embedding.html\nContinuous Skip-gram Model  The second architecture is similar to CBOW, but instead of predicting the current word based on the context, it tries to maximize classification of a word based on another word in the same sentence. More precisely, we use each current word as an input to a log-linear classifier with continuous projection layer, and predict words within a certain range before and after the current word.\n Efficient Estimation of Word Representations in Vector Space\n  Credits https://lilianweng.github.io/lil-log/2017/10/15/learning-word-embedding.html\nEssentially, the skip-gram model is trained to predict the probabilities of a word being a context word for the given target.\nNote: the output context matrix $W'$ encodes the meanings of words as context, different from the embedding matrix $W$. Despite the name, $W'$ is independent of $W$, not a transpose or inverse or whatsoever.\nRegularities in Word2Vec embedding space Paper: Linguistic Regularities in Continuous Space Word Representations\nIt was shown that a simple method like the Vector Offset Method is very effective in solving analogy questions, like $a:b = c:d$ where $d$ is unknown. It works as follows: find the embedding vectors $x_a,x_b,x_c$ (all normalized to unit norm) and then compute $y = x_b - x_a + x_c$. $y$ will be the continuous representation of the word we expect to be the best answer. Since no word might exist at that exact position, we search for the word whose embedding vector has the greatest cosine similarity to $y$:\n$$ w^* = argmax_w \\frac{x_w y}{||x_w||||y||} $$\nImage from Linguistic Regularities in Continuous Space Word Representations\nSome interesting “semantic equations” that can be computed using embedding vectors are:\n$$ \\displaylines{w_{king} - w_{man} + w_{woman} \\cong w_{queen} \\\\ w_{paris} - w_{france} + w_{italy} \\cong w_{rome} \\\\ w_{einstein} - w_{scientist} + w_{painter} \\cong w_{picasso} \\\\ w_{his} - w_{he} + w_{she} \\cong w_{her} \\\\ w_{cu} - w_{copper} + w_{gold} \\cong w_{au}} $$\nGloVe Paper: GloVe: Global Vectors for Word Representation\nGloVe (Global Vectors) is another method for word embedding. It does explicitly what Word2Vec does implicitly, trying to extract meanings from co-occurence probabilities. Let’s see how it works:\n $X$ is the matrix of word-word co-occurence counts, so that $X_{ij}$ representes the number of times the word $j$ occurs in the context of word $i$. $X_i = \\sum_{k} X_{ik}$ is the number of times any word appears in the context of word $i$. $P_{ij} = P(j|i) = X{ij}/X_i$ is the probability that word $j$ appears in context of word $i$.  Suppose for example that we have two words $i = ice$ and $j = steam$. We can study the relationship between these two words by considering the ratio of their co-occurence probabilities with other words $k$.\nIf we take a word related to $ice$ but not related to $steam$, like $k = solid$, the ratio $\\frac{P_{ik}}{P_{jk}}$ will be large. Viceversa, if $k$ is related to $steam$ but not to $ice$, the ratio will be small. Finally, if $k$ is related to both or to neither, the ratio will be close to $1$.\nTable from Jeffrey Pennington, Richard Socher, Christopher D. Manning - GloVe: Global Vectors for Word Representation\nThe underlying idea is that the ratio is better than the mere probabilities at distinguish relevant words from irrelevant words. Thus, the most general model can be written as\n$$ F(w_i, w_j, \\tilde{w_k}) = \\frac{P_{ik}}{P_{jk}} $$\n$F$ should be chosen so that it will encode the information coming from the ratio in the word vector space. One straightforward choice could be\n$$ F(w_i - w_j, \\tilde{w_k}) = \\frac{P_{ik}}{P_{jk}} $$\nand then transforming its arguments in a scalar to match with the right-hand side term we obtain\n$$ F((w_i - w_j)^T \\tilde{w_k}) = \\frac{P_{ik}}{P_{jk}} $$\nAfter this step, in the paper other transformations are applied, mainly in order to make the equation symmetric. If you are interested, please read the original paper for more details. For now, let’s consider the final equation, i.e.\n$$ w_i^T \\tilde{w}_k + b_i + \\tilde{b}_k = \\log{(X_{ik})} $$\nthat actually becomes\n$$ w_i^T \\tilde{w}_k + b_i + \\tilde{b}_k = \\log{(1 + X_{ik})} $$\nto prevent the logarithm to diverge when its argument is zero.\nThis model, however, has the problem of weighting all co-occurences equally, no matter if they happen rarely or never. To address this problem a specific loss function is used:\n$$ J = \\sum_{i,j=1}^{V} f(X_{ij}) (w_i^T \\tilde{w}_j + b_i + \\tilde{b}_j - log X_{ij})^2 $$\nwhere $f(X_{ij})$ is a weighting function with some interesting properties in order to deal with rare and frequent co-occurences (again, read the paper for more details).\nReferences  Yoshua Bengio, Réjean Ducharme, Pascal Vincent, Christian Jauvin - A Neural Probabilistic Language Model Tomas Mikolov, Kai Chen, Greg Corrado, and Jeffrey Dean - Efficient Estimation of Word Representations in Vector Space Tomas Mikolov, Wen-tau Yih, Geoffrey Zweig - Linguistic Regularities in Continuous Space Word Representations Jeffrey Pennington, Richard Socher, Christopher D. Manning - GloVe: Global Vectors for Word Representation Lil’Log Github Blog - Learning Word Embedding  ",
+  "wordCount" : "1564",
+  "inLanguage": "en",
+  "datePublished": "2019-12-25T22:55:08+02:00",
+  "dateModified": "2019-12-25T22:55:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/word-embedding/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Word Embedding
+    </h1>
+    <div class="post-meta"><span title='2019-12-25 22:55:08 +0200 +0200'>December 25, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post I will give you a brief introduction about <strong>Word Embedding</strong>, a technique used in NLP as an efficient representation of words.</p>
+<p><strong>Disclaimer:</strong> <em>These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</em></p>
+<h1 id="word-embedding">Word Embedding<a hidden class="anchor" aria-hidden="true" href="#word-embedding">#</a></h1>
+<blockquote>
+<p>Word embedding is the collective name for a set of language modeling and feature learning techniques in natural language processing (NLP) where words or phrases from the vocabulary are mapped to vectors of real numbers. Conceptually it involves a mathematical embedding from a space with many dimensions per word to a continuous vector space with a much lower dimension.</p>
+<blockquote>
+<p>Wikipedia</p>
+</blockquote>
+</blockquote>
+<p>The above description is pretty exaustive: we need an <strong>efficient</strong> way in which we can represent words so that they <strong>do not lose</strong> their meanings and relationships.</p>
+<p>Before starting with word embedding, let&rsquo;s see another approach: we can use a vector of size $V$, where $V$ is the number of unique words in our dictionary, for each word, setting the position where that word is present to $1$ and all the others to $0$.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>woman</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>cat</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>pizza</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>word</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Now, you can guess how big this table would be if we consider a real dictionary. This method is called <strong>one-hot encoding</strong> and it is clear computationally unfeasible when $V$ is large. Moreover, notice that using this encoding we are losing the relationships between words: if for example we consider the words <code>cat</code> and <code>dog</code>, we would like them to be close in an hypothetical space of words, while instead in this representation they are orthogonal (<code>cat</code> $\perp$ <code>dog</code>), since their logical AND would result in a all zeros vector.</p>
+<p>Word embeddings are much better, since they are <strong>short</strong> and <strong>dense</strong>. The fact that they are short and dense is useful not only from a computationally point of view, but also because containing fewer parameters they may generalize better, reducing the risk of overfitting. In addition to this, unlike one-hot-encoding, they do not lose the relationships between words, and they can even disclose hidden semantic relationships, like the fact that the relationship between <code>cat</code> and <code>kitten</code> is the same as the one between <code>dog</code> and <code>puppy</code>.</p>
+<h2 id="a-neural-probabilistic-language-model">A Neural Probabilistic Language Model<a hidden class="anchor" aria-hidden="true" href="#a-neural-probabilistic-language-model">#</a></h2>
+<p><strong>Paper:</strong> <em><a href="http://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf">A Neural Probabilistic Language Model</a></em></p>
+<p>In 2003 Bengio at al. published this paper, in which they proposed a new model able to</p>
+<blockquote>
+<p>fight the curse of dimensionality by learning a distributed representation for words which allows each training sentence to inform the model about an exponential number of semantically neighboring sentences.</p>
+</blockquote>
+<p>reaching a clear improvement w.r.t. the previous state-of-the-art n-gram models.</p>
+<p>In the model the training set is a sequence $w_1,&hellip;,w_T$ of words $w_t \in V$, being $V$ a large vocabulary. The goal is to learn a good model $f(w_t,&hellip;,w_{t-n+1}) = \hat{P}(w_t|w_1^{t-1})$, i.e. a model that outputs the most likely word given the previous ones. Such a function is decomposed in two parts:</p>
+<ul>
+<li>a mapping $C$ from any element $i$ of $V$ to a real vector $C(i) \in R^m$</li>
+<li>a function $g$ (it could be a feed-forward neural network) that maps an input sequence of feature vectors for words in context to a conditional probability distribution over words in $V$ for the next word $w_t$:</li>
+</ul>
+<p>$$
+g(i, C(w_{t-1}),&hellip;,C(w_{t-n+1}))
+$$</p>
+
+
+<img src="/img/word-embeddings/neural_net_language_model.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px;">
+<p style="text-align: center">Image from <a href="http://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf">A Neural Probabilistic Language Model</a></p>
+
+<p>The reason for which I first described this model is that it is the base on which Mikolov et al. built what we know as Word2Vec.</p>
+<h2 id="googles-word2vec">Google&rsquo;s Word2Vec<a hidden class="anchor" aria-hidden="true" href="#googles-word2vec">#</a></h2>
+<p><strong>Paper:</strong> <em><a href="https://arxiv.org/pdf/1301.3781.pdf">Efficient Estimation of Word Representations in Vector Space</a></em></p>
+<p>In 2013 Mikolov at al. proposed two new model architectures for learning distributed representations
+of words that try to minimize computational complexity.</p>
+<h3 id="continuous-bag-of-words-model">Continuous Bag-of-Words Model<a hidden class="anchor" aria-hidden="true" href="#continuous-bag-of-words-model">#</a></h3>
+<p>CBOW is very similar to the Neural Network Language Model architecture briefly described before. The are three main differences:</p>
+<ul>
+<li>the non-linear hidden layer is removed, and with it also most of the computational complexity</li>
+<li>the projection layer is shared for all words (not just the projection matrix), thus all words get projected in the same position and their vectors are averaged</li>
+<li>it also uses words from future</li>
+</ul>
+
+
+<img src="/img/word-embeddings/CBOW.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px;">
+<p style="text-align: center">Credits <a href="https://lilianweng.github.io/lil-log/2017/10/15/learning-word-embedding.html">https://lilianweng.github.io/lil-log/2017/10/15/learning-word-embedding.html</a></p>
+
+<h3 id="continuous-skip-gram-model">Continuous Skip-gram Model<a hidden class="anchor" aria-hidden="true" href="#continuous-skip-gram-model">#</a></h3>
+<blockquote>
+<p>The second architecture is similar to CBOW, but instead of predicting the current word based on the context, it tries to maximize classification of a word based on another word in the same sentence. More precisely, we use each current word as an input to a log-linear classifier with continuous projection layer, and predict words within a certain range before and after the current word.</p>
+<blockquote>
+<p><em>Efficient Estimation of Word Representations in Vector Space</em></p>
+</blockquote>
+</blockquote>
+
+
+<img src="/img/word-embeddings/skip_gram.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px;">
+<p style="text-align: center">Credits <a href="https://lilianweng.github.io/lil-log/2017/10/15/learning-word-embedding.html">https://lilianweng.github.io/lil-log/2017/10/15/learning-word-embedding.html</a></p>
+
+<p>Essentially, the skip-gram model is trained to predict the probabilities of a word being a context word for the given target.</p>
+<p><strong>Note:</strong> the output context matrix $W'$ encodes the meanings of words as context, different from the embedding matrix $W$. Despite the name, $W'$ is independent of $W$, not a transpose or inverse or whatsoever.</p>
+<h3 id="regularities-in-word2vec-embedding-space">Regularities in Word2Vec embedding space<a hidden class="anchor" aria-hidden="true" href="#regularities-in-word2vec-embedding-space">#</a></h3>
+<p>Paper: <em><a href="https://www.aclweb.org/anthology/N13-1090.pdf">Linguistic Regularities in Continuous Space Word Representations</a></em></p>
+<p>It was shown that a simple method like the <strong>Vector Offset Method</strong> is very effective in solving analogy questions, like $a:b = c:d$ where $d$ is unknown. It works as follows: find the embedding vectors $x_a,x_b,x_c$ (all normalized to unit norm) and then compute $y = x_b - x_a + x_c$. $y$ will be the continuous representation of the word we expect to be the best answer. Since no word might exist at that exact position, we search for the word whose embedding vector has the greatest cosine similarity to $y$:</p>
+<p>$$
+w^* = argmax_w \frac{x_w y}{||x_w||||y||}
+$$</p>
+
+
+<img src="/img/word-embeddings/word_embedding_example.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px;">
+<p style="text-align: center">Image from <a href="https://www.aclweb.org/anthology/N13-1090.pdf">Linguistic Regularities in Continuous Space Word Representations</a></p>
+
+<p>Some interesting &ldquo;semantic equations&rdquo; that can be computed using embedding vectors are:</p>
+<p>$$
+\displaylines{w_{king} - w_{man} + w_{woman} \cong w_{queen} \\ w_{paris} - w_{france} + w_{italy} \cong w_{rome} \\ w_{einstein} - w_{scientist} + w_{painter} \cong w_{picasso} \\ w_{his} - w_{he} + w_{she} \cong w_{her} \\ w_{cu} - w_{copper} + w_{gold} \cong w_{au}}
+$$</p>
+<h2 id="glove">GloVe<a hidden class="anchor" aria-hidden="true" href="#glove">#</a></h2>
+<p><strong>Paper:</strong> <em><a href="https://www.aclweb.org/anthology/D14-1162.pdf">GloVe: Global Vectors for Word Representation</a></em></p>
+<p>GloVe (Global Vectors) is another method for word embedding. It does explicitly what Word2Vec does implicitly, trying to extract meanings from <strong>co-occurence probabilities</strong>. Let&rsquo;s see how it works:</p>
+<ul>
+<li>$X$ is the matrix of word-word co-occurence counts, so that $X_{ij}$ representes the number of times the word $j$ occurs in the context of word $i$.</li>
+<li>$X_i = \sum_{k} X_{ik}$ is the number of times any word appears in the context of word $i$.</li>
+<li>$P_{ij} = P(j|i) = X{ij}/X_i$ is the probability that word $j$ appears in context of word $i$.</li>
+</ul>
+<p>Suppose for example that we have two words $i = ice$ and $j = steam$. We can study the relationship between these two words by considering the ratio of their co-occurence probabilities with other words $k$.</p>
+<p>If we take a word related to $ice$ but not related to $steam$, like $k = solid$, the ratio $\frac{P_{ik}}{P_{jk}}$ will be large. Viceversa, if $k$ is related to $steam$ but not to $ice$, the ratio will be small. Finally, if $k$ is related to both or to neither, the ratio will be close to $1$.</p>
+
+
+<img src="/img/word-embeddings/glove_table.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px;">
+<p style="text-align: center">Table from <a href="https://www.aclweb.org/anthology/D14-1162.pdf">Jeffrey Pennington, Richard Socher, Christopher D. Manning - GloVe: Global Vectors for Word Representation</a></p>
+
+<p>The underlying idea is that the ratio is better than the mere probabilities at distinguish relevant words from irrelevant words. Thus, the most general model can be written as</p>
+<p>$$
+F(w_i, w_j, \tilde{w_k}) = \frac{P_{ik}}{P_{jk}}
+$$</p>
+<p>$F$ should be chosen so that it will encode the information coming from the ratio in the word vector space. One straightforward choice could be</p>
+<p>$$
+F(w_i - w_j, \tilde{w_k}) = \frac{P_{ik}}{P_{jk}}
+$$</p>
+<p>and then transforming its arguments in a scalar to match with the right-hand side term we obtain</p>
+<p>$$
+F((w_i - w_j)^T \tilde{w_k}) = \frac{P_{ik}}{P_{jk}}
+$$</p>
+<p>After this step, in the paper other transformations are applied, mainly in order to make the equation symmetric. If you are interested, please read the original paper for more details. For now, let&rsquo;s consider the final equation, i.e.</p>
+<p>$$
+w_i^T \tilde{w}_k + b_i + \tilde{b}_k = \log{(X_{ik})}
+$$</p>
+<p>that actually becomes</p>
+<p>$$
+w_i^T \tilde{w}_k + b_i + \tilde{b}_k = \log{(1 + X_{ik})}
+$$</p>
+<p>to prevent the logarithm to diverge when its argument is zero.</p>
+<p>This model, however, has the problem of weighting all co-occurences equally, no matter if they happen rarely or never. To address this problem a specific loss function is used:</p>
+<p>$$
+J = \sum_{i,j=1}^{V} f(X_{ij}) (w_i^T \tilde{w}_j + b_i + \tilde{b}_j - log X_{ij})^2
+$$</p>
+<p>where $f(X_{ij})$ is a weighting function with some interesting properties in order to deal with rare and frequent co-occurences (again, read the paper for more details).</p>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ul>
+<li><a href="http://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf">Yoshua Bengio, Réjean Ducharme, Pascal Vincent, Christian Jauvin - A Neural Probabilistic Language Model</a></li>
+<li><a href="https://arxiv.org/pdf/1301.3781.pdf">Tomas Mikolov, Kai Chen, Greg Corrado, and Jeffrey Dean - Efficient Estimation of Word Representations in Vector Space</a></li>
+<li><a href="https://www.aclweb.org/anthology/N13-1090.pdf">Tomas Mikolov, Wen-tau Yih, Geoffrey Zweig - Linguistic Regularities in Continuous Space Word Representations</a></li>
+<li><a href="https://www.aclweb.org/anthology/D14-1162.pdf">Jeffrey Pennington, Richard Socher, Christopher D. Manning - GloVe: Global Vectors for Word Representation</a></li>
+<li><a href="https://lilianweng.github.io/lil-log/2017/10/15/learning-word-embedding.html">Lil&rsquo;Log Github Blog - Learning Word Embedding</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/cbow/">CBOW</a></li>
+      <li><a href="/tags/skip-gram/">Skip-gram</a></li>
+      <li><a href="/tags/word-embedding/">word embedding</a></li>
+      <li><a href="/tags/word2vec/">word2vec</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

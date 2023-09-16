@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Object Localization and Detection | Matt Log</title>
+<meta name="keywords" content="object localization, object detection, R-CNN, Fast R-CNN, Faster R-CNN, YOLO">
+<meta name="description" content="In this post I will introduce the Object Localization and Detection task, starting from the most straightforward solutions, to the best models that reached state-of-the-art performances, i.e. R-CNN, Fast R-CNN, Faster R-CNN and YOLO.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/object-localization-and-detection/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Object Localization and Detection" />
+<meta property="og:description" content="In this post I will introduce the Object Localization and Detection task, starting from the most straightforward solutions, to the best models that reached state-of-the-art performances, i.e. R-CNN, Fast R-CNN, Faster R-CNN and YOLO.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/object-localization-and-detection/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-12-18T22:55:08+02:00" />
+<meta property="article:modified_time" content="2019-12-18T22:55:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Object Localization and Detection"/>
+<meta name="twitter:description" content="In this post I will introduce the Object Localization and Detection task, starting from the most straightforward solutions, to the best models that reached state-of-the-art performances, i.e. R-CNN, Fast R-CNN, Faster R-CNN and YOLO.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Object Localization and Detection",
+      "item": "/posts/object-localization-and-detection/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Object Localization and Detection",
+  "name": "Object Localization and Detection",
+  "description": "In this post I will introduce the Object Localization and Detection task, starting from the most straightforward solutions, to the best models that reached state-of-the-art performances, i.e. R-CNN, Fast R-CNN, Faster R-CNN and YOLO.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the \u0026lsquo;Artificial Neural Networks and Deep Learning\u0026rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.",
+  "keywords": [
+    "object localization", "object detection", "R-CNN", "Fast R-CNN", "Faster R-CNN", "YOLO"
+  ],
+  "articleBody": "In this post I will introduce the Object Localization and Detection task, starting from the most straightforward solutions, to the best models that reached state-of-the-art performances, i.e. R-CNN, Fast R-CNN, Faster R-CNN and YOLO.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the ‘Artificial Neural Networks and Deep Learning’ course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.\nObject Localization and Detection Localization In localization, the input image contains a single relevant object to be classified in a fixed set of categories.\nThe task is:\n assign the object class to the image locate the object in the image by its bounding box  The simplest solution The most straightforward idea can be the following: since we need to predict both the class label and the bounding box, we can train a network to predict both. That is usually done by attaching another fully connected layer on the last convolution layer.\nBy doing this, we need to use a specific loss function, more precisely a multitask loss, which combines two different losses, one for the class label predictions (classification) and the other for the bounding box predictions (regression):\n$$ L(x) = \\alpha S(x) + (1 - \\alpha) R(x) $$\nwhere $\\alpha$ is a hyperparameter of the network.\nNote that this approach works only for one object at a time.\nWeakly-Supervised Localization As far as we have seen until now, our training dataset must be composed of annotated images with labels and a bounding box for each object. In order to avoid this expensive representation, weakly-supervised localization can be used.\nThe idea is to perform localization by getting rid of the annotated bounding boxes.\nThe Global Average Pooling revisited\nReference paper: Learning Deep Features for Discriminative Localization\n While this technique was previously proposed as a means for regularizing training, we find that it actually builds a generic localizable deep representation that exposes the implicit attention of CNNs on an image. Despite the apparent simplicity of global average pooling, we are able to achieve 37.1% top-5 error for object localization on ILSVRC 2014 without training on any bounding box annotation.\n Image from Learning Deep Features for Discriminative Localization\nHow can we obtain such results? If we consider a standard architecture made only of convolutions and activation functions, we know that it leads to a final layer having $n$ feature maps $f_k(:,:)$ having resolution “similar” to the input image. At this point global average pooling is performed, giving a vector made of $n$ averages $F_k$.\nWe then add and train a fully connected layer after the GAP. This FC computes $S_c$ for each class $c$ by the weighted sum of ${F_k}$, where weights are defined during training. Finally, the class probability $P_c$ is computed via softmax.\n$$ S_c = \\sum_{k} w_k^c F_k $$\nwhere $w_k^c$ represents the importance of $F_k$ for the class $c$.\nHowever, we can also write\n$$ S_c = \\sum_{k} w_k^c \\sum_{x,y} f_k(x,y) = \\sum_{x,y}\\sum_{k} w_k^c f_k(x,y) $$\nand $M_c(x,y) = \\sum_{k} w_k^c f_k(x,y)$ is exactly the so-called **Class Activation Mapping (CAM)**, indicating the importance of the activations at $(x,y)$ for predicting the class $c$.\nImage from Learning Deep Features for Discriminative Localization\nAs written in the paper, weakly supervised object localization was already tried by Oquab et al with Global Max Pooling. The idea behind the use of GAP is that it encourages the network to identify the extent of the object as compared to GMP which encourages it to identify just one discriminative part.\nObject Detection Task: given a fixed set of categories and an input image which contains an unknown and varying number of instances, draw a bounding box on each object instance.\nThe sliding window approach The sliding window approach is the most straightforward solution. We simply apply a standard CNN to each crop of the image, sliding on it a window of fixed size and classifying each region.\nThe problems of this solution are clear:\n very inefficient, since it doesn’t use features that are “shared” among overlapping crops how can we choose the crop size? difficult to detect objects at different scales a huge number of crops of different sizes should be considered  The only advantage is that there is no need to retrain the CNN.\nRegion proposals Region proposal algorithms (and networks) are meant to identify bounding boxes that correspond to a candidate object in the image. Thus, RCNN (Regions + CNN) consists of applying a region proposal algorithm and classify the image inside each proposal region by using a CNN.\nR-CNN\nReference paper: Rich feature hierarchies for accurate object detection and semantic segmentation\nImage from Rich feature hierarchies for accurate object detection and semantic segmentation\n Our approach combines two key insights: (1) one can apply high-capacity convolutional neural networks (CNNs) to bottom-up region proposals in order to localize and segment objects and (2) when labeled training data is scarce, supervised pre-training for an auxiliary task, followed by domain-specific fine-tuning, yields a significant performance boost.\n Considering the above image, the Extract region proposal step can be performed with many different techniques, since, as said in the paper, R-CNN is agnostic to the particular region proposal method. Then, there is the Feature extraction phase, in which a standard CNN is used. Note that before this, the extracted regions are warped to a predefined size in order to make them compatible with the CNN (because of the FC layer at the end). In the last step, SVM + BB regressor are used to classify regions. A linear SVM per class is used to classify between object and background (an IoU overlap threshold is used to deal with cases in which the object and the background overlap), while the Bounding Box regressor is used to improve localization performance, by refining the region proposals using the features computed by the CNN.\nThe CNN of the paper was discriminatively pretrained on a large auxiliary dataset and then fine-tuned to adapt it to the new task and the new domain.\nLimitations\n Ad-hoc training objectives and not an end-to-end training  Fine-tune network with softmax classifier (log loss) Train post-hoc linear SVMs (hinge loss) Train post-hoc bounding box regressions (least squares)   Region proposals are from a different algorithm, thus that part has not been optimized for the detection by CNN Training is slow and takes a lot of space to store features Also inference is slow, since the CNN has to be executed on each region proposal (no feature re-use)  Fast R-CNN\nReference paper: Fast R-CNN\n Compared to previous work, Fast R-CNN employs several innovations to improve training and testing speed while also increasing detection accuracy.\n  R-CNN is slow because it performs a ConvNet forward pass for each object proposal, without sharing computation.\n Advantages of Fast R-CNN:\n Higher detection quality (mAP) than R-CNN and SPPnet (the latter is another architecture, which solves some problems of R-CNN) Training is single-stage, using a multi-task loss Training can update all network layers No disk storage is required for feature caching  Fast R-CNN takes as input an entire image and a set of object proposals. The network first processes the image with several convolutional and max pooling layers, and then, for each object proposal, a region of interest (RoI) pooling layer, followed by fully connected layers, extracts a fixed-length feature vector from the feature map. Then, the network has two output vectors per RoI: softmax probabilities and per-class bounding-box regression offsets.\nThe RoI pooling layer works by dividing each RoI window into a grid of sub-windows and then max-pooling the values in each sub-window. The pool size is dependent on the input, so that the output always has the same size, because also in this case we have fully connected layers, which require a fixed input size.\nImage from Fast R-CNN\nSo, we can say that the main advantage of this solution is that it is possible to backpropagate through the whole network, and thus train it in an end-to-end manner. Both the training and testing phase are much faster than in R-CNN.\n The inefficiency of backpropagation in R-CNN and SPPnet networks is due to the fact that each training sample (i.e. each RoI) comes from a different image, and since RoI may have a very large receptive field, the training inputs are very large (often the entire image).\n  In Fast RCNN training, stochastic gradient descent (SGD) minibatches are sampled hierarchically, first by sampling N images and then by sampling R/N RoIs from each image. Critically, RoIs from the same image share computation and memory in the forward and backward passes.\n Moreover, if in R-CNN the softmax classifier, the SVMs and the regressors were trained in three different stages, in Fast R-CNN the softmax classifier and the bounding-box regressors are jointly optimized.\nNotice also that in Fast R-CNN SVMs are no more used, substituted by the softmax classifier learnt during fine-tuning, since it was shown to perform a bit better.\nOne “problem”, however, is still present: it still depends on some external RoI extraction algorithm.\nFaster R-CNN\nReference paper: Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks\nThat is why Faster R-CNN was invented. Indeed, instead of the RoI extraction algorithm, a region proposal network (RPN) is used.\n Our observation is that the convolutional (conv) feature maps used by region-based detectors, like Fast R-CNN, can also be used for generating region proposals. On top of these conv features, we construct RPNs by adding two additional conv layers: one that encodes each conv map position into a short (e.g., 256-d) feature vector and a second that, at each conv map position, outputs an objectness score and regressed bounds for k region proposals relative to various scales and aspect ratios at that location (k = 9 is a typical value).\n Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks\n  Image from Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks\nAs we can see from the above image, a RPN takes as input an image of any size and outputs a set of object proposals, each with a objectness score, i.e. a measure of the membership to a set of object classes vs background. It is essentially a fully convolutional network, that maps each region to a lower-dimensional vector, which is then fed to two FC layers, one for classification and one for regression. Note that for each sliding window $k$ region proposals are simultaneously predicted, parameterized relative to $k$ different anchor boxes. Each anchor is centered at the sliding window and it is associated with a scale and aspect ratio. In the paper they used 3 scales and 3 aspect ratios, thus having 9 anchors for each sliding window. In general, if we consider a conv feature map of size $H \\times W$, the total number of anchors is equal to $H \\times W \\times k$.\nIt is worth to show that now we have 4 losses:\n RPN classify object/non object RPN regression coordinates Final classification score Final BB coordinates  Apart from that, we can say that more or less the rest is a Fast R-CNN. At test time, indeed, we take the top $\\sim 300$ anchors according to their object scores and we consider the refined BB locations of these 300 anchors. These are the RoI to be fed to a Fast R-CNN.\nComparison YOLO/SSD R-CNN methods are based on region proposals. However, there are also region-free methods, like:\n YOLO: You Only Look Once SSD: Single Shot Detectors  Reference paper: You Only Look Once: Unified, Real-Time Object Detection\n Prior work on object detection repurposes classifiers to perform detection. Instead, we frame object detection as a regression problem to spatially separated bounding boxes and associated class probabilities. A single neural network predicts bounding boxes and class probabilities directly from full images in one evaluation. Since the whole detection pipeline is a single network, it can be optimized end-to-end directly on detection performance.\n You Only Look Once: Unified, Real-Time Object Detection\n  Image from You Only Look Once: Unified, Real-Time Object Detection\nHow does it work?\n Divide the input image into an $S \\times S$ grid  If the center of an object falls into a grid cell, that grid cell is responsible for detecting that object.\n Each grid cell predicts $B$ bounding boxes and confidence score for those boxes. Confidence is defined as $Pr(Object) \\cdot IOU_{pred}^{truth}$ Each grid cell also predicts $C$ conditional class probabilities $Pr(class_i | Object)$  At test time the conditional class probabilities are multiplied by the individual box confidence predictions, so that the resulting scores encode both the probability of that class appearing in the box and how well the predicted box fits the object.\nImage from You Only Look Once: Unified, Real-Time Object Detection\nThe network of YOLO is a “simple” CNN, inspired by the GoogLeNet model, with the convolutional layers pretrained on ImageNet.\nImage from You Only Look Once: Unified, Real-Time Object Detection\nYOLO is incredibly faster than all the other methods we have seen. One limitation is that due to the spatial constraint imposed on the bounding box predictions (each grid cell can only have one class), the network struggles with small objects that appear in groups.\nReferences  B. Zhou, A. Khosla, A. Lapedriza, A. Oliva, A. Torralba - Learning Deep Features for Discriminative Localization R. Girshick, J. Donahue, T. Darrell, J. Malik - Rich feature hierarchies for accurate object detection and semantic segmentation Ross Girshick - Fast R-CNN S. Ren, K. He, R. Girshick, J. Sun - Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks J. Redmon, S. Divvala, R. Girshick, A. Farhadi - You Only Look Once: Unified, Real-Time Object Detection Object Localization and Detection  ",
+  "wordCount" : "2306",
+  "inLanguage": "en",
+  "datePublished": "2019-12-18T22:55:08+02:00",
+  "dateModified": "2019-12-18T22:55:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/object-localization-and-detection/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Object Localization and Detection
+    </h1>
+    <div class="post-meta"><span title='2019-12-18 22:55:08 +0200 +0200'>December 18, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post I will introduce the <strong>Object Localization and Detection</strong> task, starting from the most straightforward solutions, to the best models that reached state-of-the-art performances, i.e. <strong>R-CNN</strong>, <strong>Fast R-CNN</strong>, <strong>Faster R-CNN</strong> and <strong>YOLO</strong>.</p>
+<p><strong>Disclaimer:</strong> <em>These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am just putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone interested in this topic.</em></p>
+<h1 id="object-localization-and-detection">Object Localization and Detection<a hidden class="anchor" aria-hidden="true" href="#object-localization-and-detection">#</a></h1>
+<h2 id="localization">Localization<a hidden class="anchor" aria-hidden="true" href="#localization">#</a></h2>
+<p>In localization, the input image contains a single relevant object to be classified in a fixed set of categories.</p>
+<p>The task is:</p>
+<ul>
+<li>assign the object class to the image</li>
+<li>locate the object in the image by its bounding box</li>
+</ul>
+
+
+<img src="/img/object-localization-and-detection/hawk.png" style="display: block; margin-left: auto; margin-right: auto; width: 200px; heigth: 300px;">
+
+<h3 id="the-simplest-solution">The simplest solution<a hidden class="anchor" aria-hidden="true" href="#the-simplest-solution">#</a></h3>
+<p>The most straightforward idea can be the following: since we need to predict both the class label and the bounding box, we can train a network to predict both. That is usually done by attaching another fully connected layer on the last convolution layer.</p>
+<p>By doing this, we need to use a specific loss function, more precisely a multitask loss, which combines two different losses, one for the class label predictions (classification) and the other for the bounding box predictions (regression):</p>
+<p>$$
+L(x) = \alpha S(x) + (1 - \alpha) R(x)
+$$</p>
+<p>where $\alpha$ is a hyperparameter of the network.</p>
+<p>Note that this approach works only for one object at a time.</p>
+<h3 id="weakly-supervised-localization">Weakly-Supervised Localization<a hidden class="anchor" aria-hidden="true" href="#weakly-supervised-localization">#</a></h3>
+<p>As far as we have seen until now, our training dataset must be composed of annotated images with labels and a bounding box for each object. In order to avoid this expensive representation, weakly-supervised localization can be used.</p>
+<p>The idea is to perform localization by getting rid of the annotated bounding boxes.</p>
+<p><strong>The Global Average Pooling revisited</strong></p>
+<p>Reference paper: <em><a href="http://cnnlocalization.csail.mit.edu/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf">Learning Deep Features for Discriminative Localization</a></em></p>
+<blockquote>
+<p>While this technique was previously proposed as a means for regularizing training, we find that it actually builds a generic localizable deep representation that exposes the implicit attention of CNNs on an image. Despite the apparent simplicity of global average pooling, we are able to achieve 37.1% top-5 error for object localization on ILSVRC 2014 without training on any bounding box annotation.</p>
+</blockquote>
+
+
+<img src="/img/object-localization-and-detection/GAP_example.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px; height: 250px;">
+<p style="text-align: center">Image from <a href="http://cnnlocalization.csail.mit.edu/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf">Learning Deep Features for Discriminative Localization</a></p>
+
+<p>How can we obtain such results? If we consider a standard architecture made only of convolutions and activation functions, we know that it leads to a final layer having $n$ feature maps $f_k(:,:)$ having resolution &ldquo;similar&rdquo; to the input image. At this point global average pooling is performed, giving a vector made of $n$ averages $F_k$.</p>
+
+
+<img src="/img/object-localization-and-detection/GAP1.png" style="display: block; margin-left: auto; margin-right: auto;">
+
+<p>We then add and train a fully connected layer after the GAP. This FC computes $S_c$ for each class $c$ by the weighted sum of ${F_k}$, where weights are defined during training. Finally, the class probability $P_c$ is computed via softmax.</p>
+<p>$$
+S_c = \sum_{k} w_k^c F_k
+$$</p>
+<p>where $w_k^c$ represents the importance of $F_k$ for the class $c$.</p>
+
+
+<img src="/img/object-localization-and-detection/GAP2.png" style="display: block; margin-left: auto; margin-right: auto;">
+
+<p>However, we can also write</p>
+<p>$$
+S_c = \sum_{k} w_k^c \sum_{x,y} f_k(x,y) = \sum_{x,y}\sum_{k} w_k^c f_k(x,y)
+$$</p>
+<p>and $M_c(x,y) = \sum_{k} w_k^c f_k(x,y)$ is exactly the so-called **Class Activation Mapping (CAM)**, indicating the importance of the activations at $(x,y)$ for predicting the class $c$.</p>
+
+
+<img src="/img/object-localization-and-detection/CAM.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Image from <a href="http://cnnlocalization.csail.mit.edu/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf">Learning Deep Features for Discriminative Localization</a></p>
+
+<p>As written in the paper, weakly supervised object localization was already tried by Oquab <em>et al</em> with <strong>Global Max Pooling</strong>. The idea behind the use of <strong>GAP</strong> is that it encourages the network to identify the extent of the object as compared to <strong>GMP</strong> which encourages it to identify just one discriminative part.</p>
+<h2 id="object-detection">Object Detection<a hidden class="anchor" aria-hidden="true" href="#object-detection">#</a></h2>
+<p>Task: given a fixed set of categories and an input image which contains an unknown and varying number of instances, draw a bounding box on each object instance.</p>
+<h3 id="the-sliding-window-approach">The sliding window approach<a hidden class="anchor" aria-hidden="true" href="#the-sliding-window-approach">#</a></h3>
+<p>The sliding window approach is the most straightforward solution. We simply apply a standard CNN to each crop of the image, sliding on it a window of fixed size and classifying each region.</p>
+<p>The problems of this solution are clear:</p>
+<ul>
+<li>very inefficient, since it doesn&rsquo;t use features that are &ldquo;shared&rdquo; among overlapping crops</li>
+<li>how can we choose the crop size?</li>
+<li>difficult to detect objects at different scales</li>
+<li>a huge number of crops of different sizes should be considered</li>
+</ul>
+<p>The only advantage is that there is no need to retrain the CNN.</p>
+<h3 id="region-proposals">Region proposals<a hidden class="anchor" aria-hidden="true" href="#region-proposals">#</a></h3>
+<p>Region proposal algorithms (and networks) are meant to identify bounding boxes that correspond to a candidate object in the image. Thus, RCNN (Regions + CNN) consists of applying a region proposal algorithm and classify the image inside each proposal region by using a CNN.</p>
+<p><strong>R-CNN</strong></p>
+<p><strong>Reference paper:</strong> <em><a href="https://arxiv.org/pdf/1311.2524.pdf">Rich feature hierarchies for accurate object detection and semantic segmentation</a></em></p>
+
+
+<img src="/img/object-localization-and-detection/R-CNN.png" style="display: block; margin-left: auto; margin-right: auto; width: 580px; height: 230px;">
+<p style="text-align: center">Image from <a href="https://arxiv.org/pdf/1311.2524.pdf">Rich feature hierarchies for accurate object detection and semantic segmentation</a></p>
+
+<blockquote>
+<p>Our approach combines two key insights: (1) one can apply high-capacity convolutional neural networks (CNNs) to bottom-up region proposals in order to localize and segment objects and (2) when labeled training data is scarce, supervised pre-training for an auxiliary task, followed by domain-specific fine-tuning, yields a significant performance boost.</p>
+</blockquote>
+<p>Considering the above image, the <em>Extract region proposal</em> step can be performed with many different techniques, since, as said in the paper, R-CNN is agnostic to the particular region proposal method. Then, there is the <em>Feature extraction</em> phase, in which a standard CNN is used. Note that before this, the extracted regions are warped to a predefined size in order to make them compatible with the CNN (because of the FC layer at the end). In the last step, <strong>SVM + BB regressor</strong> are used to classify regions. A linear SVM per class is used to classify between <em>object</em> and <em>background</em> (an IoU overlap threshold is used to deal with cases in which the object and the background overlap), while the Bounding Box regressor is used to improve localization performance, by refining the region proposals using the features computed by the CNN.</p>
+<p>The CNN of the paper was discriminatively <strong>pretrained</strong> on a large auxiliary dataset and then <strong>fine-tuned</strong> to adapt it to the new task and the new domain.</p>
+<p><strong>Limitations</strong></p>
+<ul>
+<li>Ad-hoc training objectives and not an end-to-end training
+<ul>
+<li>Fine-tune network with softmax classifier (log loss)</li>
+<li>Train post-hoc linear SVMs (hinge loss)</li>
+<li>Train post-hoc bounding box regressions (least squares)</li>
+</ul>
+</li>
+<li>Region proposals are from a different algorithm, thus that part has not been optimized for the detection by CNN</li>
+<li>Training is slow and takes a lot of space to store features</li>
+<li>Also inference is slow, since the CNN has to be executed on each region proposal (no feature re-use)</li>
+</ul>
+<p><strong>Fast R-CNN</strong></p>
+<p><strong>Reference paper:</strong> <em><a href="https://arxiv.org/pdf/1504.08083.pdf">Fast R-CNN</a></em></p>
+<blockquote>
+<p>Compared to previous work, Fast R-CNN employs several innovations to improve training and testing speed while also increasing detection accuracy.</p>
+</blockquote>
+<blockquote>
+<p>R-CNN is slow because it performs a ConvNet forward pass for each object proposal, without sharing computation.</p>
+</blockquote>
+<p>Advantages of Fast R-CNN:</p>
+<ul>
+<li>Higher detection quality (mAP) than R-CNN and SPPnet (the latter is another architecture, which solves some problems of R-CNN)</li>
+<li>Training is single-stage, using a multi-task loss</li>
+<li>Training can update all network layers</li>
+<li>No disk storage is required for feature caching</li>
+</ul>
+<p>Fast R-CNN takes as input an entire image and a set of object proposals. The network first processes the image with several convolutional and max pooling layers, and then, for each object proposal, a <strong>region of interest (RoI) pooling layer</strong>, followed by fully connected layers, extracts a fixed-length feature vector from the feature map. Then, the network has two output vectors per RoI: softmax probabilities and per-class bounding-box regression offsets.</p>
+<p>The RoI pooling layer works by dividing each RoI window into a grid of sub-windows and then <strong>max-pooling</strong> the values in each sub-window. The pool size is dependent on the input, so that the output always has the same size, because also in this case we have fully connected layers, which require a fixed input size.</p>
+
+
+<img src="/img/object-localization-and-detection/Fast_R-CNN.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px; height: 200px;">
+<p style="text-align: center">Image from <a href="https://arxiv.org/pdf/1504.08083.pdf">Fast R-CNN</a></p>
+
+<p>So, we can say that the main advantage of this solution is that it is possible to <strong>backpropagate through the whole network</strong>, and thus train it in an <strong>end-to-end</strong> manner. Both the training and testing phase are much faster than in R-CNN.</p>
+<blockquote>
+<p>The inefficiency of backpropagation in R-CNN and SPPnet networks is due to the fact that each training sample (i.e. each RoI) comes from a different image, and since RoI may have a very large receptive field, the training inputs are very large (often the entire image).</p>
+</blockquote>
+<blockquote>
+<p>In Fast RCNN training, stochastic gradient descent (SGD) minibatches are sampled hierarchically, first by sampling N images and then by sampling R/N RoIs from each image. Critically, RoIs from the same image share computation and memory in the forward and backward passes.</p>
+</blockquote>
+<p>Moreover, if in R-CNN the softmax classifier, the SVMs and the regressors were trained in three different stages, in Fast R-CNN the softmax classifier and the bounding-box regressors are jointly optimized.</p>
+<p>Notice also that in Fast R-CNN SVMs are no more used, substituted by the softmax classifier learnt during fine-tuning, since it was shown to perform a bit better.</p>
+<p>One &ldquo;problem&rdquo;, however, is still present: it still depends on some external RoI extraction algorithm.</p>
+<p><strong>Faster R-CNN</strong></p>
+<p><strong>Reference paper:</strong> <em><a href="http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf">Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks</a></em></p>
+<p>That is why Faster R-CNN was invented. Indeed, instead of the RoI extraction algorithm, a region proposal network <strong>(RPN)</strong> is used.</p>
+<blockquote>
+<p>Our observation is that the convolutional (conv) feature maps used by region-based detectors, like Fast R-CNN, can also be used for generating region proposals. On top of these conv features, we construct RPNs by adding two additional conv layers: one that encodes each conv map position into a short (e.g., 256-d) feature vector and a second that, at each conv map position, outputs an objectness score and regressed bounds for k region proposals relative to various scales and aspect ratios at that location (k = 9 is a typical value).</p>
+<blockquote>
+<p>Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks</p>
+</blockquote>
+</blockquote>
+
+
+<img src="/img/object-localization-and-detection/RPN.png" style="display: block; margin-left: auto; margin-right: auto; width: 500px; height: 300px;">
+<p style="text-align: center">Image from <a href="http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf">Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks</a></p>
+
+<p>As we can see from the above image, a RPN takes as input an image of any size and outputs a set of object proposals, each with a <strong>objectness score</strong>, i.e. a measure of the membership to a set of object classes vs background. It is essentially a fully convolutional network, that maps each region to a lower-dimensional vector, which is then fed to two FC layers, one for classification and one for regression. Note that for each sliding window $k$ region proposals are simultaneously predicted, parameterized relative to $k$ different <strong>anchor boxes</strong>. Each anchor is centered at the sliding window and it is associated with a scale and aspect ratio. In the paper they used 3 scales and 3 aspect ratios, thus having 9 anchors for each sliding window. In general, if we consider a conv feature map of size $H \times W$, the total number of anchors is equal to $H \times W \times k$.</p>
+<p>It is worth to show that now we have 4 losses:</p>
+<ul>
+<li>RPN classify object/non object</li>
+<li>RPN regression coordinates</li>
+<li>Final classification score</li>
+<li>Final BB coordinates</li>
+</ul>
+<p>Apart from that, we can say that more or less the rest is a Fast R-CNN. At test time, indeed, we take the top $\sim 300$ anchors according to their object scores and we consider the refined BB locations of these 300 anchors. <strong>These are the RoI to be fed to a Fast R-CNN</strong>.</p>
+<h4 id="comparison">Comparison<a hidden class="anchor" aria-hidden="true" href="#comparison">#</a></h4>
+
+
+<img src="/img/object-localization-and-detection/R-CNN_comparison.png" style="display: block; margin-left: auto; margin-right: auto; width: 450px; height: 220px;">
+
+<h3 id="yolossd">YOLO/SSD<a hidden class="anchor" aria-hidden="true" href="#yolossd">#</a></h3>
+<p>R-CNN methods are based on region proposals. However, there are also region-free methods, like:</p>
+<ul>
+<li>YOLO: You Only Look Once</li>
+<li>SSD: Single Shot Detectors</li>
+</ul>
+<p><strong>Reference paper:</strong> <em><a href="https://arxiv.org/pdf/1506.02640.pdf">You Only Look Once: Unified, Real-Time Object Detection</a></em></p>
+<blockquote>
+<p>Prior work on object detection repurposes classifiers to perform detection. Instead, we frame object detection as a regression problem to spatially separated bounding boxes and associated class probabilities. A single neural network predicts bounding boxes and class probabilities directly from full images in one evaluation. Since the whole detection pipeline is a single network, it can be optimized end-to-end directly on detection performance.</p>
+<blockquote>
+<p>You Only Look Once: Unified, Real-Time Object Detection</p>
+</blockquote>
+</blockquote>
+
+
+<img src="/img/object-localization-and-detection/YOLO.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Image from <a href="https://arxiv.org/pdf/1506.02640.pdf">You Only Look Once: Unified, Real-Time Object Detection</a></p>
+
+<p>How does it work?</p>
+<ul>
+<li>Divide the input image into an $S \times S$ grid</li>
+</ul>
+<p>If the center of an object falls into a grid cell, that grid cell is responsible for detecting that object.</p>
+<ul>
+<li>Each grid cell predicts $B$ bounding boxes and confidence score for those boxes. Confidence is defined as $Pr(Object) \cdot IOU_{pred}^{truth}$</li>
+<li>Each grid cell also predicts $C$ conditional class probabilities $Pr(class_i | Object)$</li>
+</ul>
+<p>At test time the conditional class probabilities are multiplied by the individual box confidence predictions, so that the resulting scores encode both the probability of that class appearing in the box and how well the predicted box fits the object.</p>
+
+
+<img src="/img/object-localization-and-detection/YOLO_example.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Image from <a href="https://arxiv.org/pdf/1506.02640.pdf">You Only Look Once: Unified, Real-Time Object Detection</a></p>
+
+<p>The network of YOLO is a &ldquo;simple&rdquo; CNN, inspired by the GoogLeNet model, with the convolutional layers pretrained on ImageNet.</p>
+
+
+<img src="/img/object-localization-and-detection/YOLO_architecture.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Image from <a href="https://arxiv.org/pdf/1506.02640.pdf">You Only Look Once: Unified, Real-Time Object Detection</a></p>
+
+<p>YOLO is incredibly faster than all the other methods we have seen. One limitation is that due to the <strong>spatial constraint</strong> imposed on the bounding box predictions (each grid cell can only have one class), the network struggles with small objects that appear in groups.</p>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ul>
+<li><a href="http://cnnlocalization.csail.mit.edu/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf">B. Zhou, A. Khosla, A. Lapedriza, A. Oliva, A. Torralba - Learning Deep Features for Discriminative Localization</a></li>
+<li><a href="https://arxiv.org/pdf/1311.2524.pdf">R. Girshick, J. Donahue, T. Darrell, J. Malik - Rich feature hierarchies for accurate object detection and semantic segmentation</a></li>
+<li><a href="https://arxiv.org/pdf/1504.08083.pdf">Ross Girshick - Fast R-CNN</a></li>
+<li><a href="http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf">S. Ren, K. He, R. Girshick, J. Sun - Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks</a></li>
+<li><a href="https://arxiv.org/pdf/1506.02640.pdf">J. Redmon, S. Divvala, R. Girshick, A. Farhadi - You Only Look Once: Unified, Real-Time Object Detection</a></li>
+<li><a href="https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/object_localization_and_detection.html">Object Localization and Detection</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/fast-r-cnn/">Fast R-CNN</a></li>
+      <li><a href="/tags/faster-r-cnn/">Faster R-CNN</a></li>
+      <li><a href="/tags/object-detection/">object detection</a></li>
+      <li><a href="/tags/object-localization/">object localization</a></li>
+      <li><a href="/tags/r-cnn/">R-CNN</a></li>
+      <li><a href="/tags/yolo/">YOLO</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

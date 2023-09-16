@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Introduction to GAN | Matt Log</title>
+<meta name="keywords" content="generative models, autoencoders, GAN">
+<meta name="description" content="In this post I will give you an introduction to Generative Adversarial Networks, explaining the reasons behind their architecture and how they are trained.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/intro-to-gan/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Introduction to GAN" />
+<meta property="og:description" content="In this post I will give you an introduction to Generative Adversarial Networks, explaining the reasons behind their architecture and how they are trained.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/intro-to-gan/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-12-21T22:55:08+02:00" />
+<meta property="article:modified_time" content="2019-12-21T22:55:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Introduction to GAN"/>
+<meta name="twitter:description" content="In this post I will give you an introduction to Generative Adversarial Networks, explaining the reasons behind their architecture and how they are trained.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Introduction to GAN",
+      "item": "/posts/intro-to-gan/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Introduction to GAN",
+  "name": "Introduction to GAN",
+  "description": "In this post I will give you an introduction to Generative Adversarial Networks, explaining the reasons behind their architecture and how they are trained.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the \u0026lsquo;Artificial Neural Networks and Deep Learning\u0026rsquo; course at Polytechnic of Milan, the book \u0026lsquo;Deep Learning\u0026rsquo; (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.",
+  "keywords": [
+    "generative models", "autoencoders", "GAN"
+  ],
+  "articleBody": "In this post I will give you an introduction to Generative Adversarial Networks, explaining the reasons behind their architecture and how they are trained.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the ‘Artificial Neural Networks and Deep Learning’ course at Polytechnic of Milan, the book ‘Deep Learning’ (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.\nGenerative Models As the name suggests, generative models are models with the goal of generating new data instances. The adjective “generative” describes a class of statistical models that contrasts with discriminative models.\nGenerative models, indeed, capture the joint probability $P(X,Y)$, telling us how likely a given example is, while discriminative models capture the conditional probability $P(Y | X)$, ignoring how likely a given example is and just telling how likely a label is to apply to the instance.\nAutoencoders as generative models I will assume that autoencoders are a familiar architecture to the reader, and in the future I’ll probably write a specific post about them. In the meanwhile, it is enough to know that an autoencoder is a specific type of neural network, which is trained to attempt to copy its input to its output. Even if it can sound strange, these models are very useful, since they allow to have an internal and lower-dimension representation of the input data. In fact, the original use of autoencoders was dimensionality reduction and feature learning.\nIn recent years, autoencoders have started to be used also as generative models. The idea is the following:\n Train an autoencoder on a training set of images $S$ Discard the encoder Draw random vectors to replace the latent representation and feed this to the decoder input  The problem of this approach is that we don’t know the distribution of proper latent representation, or at least it is very difficult to estimate.\nGenerative Adversarial Networks (GANs) Reference paper: Generative Adversarial Nets\nThe difference w.r.t. the previous approach is that here we do not look for an explicit density model describing the manifold of natural images, but we just find out a model that is able to generate samples that “look like” our training samples.\nNow, the main challenge is: how can we define a suitable loss?\nThe idea is to adopt a game theoretic scenario in which the generator network must compete against an adversary. The generator network tries to produce realistic samples in order to fool the discriminator network. The discriminator network tries to distinguish between samples drawn from the training data and samples drawn from the generator, emitting a probability value indicating that $\\boldsymbol{x}$ is a real training example.\nThus, we train both networks and once finished, the decoder can be discarded (since it will output $\\frac{1}{2}$ everywhere).\nConsidering that\n the samples produced by the generator are $\\boldsymbol{x} = g(\\boldsymbol{z};\\boldsymbol{\\theta}^{(g)})$ the emitted probability value of the discriminator is $d(\\boldsymbol{x};\\boldsymbol{\\theta}^{(d)})$ the payoff received by the discriminator is $v(\\boldsymbol{\\theta}^{(g)}, \\boldsymbol{\\theta}^{(d)})$ the payoff received by the generator is $-v(\\boldsymbol{\\theta}^{(g)}, \\boldsymbol{\\theta}^{(d)})$  Since during learning both the generator and the discriminator attempt to maximize its own payoff:\n$$\ng^* = arg\\; min_g\\; max_d\\; v(g,d) $$\nwhere\n$$ v(\\boldsymbol{\\theta}^{(g)}, \\boldsymbol{\\theta}^{(d)}) = E_{\\boldsymbol{x} \\sim p_{data}} log; d(\\boldsymbol{x}) + E_{\\boldsymbol{x} \\sim p_{model}} log(1 - d(\\boldsymbol{x})) $$\nTraining Because of the particular structure of a GAN, where we have two different trained networks, two problems arise when training:\n two different kinds of training (generator and discriminator) convergence is hard to identify  Alternate training\nThe idea is to train the two networks in separated periods:\n Train the discriminator for one or more epochs. During these steps, the generator is kept constant, because the discriminator has to learn the imperfections of the generator, and of course a trained generator is different from a generator that produces random outputs, as happens at the beginning. Train the generator for one or more epochs. During these steps, the discriminator is kept constant, otherwise the generator should try to hit a moving target and might not converge. Repeat  As said, convergence is also a problem, since the discriminator feedback gets less meaningful over time and if the GAN is trained after the point in which the discriminator gives as output a $\\frac{1}{2}$ probability, the generator would start to train on junk feedback.\nImage from Generative Adversarial Nets\nImage from Generative Adversarial Nets\nI think the above image is very interesting and helps to understand what is going on during the training procedure: the lowest line is the domain from which $\\boldsymbol{z}$ is sampled, while the above one is part of the domain of $\\boldsymbol{x}$. The arrows represent the mapping $g(\\boldsymbol{z};\\boldsymbol{\\theta}^{(g)})$, and in fact one can see that the green line, i.e. the generative distribution, is positioned according to them. Instead, the black dotted line represents the data generating distribution, and the blue one the discriminative distribution. The latter is positioned according to its emitted probability, and we can see that on the left of each plot the probabilities are high, since the samples are real training examples, while on the right it correctly recognizes the fake ones produced by the generator. During training we can see how the generator shifts its generative distribution to match the data distribution and how the discriminator struggles to discriminate between fake and real, until reaching convergence, i.e. the horizontal line at probability $\\frac{1}{2}$.\nImprovements over the years If you are interested, these are some papers that improved the original GAN:\n Unsupervised Representation Learning With Deep Convolutional Generative Adversarial Networks Progressive Growing of GANs for Improved Quality, Stability, and Variation Wasserstein GAN Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks Self-Attention Generative Adversarial Networks  References  Generative Adversarial Nets - Ian J. Goodfellow Google Online Course on Generative Models  ",
+  "wordCount" : "985",
+  "inLanguage": "en",
+  "datePublished": "2019-12-21T22:55:08+02:00",
+  "dateModified": "2019-12-21T22:55:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/intro-to-gan/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Introduction to GAN
+    </h1>
+    <div class="post-meta"><span title='2019-12-21 22:55:08 +0200 +0200'>December 21, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post I will give you an introduction to <strong>Generative Adversarial Networks</strong>, explaining the reasons behind their architecture and how they are trained.</p>
+<p><strong>Disclaimer:</strong> <em>These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</em></p>
+<h1 id="generative-models">Generative Models<a hidden class="anchor" aria-hidden="true" href="#generative-models">#</a></h1>
+<p>As the name suggests, generative models are models with the goal of generating new data instances. The adjective &ldquo;generative&rdquo; describes a class of statistical models that contrasts with discriminative models.</p>
+<p>Generative models, indeed, capture the joint probability $P(X,Y)$, telling us how likely a given example is, while discriminative models capture the conditional probability $P(Y | X)$, ignoring how likely a given example is and just telling how likely a label is to apply to the instance.</p>
+<h2 id="autoencoders-as-generative-models">Autoencoders as generative models<a hidden class="anchor" aria-hidden="true" href="#autoencoders-as-generative-models">#</a></h2>
+<p>I will assume that autoencoders are a familiar architecture to the reader, and in the future I&rsquo;ll probably write a specific post about them. In the meanwhile, it is enough to know that an autoencoder is a specific type of neural network, which is trained to attempt to <strong>copy its input to its output</strong>. Even if it can sound strange, these models are very useful, since they allow to have an internal and lower-dimension representation of the input data. In fact, the original use of autoencoders was dimensionality reduction and feature learning.</p>
+
+
+<img src="/img/intro-to-gan/autoencoder.png" style="display: block; margin-left: auto; margin-right: auto; width: 550px; heigth: 350px;">
+
+<p>In recent years, autoencoders have started to be used also as generative models. The idea is the following:</p>
+<ul>
+<li>Train an autoencoder on a training set of images $S$</li>
+<li>Discard the encoder</li>
+<li>Draw random vectors to replace the latent representation and feed this to the decoder input</li>
+</ul>
+<p>The problem of this approach is that <strong>we don&rsquo;t know the distribution of proper latent representation</strong>, or at least it is very difficult to estimate.</p>
+<h2 id="generative-adversarial-networks-gans">Generative Adversarial Networks (GANs)<a hidden class="anchor" aria-hidden="true" href="#generative-adversarial-networks-gans">#</a></h2>
+<p><strong>Reference paper:</strong> <em><a href="https://arxiv.org/pdf/1406.2661.pdf">Generative Adversarial Nets</a></em></p>
+<p>The difference w.r.t. the previous approach is that here we do not look for an explicit density model describing the manifold of natural images, but we just find out a model that is able to generate samples that &ldquo;look like&rdquo; our training samples.</p>
+<p>Now, the main challenge is: <strong>how can we define a suitable loss?</strong></p>
+<p>The idea is to adopt a game theoretic scenario in which the generator network must compete against an adversary. The generator network tries to produce realistic samples in order to fool the discriminator network. The discriminator network tries to distinguish between samples drawn from the training data and samples drawn from the generator, emitting a probability value indicating that $\boldsymbol{x}$ is a real training example.</p>
+<p>Thus, we train both networks and once finished, the decoder can be discarded (since it will output $\frac{1}{2}$ everywhere).</p>
+<p>Considering that</p>
+<ul>
+<li>the samples produced by the generator are $\boldsymbol{x} = g(\boldsymbol{z};\boldsymbol{\theta}^{(g)})$</li>
+<li>the emitted probability value of the discriminator is $d(\boldsymbol{x};\boldsymbol{\theta}^{(d)})$</li>
+<li>the payoff received by the discriminator is $v(\boldsymbol{\theta}^{(g)}, \boldsymbol{\theta}^{(d)})$</li>
+<li>the payoff received by the generator is $-v(\boldsymbol{\theta}^{(g)}, \boldsymbol{\theta}^{(d)})$</li>
+</ul>
+<p>Since during learning both the generator and the discriminator attempt to maximize its own payoff:</p>
+<p>$$<br>
+g^* = arg\; min_g\; max_d\; v(g,d)
+$$</p>
+<p>where</p>
+<p>$$
+v(\boldsymbol{\theta}^{(g)}, \boldsymbol{\theta}^{(d)}) = E_{\boldsymbol{x} \sim p_{data}} log; d(\boldsymbol{x}) + E_{\boldsymbol{x} \sim p_{model}} log(1 - d(\boldsymbol{x}))
+$$</p>
+<h3 id="training">Training<a hidden class="anchor" aria-hidden="true" href="#training">#</a></h3>
+<p>Because of the particular structure of a GAN, where we have two different trained networks, two problems arise when training:</p>
+<ul>
+<li>two different kinds of training (generator and discriminator)</li>
+<li>convergence is hard to identify</li>
+</ul>
+<p><strong>Alternate training</strong></p>
+<p>The idea is to train the two networks in separated periods:</p>
+<ul>
+<li>Train the discriminator for one or more epochs. During these steps, the generator is kept constant, because the discriminator has to learn the imperfections of the generator, and of course a trained generator is different from a generator that produces random outputs, as happens at the beginning.</li>
+<li>Train the generator for one or more epochs. During these steps, the discriminator is kept constant, otherwise the generator should try to hit a moving target and might not converge.</li>
+<li>Repeat</li>
+</ul>
+<p>As said, convergence is also a problem, since the discriminator feedback gets less meaningful over time and if the GAN is trained after the point in which the discriminator gives as output a $\frac{1}{2}$ probability, the generator would start to train on junk feedback.</p>
+
+
+<img src="/img/intro-to-gan/GAN_training.png" style="display: block; margin-left: auto; margin-right: auto; width: 580px; height: 400px;">
+<p style="text-align: center">Image from <a href="https://arxiv.org/pdf/1406.2661.pdf">Generative Adversarial Nets</a></p>
+
+
+
+<img src="/img/intro-to-gan/GAN_training_plots.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Image from <a href="https://arxiv.org/pdf/1406.2661.pdf">Generative Adversarial Nets</a></p>
+
+<p>I think the above image is very interesting and helps to understand what is going on during the training procedure: the lowest line is the domain from which $\boldsymbol{z}$ is sampled, while the above one is part of the domain of $\boldsymbol{x}$. The arrows represent the mapping $g(\boldsymbol{z};\boldsymbol{\theta}^{(g)})$, and in fact one can see that the green line, i.e. the <strong>generative distribution</strong>, is positioned according to them. Instead, the black dotted line represents the <strong>data generating distribution</strong>, and the blue one the <strong>discriminative distribution</strong>. The latter is positioned according to its emitted probability, and we can see that on the left of each plot the probabilities are high, since the samples are real training examples, while on the right it correctly recognizes the fake ones produced by the generator. During training we can see how the generator shifts its generative distribution to match the data distribution and how the discriminator struggles to discriminate between fake and real, until reaching convergence, i.e. the horizontal line at probability $\frac{1}{2}$.</p>
+<h2 id="improvements-over-the-years">Improvements over the years<a hidden class="anchor" aria-hidden="true" href="#improvements-over-the-years">#</a></h2>
+<p>If you are interested, these are some papers that improved the original GAN:</p>
+<ul>
+<li><a href="https://arxiv.org/pdf/1511.06434.pdf">Unsupervised Representation Learning With Deep Convolutional Generative Adversarial Networks</a></li>
+<li><a href="https://arxiv.org/pdf/1710.10196.pdf">Progressive Growing of GANs for Improved Quality, Stability, and Variation</a></li>
+<li><a href="https://arxiv.org/pdf/1701.07875.pdf">Wasserstein GAN</a></li>
+<li><a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Zhu_Unpaired_Image-To-Image_Translation_ICCV_2017_paper.pdf">Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks</a></li>
+<li><a href="https://arxiv.org/pdf/1805.08318.pdf">Self-Attention Generative Adversarial Networks</a></li>
+</ul>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ul>
+<li><a href="https://arxiv.org/pdf/1406.2661.pdf">Generative Adversarial Nets - Ian J. Goodfellow</a></li>
+<li><a href="https://developers.google.com/machine-learning/gan/generative">Google Online Course on Generative Models</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/autoencoders/">autoencoders</a></li>
+      <li><a href="/tags/gan/">GAN</a></li>
+      <li><a href="/tags/generative-models/">generative models</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

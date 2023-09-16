@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>regularization on Matt Log</title>
+    <link>/tags/regularization/</link>
+    <description>Recent content in regularization on Matt Log</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 17 Oct 2019 21:40:08 +0200</lastBuildDate><atom:link href="/tags/regularization/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Bias-Variance Tradeoff and Model Selection</title>
+      <link>/posts/bias-variance-and-model-selection/</link>
+      <pubDate>Thu, 17 Oct 2019 21:40:08 +0200</pubDate>
+      
+      <guid>/posts/bias-variance-and-model-selection/</guid>
+      <description>In this post we will talk about the Bias-Variance tradeoff, explaining where it comes from and how we can manage it, introducing techniques for model selection (feature selection, regularization, dimensionality reduction) and model ensemble (bagging and boosting).
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &amp;lsquo;Pattern Recognition and Machine Learning&#39;.
+Bias-Variance trade-off and Model Selection No Free Lunch Theorems Define $Acc_G(L)$ as the generalization accuracy of the learner $L$, which is the accuracy of $L$ on non-training samples.</description>
+    </item>
+    
+    <item>
+      <title>Linear Regression</title>
+      <link>/posts/linear-regression/</link>
+      <pubDate>Wed, 25 Sep 2019 22:55:08 +0200</pubDate>
+      
+      <guid>/posts/linear-regression/</guid>
+      <description>In this post we will analyze Linear Regression Models in a pretty much detailed way, discussing the different approaches in which the problem can be tackled and also explaining what is regularization.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &amp;lsquo;Pattern Recognition and Machine Learning&#39;.
+The goal of regression is to predict the value of one or more continuous target variables $t$ given the value of a D-dimensional vector $\boldsymbol{x}$ of input variables.</description>
+    </item>
+    
+  </channel>
+</rss>

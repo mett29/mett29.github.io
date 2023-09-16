@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Bias-Variance Tradeoff and Model Selection | Matt Log</title>
+<meta name="keywords" content="bias-variance tradeoff, model selection, feature selection, cross-validation, regularization, dimensionality reduction, PCA, bagging, boosting">
+<meta name="description" content="In this post we will talk about the Bias-Variance tradeoff, explaining where it comes from and how we can manage it, introducing techniques for model selection (feature selection, regularization, dimensionality reduction) and model ensemble (bagging and boosting).
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+Bias-Variance trade-off and Model Selection No Free Lunch Theorems Define $Acc_G(L)$ as the generalization accuracy of the learner $L$, which is the accuracy of $L$ on non-training samples.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/bias-variance-and-model-selection/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Bias-Variance Tradeoff and Model Selection" />
+<meta property="og:description" content="In this post we will talk about the Bias-Variance tradeoff, explaining where it comes from and how we can manage it, introducing techniques for model selection (feature selection, regularization, dimensionality reduction) and model ensemble (bagging and boosting).
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+Bias-Variance trade-off and Model Selection No Free Lunch Theorems Define $Acc_G(L)$ as the generalization accuracy of the learner $L$, which is the accuracy of $L$ on non-training samples." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/bias-variance-and-model-selection/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-10-17T21:40:08+02:00" />
+<meta property="article:modified_time" content="2019-10-17T21:40:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Bias-Variance Tradeoff and Model Selection"/>
+<meta name="twitter:description" content="In this post we will talk about the Bias-Variance tradeoff, explaining where it comes from and how we can manage it, introducing techniques for model selection (feature selection, regularization, dimensionality reduction) and model ensemble (bagging and boosting).
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+Bias-Variance trade-off and Model Selection No Free Lunch Theorems Define $Acc_G(L)$ as the generalization accuracy of the learner $L$, which is the accuracy of $L$ on non-training samples."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Bias-Variance Tradeoff and Model Selection",
+      "item": "/posts/bias-variance-and-model-selection/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Bias-Variance Tradeoff and Model Selection",
+  "name": "Bias-Variance Tradeoff and Model Selection",
+  "description": "In this post we will talk about the Bias-Variance tradeoff, explaining where it comes from and how we can manage it, introducing techniques for model selection (feature selection, regularization, dimensionality reduction) and model ensemble (bagging and boosting).\nDisclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book \u0026lsquo;Pattern Recognition and Machine Learning'.\nBias-Variance trade-off and Model Selection No Free Lunch Theorems Define $Acc_G(L)$ as the generalization accuracy of the learner $L$, which is the accuracy of $L$ on non-training samples.",
+  "keywords": [
+    "bias-variance tradeoff", "model selection", "feature selection", "cross-validation", "regularization", "dimensionality reduction", "PCA", "bagging", "boosting"
+  ],
+  "articleBody": "In this post we will talk about the Bias-Variance tradeoff, explaining where it comes from and how we can manage it, introducing techniques for model selection (feature selection, regularization, dimensionality reduction) and model ensemble (bagging and boosting).\nDisclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book ‘Pattern Recognition and Machine Learning'.\nBias-Variance trade-off and Model Selection No Free Lunch Theorems Define $Acc_G(L)$ as the generalization accuracy of the learner $L$, which is the accuracy of $L$ on non-training samples. $\\mathcal{F}$ is the set of all possible concepts, $y = f(x)$, that are the true models we want to learn.\nTheorem For any learner $L$, $\\frac{1}{|\\mathcal{F}|}\\sum_{\\mathcal{F}}Acc_G(L) = \\frac{1}{2}$ (given any distribution $\\mathcal{P}$ over $\\boldsymbol{x}$ and the training set size $N$)\nThis means that any learner, on average of all the models, has the same accuracy of random sampling, and so what is learned from the seen data is useless for predicting new data. If this is true, well…why does Machine Learning exist?\nThe point here is that highlighted “on average”. Indeed, Machine Learning is based on the assumption that not all the models are equally likely, because the seen data are related to the unseen data, so the distribution over models is restricted after seeing the data. In practice, Machine Learning is betting that some models are better than others (in that specific case), in the same way you assume that there is some regularity in the world, so that what you observe is meaningful for what you want to predict.\nCorollary For any two learners $L_1, L_2$: if $\\exists$ learning problems s.t. $Acc_G(L_1)  Acc_G(L_2)$, then $\\exists$ learning problems s.t. $Acc_G(L_2)  Acc_G(L_1)$\nThis means that there is no best method for solving all the machine learning problems, because every method is based on some assumptions and it can perform better only on some subset of models. This is the reason for which there isn’t an unique algorithm for solving all the ML problems.\nBias-Variance trade-off As we have seen in past chapters, the use of maximum likelihood, or equivalently least squares, can lead to overfitting if complex models are trained using datasets of limited size. On the other hand, limiting the number of basis functions in order to avoid this problem has the side effect of making our model less flexible and so less capable of capturing interesting trends in data. We also introduced regularization to control overfitting for models with many parameters, but this solution raises the question of how to determine a suitable value for the regularization coefficient $\\lambda$.\nFor all these reasons, we showed a valid alternative, represented by the Bayesian setting. However, let’s now investigate a frequentist viewpoint of the complexity model issue, knows as the bias-variance trade-off.\nAssume that we have a dataset $D$ with $N$ samples obtained by a function $t_i = f(\\boldsymbol{x_i}) + \\epsilon$ with $E[\\epsilon] = 0$ and $Var[\\epsilon] = \\sigma^2$. We want to find a model $y(\\boldsymbol{x})$ that approximates $f$ as well as possible. Consider the expected square error on an unseen sample $x$:\n$$ \\displaylines{E[(t - y(x))^2] = E[t^2 + y(x)^2 -2ty(x)] \\\\ = E[t^2] + E[y(x)^2] - E[2ty(x)] \\\\ = E[t^2] \\pm E[t]^2 + E[y(x)^2] \\pm E[y(x)]^2 - 2f(x)E[y(x)] \\\\ = Var[t] + E[t]^2 + Var[y(x)] + E[y(x)]^2 - 2f(x)E[y(x)] \\\\ = Var[t] + Var[y(x)] + E[f(x)-y(x)]^2} $$\nwhere:\n $Var[t] = \\sigma^2$ is the irreducible noise. $Var[y(x)]$ is the $Variance$, that measures how much the solutions for individual data sets vary around their average. $E[f(x)-y(x)]^2$ is the $Bias^2$, that represents the difference between the average prediction over all data sets and the true function.  Substantially, $expected \\ loss = noise + variance + (bias)^2$\nA high bias means that even with a lot of samples it is not possible to learn the true model (underfitting). It decreases with more complex models.\nA high variance means that the model depends highly on noise and so its solutions vary a lot depending on the particular choice of the data sets (overfitting). It can decrease by using simpler models or with more samples.\nIncreasing the number of samples is the only way in which we can reduce the variance while keeping the bias unchanged, but of course this is not always possible.\nOur goal is to minimize the expected loss and, as we can see from the image above, there is a clear trade-off between variance and bias, leading to very flexible models having low bias and high variance, and relatively rigid models having high bias and low variance.\nThe bias-variance tradeoff can be managed using different techniques:\n Model selection  Feature selection Regularization Dimension reduction   Model ensemble  Bagging Boosting    Model Selection The variance-bias trade-off becomes even more problematic when we have to deal with high-dimensional data, since the risk of overfitting is higher, the number of required samples is larger and the computational cost increases.\nSo, if we can’t solve a problem with few features, adding more features could not be a good idea, especially if the number of samples stays the same.\nFeature Selection It identifies a subset of features which are the most related to the output. Feature selection techniques are used for four reasons:\n simplification of models to make them easier to interpret by researchers/users shorter training times to avoid the curse of dimensionality enhanced generalization by reducing overfitting (formally, reduction of variance)  The best subset selection method is to try all the possible combinations of features. Of course, this approach has problems of high computational cost and overfitting if the number of features is large. There exists some metaheuristics to mitigate these issues:\n Filter: rank the features and select the best ones; Embedded: the learning algorithm exploits its own variable selection technique (Lasso, Decision Trees, Auto-encoding, etc.); Wrapper: evaluate only some subsets:  Forward step-wise selection: starts from an empty model and adds features one at a time; Backward step-wise selection: starts with all the features and removes the least useful one at a time.    How can we see how well our model performs on the test set?\nDirect estimation Randomly split the data set into training set, validation set and test set and use the validation set to tune the learning algorithm. In this case cross-validation is used to prevent overfitting over the validation set (if it is not big enough).\n  Leave-One-Out Cross Validation (LOO) uses a validation set $\\{n\\}$ with 1 example extracted from the dataset $D$ and learns the model with $D \\setminus \\{n\\}$ dataset. The process is repeated for all the $N$ points of the dataset and the error is averaged\n$$L_{LOO} = \\frac{1}{N}\\sum_{n=1}^{N}(t_n-y_{\\mathcal{D}\\setminus{n}}(\\boldsymbol{x_n}))^2$$\n  k-fold Cross Validation randomly divides the training data into $k$ equal parts: $D_1,…,D_k$ and for each $i$:\n  learns the model $y_{\\mathcal{D}\\setminus{D_i}}$\n  estimates the error of $y_{\\mathcal{D}\\setminus{D_i}}$ on validation set $D_i$\n$$L_{D_i} = \\frac{k}{N}\\sum_{(\\boldsymbol{x_n},t_n)\\in\\mathcal{D_i}}(t_n-y_{\\mathcal{D}\\setminus{D_i}}(\\boldsymbol{x_n}))^2$$\n  all the $k$ errors are averaged\n$L_{k-fold} = \\frac{1}{k}\\sum_{i=1}^{k}L_{\\mathcal{D_i}}$\n  Usually $k = 10$ is used.\n  k-fold Cross Validation is much faster than LOO, but it is more (pessimistically) biased.\nIn addition to these two methods, there are other techniques, called Adjustment Techniques, that are usually used when we have a small dataset and a complex model. Some of them are: $AIC, BIC, Adjusted \\ R^2$…\nRegularization We already spoke about Ridge regression and Lasso in the “Linear Regression” chapter. These methods can significanlty reduce the variance, but unfortunately, at the same time, they increase bias, because the penalization in the loss function modifies the objective of the optimization and so, even with infinite samples, it would be impossible to obtain a perfect solution. This is the reason why regularization should not be used when a lot of samples are available.\nDimension reduction Dimension reduction (or dimensionality reduction) methods, differently from the previous approaches, transform the original features and then the model is learned on the transformed variable.\nThe basic idea is less features but with the same amount of information (more or less).\nPrincipal Component Analysis (PCA) Principal component analysis (PCA) simplifies the complexity in high-dimensional data while retaining trends and patterns. It does this by transforming the data into fewer dimensions, which act as summaries of features.\nIt can be divided in the following steps:\n Compute the mean of the data $\\boldsymbol{\\bar{x}} = \\frac{1}{N}\\sum_{n=1}^{N}\\boldsymbol{x_n}$ Subtract the mean: for PCA to work properly, you have to subtract the mean from each of the data dimensions. This produces a data set whose mean is zero Calculate the covariance matrix $\\boldsymbol{S} = \\boldsymbol{X}^T\\boldsymbol{X} = \\frac{1}{N-1}\\sum_{n=1}^{N}(\\boldsymbol{x_n}-\\boldsymbol{\\bar{x}})(\\boldsymbol{x_n}-\\boldsymbol{\\bar{x}})^T$ Calculate the eigenvectors and eigenvalues of the covariance matrix  It turns out that the eigenvector with the highest eigenvalue is the principle component of the data set. In general, once eigenvectors are found from the covariance matrix, the next step is to order them by eigenvalue, highest to lowest. This gives you the components in order of significance. Now, if you like, you can decide to ignore the components of lesser significance.\nForm a feature vector: constructed by taking the eigenvectors that you want to keep from the list of eigenvectors, and forming a matrix with these eigenvectors in the columns. Derive the new dataset: $new \\ dataset = feature \\ vector^T \\times zero \\ mean \\ data$  PCA can be analyzed much more in details, so this is a link to go deeper: PCA\nPCA has multiple benefits:\n helps to reduce the computational complexity can help supervised learning, because reduced dimensions allow simpler hypothesis spaces and less risk of overfitting can be used for noise reduction  But also some drawbacks:\n fails when data consists of multiple clusters the directions of greatest variance may not be the most informative computational problems with many dimensions PCA computes linear combination of features, but data often lie on a nonlinear manifold. Suppose for example that the data are distributed on two dimensions as a circumference: it can be actually represented by one dimension, but PCA is not able to capture it.  Model Ensembles We now introduce meta-algorithms, which instead of learning one model, learn several and combine them.\nBagging This algorithm reduces the variance without increasing the bias, but the variance needs to be high initially in order to see considerable improvements. It is based on the principle that averaging over multiple models reduces the variance:\n$Var(\\bar{X}) = \\frac{Var(X)}{N}$\nActually this is not the real reduction because it is based on the assumption that the models are independent.\nTo be able to train multiple models from a unique train set, bootstrapping is performed: generate B bootstrap samples of the training data by random sampling with replacement. Then train a model for each bootstrap sample and the prediction will be determined through majority vote in case of classification or through average of the predicted values in case of regression. It improves the performance for unstable learners which vary significantly with small changes in the data set.\nNote that Bagging is relatively easy to parallelize because all the models work on the same problem independently.\nRandom Forest is an extension over bagging. It takes one extra step where in addition to taking the random subset of data, it also takes the random selection of features rather than using all features to grow trees.\nBoosting The aim of boosting is to reduce the bias without increasing the variance (too much). It works by sequentially training weak learners, i.e. learners that have a performance that on any train set is slightly better than chance prediction (high bias).\nThe steps are the following:\n Weight all the train samples equally Train a weak model on the train set (since it is weak, it will perform good on some samples and bad on another) Compute the error of the model on the train set Increase the weights on the train cases where the model gets wrong Train a new model on re-weighted train set, so that the model is more concerned on misclassified points Repeat from 3. until tired The final model is composed by the weighted prediction of each model  Boosting might hurt the performance on noisy datasets, while Bagging doesn’t have this problem. Gradient Boosting is an extension over boosting method. It uses gradient descent algorithm which can optimize any differentiable loss function.\n",
+  "wordCount" : "2023",
+  "inLanguage": "en",
+  "datePublished": "2019-10-17T21:40:08+02:00",
+  "dateModified": "2019-10-17T21:40:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/bias-variance-and-model-selection/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Bias-Variance Tradeoff and Model Selection
+    </h1>
+    <div class="post-meta"><span title='2019-10-17 21:40:08 +0200 CEST'>October 17, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post we will talk about the <strong>Bias-Variance tradeoff</strong>, explaining where it comes from and how we can manage it, introducing techniques for model selection (feature selection, regularization, dimensionality reduction) and model ensemble (bagging and boosting).</p>
+<p><strong>Disclaimer:</strong> <em>the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;<a href="https://www.springer.com/gp/book/9780387310732">Pattern Recognition and Machine Learning</a>'.</em></p>
+<h1 id="bias-variance-trade-off-and-model-selection">Bias-Variance trade-off and Model Selection<a hidden class="anchor" aria-hidden="true" href="#bias-variance-trade-off-and-model-selection">#</a></h1>
+<h2 id="no-free-lunch-theorems">No Free Lunch Theorems<a hidden class="anchor" aria-hidden="true" href="#no-free-lunch-theorems">#</a></h2>
+<p>Define $Acc_G(L)$ as the generalization accuracy of the learner $L$, which is the accuracy of $L$ on non-training samples.
+$\mathcal{F}$ is the set of all possible concepts, $y = f(x)$, that are the true models we want to learn.</p>
+<p><strong>Theorem</strong>
+For any learner $L$, $\frac{1}{|\mathcal{F}|}\sum_{\mathcal{F}}Acc_G(L) = \frac{1}{2}$
+(given any distribution $\mathcal{P}$ over $\boldsymbol{x}$ and the training set size $N$)</p>
+<p>This means that any learner, <strong>on average</strong> of all the models, has the same accuracy of random sampling, and so what is learned from the seen data is useless for predicting new data.
+If this is true, well&hellip;why does Machine Learning exist?</p>
+<p>The point here is that highlighted &ldquo;on average&rdquo;. Indeed, Machine Learning is based on the assumption that not all the models are equally likely, because the seen data are related to the unseen data, so the distribution over models is restricted after seeing the data. In practice, Machine Learning is betting that some models are better than others (in that specific case), in the same way you assume that there is some regularity in the world, so that what you observe is meaningful for what you want to predict.</p>
+<p><strong>Corollary</strong>
+<em>For any two learners $L_1, L_2$:
+if $\exists$ learning problems s.t. $Acc_G(L_1) &gt; Acc_G(L_2)$</em>, then $\exists$ learning problems s.t. $Acc_G(L_2) &gt; Acc_G(L_1)$</p>
+<p>This means that <strong>there is no best method for solving all the machine learning problems</strong>, because every method is based on some assumptions and it can perform better only on some subset of models. This is the reason for which there isn&rsquo;t an unique algorithm for solving all the ML problems.</p>
+<h2 id="bias-variance-trade-off">Bias-Variance trade-off<a hidden class="anchor" aria-hidden="true" href="#bias-variance-trade-off">#</a></h2>
+<p>As we have seen in past chapters, the use of maximum likelihood, or equivalently least squares, can lead to overfitting if complex models are trained using datasets of limited size. On the other hand, limiting the number of basis functions in order to avoid this problem has the side effect of making our model less flexible and so less capable of capturing interesting trends in data. We also introduced regularization to control overfitting for models with many parameters, but this solution raises the question of how to determine a suitable value for the regularization coefficient $\lambda$.</p>
+<p>For all these reasons, we showed a valid alternative, represented by the Bayesian setting. However, let&rsquo;s now investigate a frequentist viewpoint of the complexity model issue, knows as the bias-variance trade-off.</p>
+<p>Assume that we have a dataset $D$ with $N$ samples obtained by a function $t_i = f(\boldsymbol{x_i}) + \epsilon$ with $E[\epsilon] = 0$ and $Var[\epsilon] = \sigma^2$.
+We want to find a model $y(\boldsymbol{x})$ that approximates $f$ as well as possible. Consider the expected square error on an unseen sample $x$:</p>
+<p>$$
+\displaylines{E[(t - y(x))^2] = E[t^2 + y(x)^2 -2ty(x)] \\ = E[t^2] + E[y(x)^2] - E[2ty(x)] \\ = E[t^2] \pm E[t]^2 + E[y(x)^2] \pm E[y(x)]^2 - 2f(x)E[y(x)] \\ = Var[t] + E[t]^2 + Var[y(x)] + E[y(x)]^2 - 2f(x)E[y(x)] \\ = Var[t] + Var[y(x)] + E[f(x)-y(x)]^2}
+$$</p>
+<p>where:</p>
+<ul>
+<li>$Var[t] = \sigma^2$ is the irreducible noise.</li>
+<li>$Var[y(x)]$ is the $Variance$, that measures how much the solutions for individual data sets vary around their average.</li>
+<li>$E[f(x)-y(x)]^2$ is the $Bias^2$, that represents the difference between the average prediction over all data sets and the true function.</li>
+</ul>
+<p>Substantially, $expected \ loss = noise + variance + (bias)^2$</p>
+<p>A high bias means that even with a lot of samples it is not possible to learn the true model (underfitting).
+It decreases with more complex models.</p>
+<p>A high variance means that the model depends highly on noise and so its solutions vary a lot depending on the particular choice of the data sets (overfitting).
+It can decrease by using simpler models or with more samples.</p>
+<p>Increasing the number of samples is the only way in which we can reduce the variance while keeping the bias unchanged, but of course this is not always possible.</p>
+
+
+<img src="/img/bias-variance/bias-variance.png" width="500px" heigth="250px">
+
+<p>Our goal is to minimize the expected loss and, as we can see from the image above, there is a clear trade-off between variance and bias, leading to very flexible models having low bias and high variance, and relatively rigid models having high bias and low variance.</p>
+<p>The bias-variance tradeoff can be managed using different techniques:</p>
+<ol>
+<li>Model selection
+<ul>
+<li>Feature selection</li>
+<li>Regularization</li>
+<li>Dimension reduction</li>
+</ul>
+</li>
+<li>Model ensemble
+<ul>
+<li>Bagging</li>
+<li>Boosting</li>
+</ul>
+</li>
+</ol>
+<h2 id="model-selection">Model Selection<a hidden class="anchor" aria-hidden="true" href="#model-selection">#</a></h2>
+<p>The variance-bias trade-off becomes even more problematic when we have to deal with high-dimensional data, since the risk of overfitting is higher, the number of required samples is larger and the computational cost increases.</p>
+<p>So, if we can&rsquo;t solve a problem with few features, adding more features could not be a good idea, especially if the number of samples stays the same.</p>
+<h3 id="feature-selection">Feature Selection<a hidden class="anchor" aria-hidden="true" href="#feature-selection">#</a></h3>
+<p>It identifies a subset of features which are the most related to the output.
+Feature selection techniques are used for four reasons:</p>
+<ul>
+<li>simplification of models to make them easier to interpret by researchers/users</li>
+<li>shorter training times</li>
+<li>to avoid the  curse of dimensionality</li>
+<li>enhanced generalization by reducing  overfitting (formally, reduction of  variance)</li>
+</ul>
+<p>The best subset selection method is to try all the possible combinations of features. Of course, this approach has problems of high computational cost and overfitting if the number of features is large.
+There exists some metaheuristics to mitigate these issues:</p>
+<ul>
+<li>Filter: rank the features and select the best ones;</li>
+<li>Embedded: the learning algorithm exploits its own variable selection technique (Lasso, Decision Trees, Auto-encoding, etc.);</li>
+<li>Wrapper: evaluate only some subsets:
+<ul>
+<li>Forward step-wise selection: starts from an empty model and adds features one at a time;</li>
+<li>Backward step-wise selection: starts with all the features and removes the least useful one at a time.</li>
+</ul>
+</li>
+</ul>
+<p>How can we see how well our model performs on the test set?</p>
+<p><strong>Direct estimation</strong>
+Randomly split the data set into training set, validation set and test set and use the validation set to tune the learning algorithm.
+In this case <strong>cross-validation</strong> is used to prevent overfitting over the validation set (if it is not big enough).</p>
+<ul>
+<li>
+<p>Leave-One-Out Cross Validation (LOO)
+uses a validation set $\{n\}$ with 1 example extracted from the dataset $D$ and learns the model with $D \setminus \{n\}$ dataset. The process is repeated for all the $N$ points of the dataset and the error is averaged</p>
+<p>$$L_{LOO} = \frac{1}{N}\sum_{n=1}^{N}(t_n-y_{\mathcal{D}\setminus{n}}(\boldsymbol{x_n}))^2$$</p>
+</li>
+<li>
+<p>k-fold Cross Validation
+randomly divides the training data into $k$ equal parts: $D_1,&hellip;,D_k$ and for each $i$:</p>
+<ul>
+<li>
+<p>learns the model $y_{\mathcal{D}\setminus{D_i}}$</p>
+</li>
+<li>
+<p>estimates the error of $y_{\mathcal{D}\setminus{D_i}}$ on validation set $D_i$</p>
+<p>$$L_{D_i} = \frac{k}{N}\sum_{(\boldsymbol{x_n},t_n)\in\mathcal{D_i}}(t_n-y_{\mathcal{D}\setminus{D_i}}(\boldsymbol{x_n}))^2$$</p>
+</li>
+<li>
+<p>all the $k$ errors are averaged</p>
+<p>$L_{k-fold} = \frac{1}{k}\sum_{i=1}^{k}L_{\mathcal{D_i}}$</p>
+</li>
+</ul>
+<p>Usually $k = 10$ is used.</p>
+</li>
+</ul>
+<p>k-fold Cross Validation is much faster than LOO, but it is more (pessimistically) biased.</p>
+<p>In addition to these two methods, there are other techniques, called <strong>Adjustment Techniques</strong>, that are usually used when we have a small dataset and a complex model.
+Some of them are: $AIC, BIC, Adjusted \ R^2$&hellip;</p>
+<h3 id="regularization">Regularization<a hidden class="anchor" aria-hidden="true" href="#regularization">#</a></h3>
+<p>We already spoke about Ridge regression and Lasso in the &ldquo;Linear Regression&rdquo; chapter. These methods can significanlty reduce the variance, but unfortunately, at the same time, they increase bias, because the penalization in the loss function modifies the objective of the optimization and so, even with infinite samples, it would be impossible to obtain a perfect solution.
+This is the reason why regularization should not be used when a lot of samples are available.</p>
+<h3 id="dimension-reduction">Dimension reduction<a hidden class="anchor" aria-hidden="true" href="#dimension-reduction">#</a></h3>
+<p>Dimension reduction (or dimensionality reduction) methods, differently from the previous approaches, transform the original features and then the model is learned on the transformed variable.</p>
+<p>The basic idea is less features but with the same amount of information (more or less).</p>
+<p><strong>Principal Component Analysis (PCA)</strong>
+Principal component analysis (PCA) simplifies the complexity in high-dimensional data while retaining trends and patterns. It does this by transforming the data into fewer dimensions, which act as summaries of features.</p>
+<p>It can be divided in the following steps:</p>
+<ol>
+<li>Compute the mean of the data $\boldsymbol{\bar{x}} = \frac{1}{N}\sum_{n=1}^{N}\boldsymbol{x_n}$</li>
+<li>Subtract the mean: for PCA to work properly, you have to subtract the mean from each of the data dimensions. This produces a data set whose mean is zero</li>
+<li>Calculate the covariance matrix $\boldsymbol{S} = \boldsymbol{X}^T\boldsymbol{X} = \frac{1}{N-1}\sum_{n=1}^{N}(\boldsymbol{x_n}-\boldsymbol{\bar{x}})(\boldsymbol{x_n}-\boldsymbol{\bar{x}})^T$</li>
+<li>Calculate the eigenvectors and eigenvalues of the covariance matrix</li>
+</ol>
+<p>It turns out that the eigenvector with the highest eigenvalue is the principle component of the data set. In general, once eigenvectors are found from the covariance matrix, the next step is to order them by eigenvalue, highest to lowest. This gives you the components in order of significance. Now, if you like, you can decide to ignore the components of lesser significance.</p>
+<ol start="5">
+<li>Form a feature vector: constructed by taking the eigenvectors that you want to keep from the list of eigenvectors, and forming a matrix with these eigenvectors in the columns.</li>
+<li>Derive the new dataset: $new \ dataset = feature \ vector^T \times zero \ mean \ data$</li>
+</ol>
+<p>PCA can be analyzed much more in details, so this is a link to go deeper: <a href="https://towardsdatascience.com/a-one-stop-shop-for-principal-component-analysis-5582fb7e0a9c">PCA</a></p>
+<p>PCA has multiple benefits:</p>
+<ul>
+<li>helps to reduce the computational complexity</li>
+<li>can help supervised learning, because reduced dimensions allow simpler hypothesis spaces and less risk of overfitting</li>
+<li>can be used for noise reduction</li>
+</ul>
+<p>But also some drawbacks:</p>
+<ul>
+<li>fails when data consists of multiple clusters</li>
+<li>the directions of greatest variance may not be the most informative</li>
+<li>computational problems with many dimensions</li>
+<li>PCA computes linear combination of features, but data often lie on a nonlinear manifold. Suppose for example that the data are distributed on two dimensions as a circumference: it can be actually represented by one dimension, but PCA is not able to capture it.</li>
+</ul>
+<h2 id="model-ensembles">Model Ensembles<a hidden class="anchor" aria-hidden="true" href="#model-ensembles">#</a></h2>
+<p>We now introduce meta-algorithms, which instead of learning one model, learn several and combine them.</p>
+<h3 id="bagging">Bagging<a hidden class="anchor" aria-hidden="true" href="#bagging">#</a></h3>
+<p>This algorithm reduces the variance without increasing the bias, but the variance needs to be high initially in order to see considerable improvements.
+It is based on the principle that averaging over multiple models reduces the variance:</p>
+<p>$Var(\bar{X}) = \frac{Var(X)}{N}$</p>
+<p>Actually this is not the real reduction because it is based on the assumption that the models are independent.</p>
+<p>To be able to train multiple models from a unique train set, <strong>bootstrapping</strong> is performed: generate B bootstrap samples of the training data by random sampling with replacement.
+Then train a model for each bootstrap sample and the prediction will be determined through majority vote in case of classification or through average of the predicted values in case of regression.
+It improves the performance for unstable learners which vary significantly with small changes in the data set.</p>
+<p>Note that Bagging is relatively <strong>easy to parallelize</strong> because all the models work on the same problem independently.</p>
+<p><strong><em>Random Forest</em></strong> is an extension over bagging. It takes one extra step where in addition to taking the random subset of data, it also takes the random selection of features rather than using all features to grow trees.</p>
+<h3 id="boosting">Boosting<a hidden class="anchor" aria-hidden="true" href="#boosting">#</a></h3>
+<p>The aim of boosting is to reduce the bias without increasing the variance (too much).
+It works by sequentially training weak learners, i.e. learners that have a performance that on any train set is slightly better than chance prediction (high bias).</p>
+<p>The steps are the following:</p>
+<ol>
+<li>Weight all the train samples equally</li>
+<li>Train a weak model on the train set (since it is weak, it will perform good on some samples and bad on another)</li>
+<li>Compute the error of the model on the train set</li>
+<li>Increase the weights on the train cases where the model gets wrong</li>
+<li>Train a new model on re-weighted train set, so that the model is more concerned on misclassified points</li>
+<li>Repeat from 3. until tired</li>
+<li>The final model is composed by the weighted prediction of each model</li>
+</ol>
+<p>Boosting might hurt the performance on noisy datasets, while Bagging doesn’t have this problem.
+<strong><em>Gradient Boosting</em></strong> is an extension over boosting method. It uses gradient descent algorithm which can optimize any differentiable loss function.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/cross-validation/">cross-validation</a></li>
+      <li><a href="/tags/bagging/">bagging</a></li>
+      <li><a href="/tags/bias-variance-tradeoff/">bias-variance tradeoff</a></li>
+      <li><a href="/tags/boosting/">boosting</a></li>
+      <li><a href="/tags/dimensionality-reduction/">dimensionality reduction</a></li>
+      <li><a href="/tags/feature-selection/">feature selection</a></li>
+      <li><a href="/tags/model-selection/">model selection</a></li>
+      <li><a href="/tags/pca/">PCA</a></li>
+      <li><a href="/tags/regularization/">regularization</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

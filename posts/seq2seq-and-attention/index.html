@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Seq2Seq models and the Attention mechanism | Matt Log</title>
+<meta name="keywords" content="seq2seq, neural turing machine, attention, transformer">
+<meta name="description" content="The path followed in this post is: sequence-to-sequence models $\rightarrow$ neural turing machines $\rightarrow$ attentional interfaces $\rightarrow$ transformers. This post is dense of stuff, but I tried to keep it as simple as possible, without losing important details!
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/seq2seq-and-attention/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Seq2Seq models and the Attention mechanism" />
+<meta property="og:description" content="The path followed in this post is: sequence-to-sequence models $\rightarrow$ neural turing machines $\rightarrow$ attentional interfaces $\rightarrow$ transformers. This post is dense of stuff, but I tried to keep it as simple as possible, without losing important details!
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/seq2seq-and-attention/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-12-23T22:55:08+02:00" />
+<meta property="article:modified_time" content="2019-12-23T22:55:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Seq2Seq models and the Attention mechanism"/>
+<meta name="twitter:description" content="The path followed in this post is: sequence-to-sequence models $\rightarrow$ neural turing machines $\rightarrow$ attentional interfaces $\rightarrow$ transformers. This post is dense of stuff, but I tried to keep it as simple as possible, without losing important details!
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Seq2Seq models and the Attention mechanism",
+      "item": "/posts/seq2seq-and-attention/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Seq2Seq models and the Attention mechanism",
+  "name": "Seq2Seq models and the Attention mechanism",
+  "description": "The path followed in this post is: sequence-to-sequence models $\\rightarrow$ neural turing machines $\\rightarrow$ attentional interfaces $\\rightarrow$ transformers. This post is dense of stuff, but I tried to keep it as simple as possible, without losing important details!\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the \u0026lsquo;Artificial Neural Networks and Deep Learning\u0026rsquo; course at Polytechnic of Milan, the book \u0026lsquo;Deep Learning\u0026rsquo; (Goodfellow-et-al-2016) and from some other online resources.",
+  "keywords": [
+    "seq2seq", "neural turing machine", "attention", "transformer"
+  ],
+  "articleBody": "The path followed in this post is: sequence-to-sequence models $\\rightarrow$ neural turing machines $\\rightarrow$ attentional interfaces $\\rightarrow$ transformers. This post is dense of stuff, but I tried to keep it as simple as possible, without losing important details!\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the ‘Artificial Neural Networks and Deep Learning’ course at Polytechnic of Milan, the book ‘Deep Learning’ (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.\nSequence to Sequence Learning As we can see from the below image, there are different sequential data problems:\nCredits Andrej Karpathy\nIn this post I want to discuss how a RNN can be trained to map an input sequence to an output sequence which is not necessarily of the same length. This model is at the core of many different tasks, like speech recognition, machine translation etc.\nThe first authors who proposed this new model (Cho et al. (2014) and Sutskever et al. (2014)) called it encoder-decoder or sequence-to-sequence architecture. The idea is pretty simple:\n an encoder processes the input sequence and outputs an encoder vector represented by the final hidden state a decoder takes as input the last hidden state of the encoder (the encoder vector) and produces the output sequence  During the training, the decoder does not feed the output of each time step to the next. The decoder input is the target sequence, here indicated in orange:\nCredits Aj.Cheng\nAt inference time, instead, the decoder feeds the output of each time step as an input to the next one:\nCredits Aj.Cheng\nDataset Batch Preparation  Sample batch_size pairs of (source_sequence, target_sequence) Append  to the source_sequence Prepend  to the target_sequence to obtain the target_input_sequence and append  to obtain target_output_sequence Pad up to the max_input_length (max_target_length) withing the batch using the  token Encode tokens based on vocabulary (or embedding) Replace out of vocabulary (OOV) tokens with . Compute the length of each input and target sequence in the batch  Extending Recurrent Neural Networks Recurrent Neural Networks have been extended with memory to cope with very long sequences and also to deal with the encoding bottleneck present in the encoder-decoder architecture, which still imposes some limitations on how much knowledge/context we can embed in the encoder vector.\nIn this section I will use the awesome images of https://distill.pub/2016/augmented-rnns/, like the one below:\nCredits https://distill.pub/2016/augmented-rnns/\nAs depicted, I will focus on the first two models.\nNeural Turing Machines Paper: Neural Turing Machines\nCredits https://distill.pub/2016/augmented-rnns/\nThe idea behind Neural Turing Machines is to enrich the capabilities of standard recurrent networks by adding an external memory, with which the model can interact using attentional mechanisms. The name comes from the analogy with the Turing’s operation of enriching finite-state-machines by adding an infinite memory tape.\nThe architecture of a NTM contains two basic components:\n a controller, that interacts with the external environment taking inputs and giving outputs, and that also interacts with the memory through selective read and write operations. a memory bank.  The main issue is: how can we make the whole differentiable? We want the read and write to be differentiable w.r.t. the location we read from or we write to, but this is not an easy task, since usually a single element in memory is addressed, like happens in Turing machine or in whatever digital computer. The authors of the paper came out with the following idea: let’s read and write in all the elements of the memory, but with a different degree in each cell. How? We can use attention.\nEven if it can sound complicate, the attention mechanism is substantially a weighted average or if you prefer a distribution which indicates how we spread our “attention” over the memory locations. Let’s consider the read operation:\n let $M_t$ be the memory matrix at time $t$, whose size is $N \\times M$, where $N$ is the number of memory locations and $M$ is the vector size at each location let $w_t$ be the weights over the $N$ locations at time $t$, such that $\\sum_{i} w_t(i) = 1 \\quad 0 \\le w_t(i) \\le 1; \\forall i$  The result of the attention mechanism will be\n$$ r_t \\leftarrow \\sum_{i} w_t(i) M_t(i) $$\nCredits https://distill.pub/2016/augmented-rnns/\nThe write operation, instead, takes inspiration from the input and forget gates of LSTMs:\n1st step\n$$ \\tilde{M}_t(i) \\leftarrow M_{t-1}(i) [\\boldsymbol{1} - w_t(i)\\boldsymbol{e_t}] $$\nThe formula is pretty intuitive: it is an update of the memory starting from its state at the previous time step. The interesting part is the second term of the multiplication: we have a row vector of all $1$s, from which we subtract the product between the weights and an erase vector $\\boldsymbol{e_t}$, whose elements all lie in the range $(0,1)$. Thus, if either the weigthing or the erase is zero, the memory is left unchanged. On the other hand, if both the weigthing and the erase are one, the memory location is reset to zero.\n2nd step\nAfter the erase step, the add one is performed, in which an add vector $\\boldsymbol{a_t}$ is added to the memory.\n$$ M_t(i) \\leftarrow \\tilde{M}_t(i) + w_t(i) \\boldsymbol{a_t} $$\nOk, but where do these weigthings come from? They are obtained by combining two addressing mechanisms:\n content-based addressing  Content-based addressing focuses attention on locations based on the similarity between their current values and values emitted by the controller.\n Neural Turing Machine\n   location-based addressing  However, not all problems are well-suited to content-based addressing. In certain tasks the content of a variable is arbitrary, but the variable still needs a recognisable name or address.\n Neural Turing Machine\n    Go on https://distill.pub/2016/augmented-rnns/ to play with an amazing interactive figure in which you can observe the whole attention mechanism. I reported it here as a mere static image:\nCredits https://distill.pub/2016/augmented-rnns/\nAttentional Interfaces Now that we have seen how Neural Turing Machines work, we won’t have any problem in applying the concept of attention to sequence-to-sequence models.\nCredits https://distill.pub/2016/augmented-rnns/\nIf we consider for example the translation task, in the previous described sequence-to-sequence model we have to reduce the entire input sequence into a single vector and then expand it into the output translated sequence, losing meaningful information because of the bottleneck. Attention allows us to not lose this information by considering them all and then focusing on the most relevant ones for that specific time step.\nFigure from Tensorflow Tutorial - NMT with attention\n$$ \\text{Attention weights:} \\quad \\quad \\alpha_{ts} = \\frac{exp(score(\\boldsymbol{h_t}, \\boldsymbol{\\bar{h}_s}))}{\\sum_{s'=1}^{S} exp(score(\\boldsymbol{h_t}, \\boldsymbol{\\bar{h}_{s’}}))} $$\n$$ \\text{Context vector:} \\quad \\quad \\boldsymbol{c_t} = \\sum_{s} \\alpha_{ts} \\boldsymbol{\\bar{h}_s} $$\n$$ \\text{Attention vector:} \\quad \\quad \\boldsymbol{a_t} = f(\\boldsymbol{c_t}, \\boldsymbol{h_t}) = tanh(\\boldsymbol{W_c}[\\boldsymbol{c_t};\\boldsymbol{h_t}]) $$\nTransformers In 2017 the Attention Is All You Need paper was published, introducing a new network architecture: the Transformer.\n The inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples.\n  In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.\n Important: in order to better understand transformers, I took inspiration from the awesome post http://jalammar.github.io/illustrated-transformer/\nA Transformer model is made out of:\n Scaled Dot-Product Attention Multi-Head Attention Position-wise Feed-Forward Networks Embeddings and Softmax Positional Encoding  Image from Attention Is All You Need\nLet’s start with the first two components:\nScaled Dot-Product Attention and Multi-Head Attention Image from Attention Is All You Need\nThe Scaled Dot-Product Attention is a particular attention that takes as input queries $Q$, keys $K$ and values $V$. These three matrices are obtained by multiplying our embeddings $X$ with some weights matrices $W^Q, W^K, W^V$ that we trained. The attention is then calculated as:\n$$ Attention(Q,K,V) = softmax(\\frac{QK^T}{\\sqrt{d_k}})V $$\nThe reason for which they scale the dot products by $\\sqrt{d_k}$ is\n to counteract the fact that for large values of $d_k$ the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients.\n Now, this is the Scaled Dot-Product Attention. As we can see from the above image, taken from the paper, it is just a component of the Multi-Head Attention. Despite its name, Multi-Head Attention is exactly what we just said, but copied and pasted multiple times. We have indeed multiple sets of $Q, K, V$, one for each attention head (the Transformer has $8$ attention heads). This means that we will end up with $8$ matrices, so how can we feed them to the feed-forward layer? Attention function is performed in parallel and the resulting $d_v$-dimensional output values are concatenated, multiplied by a trained matrix $W^O$ and projected. Mathematically speaking:\n$$ MultiHead(Q,K,V) = Concat(head_1,…,head_h) W^O $$\n$$ head_i = Attention(QW_i^Q, KW_i^K, VW_i^V) $$\nThis multi-head attention is used in:\n the encoder-decoder attention layers:  the queries come from the previous decoder layer, while the keys and values come from the output of the encoder, allowing every position in the decoder to attend over all positions in the input sequence.\n  the self-attention layers of the encoder:  each position in the encoder can attend to all positions in the previous layer of the encoder.\n  the self-attention layers of the decoder:  self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position. This is obtained by setting to $-\\infty$ all values in the input of the softmax that correspond to illegal connections.\n   Position-wise Feed-Forward Networks The next component is the Position-wise Feed-Forward Networks, which is a standard fully connected feed-forward network contained in both the encoder and decoder. It consists of two linear transformations with a ReLU activation in between.\nPositional Encoding Positional encodings are added to the input embeddings in order to deal with the fact that, since the model does not contain any recurrence or convolution, there is the need to take into account the order of the sequence. There are different choices of positional encodings, in the paper they used sine and cosine functions of different frequencies.\nOther observations One layer which we did not discuss is the Add \u0026 Norm layer, in which through a residual connection the input embeddings are added to the result of the multi-head attention layer and then normalized.\nThe last two layers of the Transformer architecture are a linear layer and a softmax layer. Also in this case anything strange, the output of the decoder stack is a vector of floats, which goes through the linear layer, that flattens the vector into a very large logits vector (with size equal to our vocabulary). The final softmax layer transforms these values into probabilities.\nWhy Self attention As written in the paper (section 4), there are different reasons to use self-attention, and I will try to summarize them here:\n total computational complexity per layer amount of computation that can be parallelized path length between long-range dependencies in the network  Image from Attention Is All You Need\nReferences  Neural Turing Machines - Graves, Wayne, Danihelka - Google DeepMind Attention Is All You Need- NIPS 2017 Olah \u0026 Carter, “Attention and Augmented Recurrent Neural Networks”, Distill, 2016 Alammar, Jay (2018). The Illustrated Transformer [Blog post] Andrej Karpathy - RNN Effectiveness Aj.Cheng’s Medium post - Seq2Seq Models Tensorflow Tutorial - NMT with attention  ",
+  "wordCount" : "1935",
+  "inLanguage": "en",
+  "datePublished": "2019-12-23T22:55:08+02:00",
+  "dateModified": "2019-12-23T22:55:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/seq2seq-and-attention/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Seq2Seq models and the Attention mechanism
+    </h1>
+    <div class="post-meta"><span title='2019-12-23 22:55:08 +0200 +0200'>December 23, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>The path followed in this post is: <strong>sequence-to-sequence models</strong> $\rightarrow$ <strong>neural turing machines</strong> $\rightarrow$ <strong>attentional interfaces</strong> $\rightarrow$ <strong>transformers</strong>. This post is dense of stuff, but I tried to keep it as simple as possible, without losing important details!</p>
+<p><strong>Disclaimer:</strong> <em>These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan, the book &lsquo;Deep Learning&rsquo; (Goodfellow-et-al-2016) and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</em></p>
+<h1 id="sequence-to-sequence-learning">Sequence to Sequence Learning<a hidden class="anchor" aria-hidden="true" href="#sequence-to-sequence-learning">#</a></h1>
+<p>As we can see from the below image, there are different sequential data problems:</p>
+
+
+<img src="/img/seq2seq-and-attention/RNN_sequence.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Credits <a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">Andrej Karpathy</a></p>
+
+<p>In this post I want to discuss how a RNN can be trained to map an input sequence to an output sequence which is not necessarily of the same length. This model is at the core of many different tasks, like speech recognition, machine translation etc.</p>
+<p>The first authors who proposed this new model (Cho et al. (2014) and Sutskever et al. (2014)) called it <strong>encoder-decoder</strong> or <strong>sequence-to-sequence</strong> architecture. The idea is pretty simple:</p>
+<ul>
+<li>an encoder processes the input sequence and outputs an encoder vector represented by the final hidden state</li>
+<li>a decoder takes as input the last hidden state of the encoder (the encoder vector) and produces the output sequence</li>
+</ul>
+<p>During the training, the decoder <strong>does not</strong> feed the output of each time step to the next. The decoder input is the target sequence, here indicated in orange:</p>
+
+
+<img src="/img/seq2seq-and-attention/seq2seq_training.png" style="display: block; margin-left: auto; margin-right: auto; width: 600px;>
+<p style="text-align: center">Credits <a href="https://medium.com/@Aj.Cheng/seq2seq-18a0730d1d77">Aj.Cheng</a></p>
+
+<p>At inference time, instead, the decoder feeds the output of each time step as an input to the next one:</p>
+
+
+<img src="/img/seq2seq-and-attention/seq2seq_inference.png" style="display: block; margin-left: auto; margin-right: auto; width: 600px;">
+<p style="text-align: center">Credits <a href="https://medium.com/@Aj.Cheng/seq2seq-18a0730d1d77">Aj.Cheng</a></p>
+
+<h3 id="dataset-batch-preparation">Dataset Batch Preparation<a hidden class="anchor" aria-hidden="true" href="#dataset-batch-preparation">#</a></h3>
+<ul>
+<li>Sample batch_size pairs of (source_sequence, target_sequence)</li>
+<li>Append <code>&lt;EOS&gt;</code> to the source_sequence</li>
+<li>Prepend <code>&lt;SOS&gt;</code> to the target_sequence to obtain the target_input_sequence and append <code>&lt;EOS&gt;</code> to obtain target_output_sequence</li>
+<li>Pad up to the max_input_length (max_target_length) withing the batch using the <code>&lt;PAD&gt;</code> token</li>
+<li>Encode tokens based on vocabulary (or embedding)</li>
+<li>Replace out of vocabulary (OOV) tokens with <code>&lt;UNK&gt;</code>. Compute the length of each input and target sequence in the batch</li>
+</ul>
+<h2 id="extending-recurrent-neural-networks">Extending Recurrent Neural Networks<a hidden class="anchor" aria-hidden="true" href="#extending-recurrent-neural-networks">#</a></h2>
+<p>Recurrent Neural Networks have been extended with memory to cope with very long sequences and also to deal with the encoding bottleneck present in the encoder-decoder architecture, which still imposes some limitations on how much knowledge/context we can embed in the encoder vector.</p>
+<p>In this section I will use the awesome images of <a href="https://distill.pub/2016/augmented-rnns/">https://distill.pub/2016/augmented-rnns/</a>, like the one below:</p>
+
+
+<img src="/img/seq2seq-and-attention/RNN_extensions.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Credits <a href="https://distill.pub/2016/augmented-rnns/">https://distill.pub/2016/augmented-rnns/</a></p>
+
+<p>As depicted, I will focus on the first two models.</p>
+<h3 id="neural-turing-machines">Neural Turing Machines<a hidden class="anchor" aria-hidden="true" href="#neural-turing-machines">#</a></h3>
+<p>Paper: <em><a href="https://arxiv.org/pdf/1410.5401.pdf">Neural Turing Machines</a></em></p>
+
+
+<img src="/img/seq2seq-and-attention/neural_turing_machines.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Credits <a href="https://distill.pub/2016/augmented-rnns/">https://distill.pub/2016/augmented-rnns/</a></p>
+
+<p>The idea behind Neural Turing Machines is to enrich the capabilities of standard recurrent networks by adding an external memory, with which the model can interact using <strong>attentional mechanisms</strong>. The name comes from the analogy with the Turing&rsquo;s operation of enriching finite-state-machines by adding an infinite memory tape.</p>
+<p>The architecture of a NTM contains two basic components:</p>
+<ul>
+<li>a <strong>controller</strong>, that interacts with the external environment taking inputs and giving outputs, and that also interacts with the memory through selective read and write operations.</li>
+<li>a <strong>memory bank</strong>.</li>
+</ul>
+<p>The main issue is: how can we make the whole differentiable? We want the read and write to be differentiable w.r.t. the location we read from or we write to, but this is not an easy task, since <em>usually</em> a <strong>single element</strong> in memory is addressed, like happens in Turing machine or in whatever digital computer. The authors of the paper came out with the following idea: let&rsquo;s read and write in all the elements of the memory, but with a different degree in each cell. How? We can use <strong>attention</strong>.</p>
+<p>Even if it can sound complicate, the attention mechanism is substantially a weighted average or if you prefer a distribution which indicates how we spread our &ldquo;attention&rdquo; over the memory locations. Let&rsquo;s consider the read operation:</p>
+<ul>
+<li>let $M_t$ be the memory matrix at time $t$, whose size is $N \times M$, where $N$ is the number of memory locations and $M$ is the vector size at each location</li>
+<li>let $w_t$ be the weights over the $N$ locations at time $t$, such that $\sum_{i} w_t(i) = 1 \quad 0 \le w_t(i) \le 1; \forall i$</li>
+</ul>
+<p>The result of the attention mechanism will be</p>
+<p>$$
+r_t \leftarrow \sum_{i} w_t(i) M_t(i)
+$$</p>
+
+
+<img src="/img/seq2seq-and-attention/NTM_read.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Credits <a href="https://distill.pub/2016/augmented-rnns/">https://distill.pub/2016/augmented-rnns/</a></p>
+
+<p>The write operation, instead, takes inspiration from the input and forget gates of LSTMs:</p>
+<p><strong>1st step</strong></p>
+<p>$$
+\tilde{M}_t(i) \leftarrow M_{t-1}(i) [\boldsymbol{1} - w_t(i)\boldsymbol{e_t}]
+$$</p>
+<p>The formula is pretty intuitive: it is an update of the memory starting from its state at the previous time step. The interesting part is the second term of the multiplication: we have a row vector of all $1$s, from which we subtract the product between the weights and an <strong>erase vector</strong> $\boldsymbol{e_t}$, whose elements all lie in the range $(0,1)$. Thus, if either the weigthing or the erase is zero, the memory is left unchanged. On the other hand, if both the weigthing and the erase are one, the memory location is reset to zero.</p>
+<p><strong>2nd step</strong></p>
+<p>After the erase step, the add one is performed, in which an <strong>add vector</strong> $\boldsymbol{a_t}$ is added to the memory.</p>
+<p>$$
+M_t(i) \leftarrow \tilde{M}_t(i) + w_t(i) \boldsymbol{a_t}
+$$</p>
+<p>Ok, but where do these weigthings come from? They are obtained by combining two addressing mechanisms:</p>
+<ul>
+<li>content-based addressing
+<blockquote>
+<p>Content-based addressing focuses attention on locations based on the similarity between their current values and values emitted by the controller.</p>
+<blockquote>
+<p><em>Neural Turing Machine</em></p>
+</blockquote>
+</blockquote>
+</li>
+<li>location-based addressing
+<blockquote>
+<p>However, not all problems are well-suited to content-based addressing. In certain tasks the content of a variable is arbitrary, but the variable still needs a recognisable name or address.</p>
+<blockquote>
+<p><em>Neural Turing Machine</em></p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+<p>Go on <a href="https://distill.pub/2016/augmented-rnns/">https://distill.pub/2016/augmented-rnns/</a> to play with an amazing interactive figure in which you can observe the whole attention mechanism. I reported it here as a mere static image:</p>
+
+
+<img src="/img/seq2seq-and-attention/attention.png" style="display: block; margin-left: auto; margin-right: auto;">
+<p style="text-align: center">Credits <a href="https://distill.pub/2016/augmented-rnns/">https://distill.pub/2016/augmented-rnns/</a></p>
+
+<h3 id="attentional-interfaces">Attentional Interfaces<a hidden class="anchor" aria-hidden="true" href="#attentional-interfaces">#</a></h3>
+<p>Now that we have seen how Neural Turing Machines work, we won&rsquo;t have any problem in applying the concept of attention to sequence-to-sequence models.</p>
+
+
+<img src="/img/seq2seq-and-attention/attention_seq2seq.png" style="display: block; margin-left: auto; margin-right: auto; width: 550px;">
+<p style="text-align: center">Credits <a href="https://distill.pub/2016/augmented-rnns/">https://distill.pub/2016/augmented-rnns/</a></p>
+
+<p>If we consider for example the translation task, in the previous described sequence-to-sequence model we have to reduce the entire input sequence into a single vector and then expand it into the output translated sequence, losing meaningful information because of the bottleneck. Attention allows us to not lose this information by considering them all and then focusing on the most relevant ones for that specific time step.</p>
+
+
+<img src="/img/seq2seq-and-attention/attention_translation.png" style="display: block; margin-left: auto; margin-right: auto; width: 550px;">
+<p style="text-align: center">Figure from <a href="https://www.tensorflow.org/tutorials/text/nmt_with_attention">Tensorflow Tutorial - NMT with attention</a></p>
+
+<p>$$
+\text{Attention weights:} \quad \quad
+\alpha_{ts} = \frac{exp(score(\boldsymbol{h_t}, \boldsymbol{\bar{h}_s}))}{\sum_{s'=1}^{S} exp(score(\boldsymbol{h_t}, \boldsymbol{\bar{h}_{s&rsquo;}}))}
+$$</p>
+<p>$$
+\text{Context vector:} \quad \quad
+\boldsymbol{c_t} = \sum_{s} \alpha_{ts} \boldsymbol{\bar{h}_s}
+$$</p>
+<p>$$
+\text{Attention vector:} \quad \quad
+\boldsymbol{a_t} = f(\boldsymbol{c_t}, \boldsymbol{h_t}) = tanh(\boldsymbol{W_c}[\boldsymbol{c_t};\boldsymbol{h_t}])
+$$</p>
+
+
+<img src="/img/seq2seq-and-attention/score_equation.png" style="display: block; margin-left: auto; margin-right: auto; width: 550px;">
+
+<h2 id="transformers">Transformers<a hidden class="anchor" aria-hidden="true" href="#transformers">#</a></h2>
+<p>In 2017 the <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a> paper was published, introducing a new network architecture: the <strong>Transformer</strong>.</p>
+<blockquote>
+<p>The inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples.</p>
+</blockquote>
+<blockquote>
+<p>In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.</p>
+</blockquote>
+<p><strong>Important:</strong> <em>in order to better understand transformers, I took inspiration from the awesome post <a href="http://jalammar.github.io/illustrated-transformer/">http://jalammar.github.io/illustrated-transformer/</a></em></p>
+<p>A Transformer model is made out of:</p>
+<ul>
+<li>Scaled Dot-Product Attention</li>
+<li>Multi-Head Attention</li>
+<li>Position-wise Feed-Forward Networks</li>
+<li>Embeddings and Softmax</li>
+<li>Positional Encoding</li>
+</ul>
+
+
+<img src="/img/seq2seq-and-attention/transformer_architecture.png" style="display: block; margin-left: auto; margin-right: auto; width: 400px;">
+<p style="text-align: center">Image from <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a></p>
+
+<p>Let&rsquo;s start with the first two components:</p>
+<h3 id="scaled-dot-product-attention-and-multi-head-attention">Scaled Dot-Product Attention and Multi-Head Attention<a hidden class="anchor" aria-hidden="true" href="#scaled-dot-product-attention-and-multi-head-attention">#</a></h3>
+
+
+<img src="/img/seq2seq-and-attention/transformer_architecture2.png" style="display: block; margin-left: auto; margin-right: auto; width: 550px;">
+<p style="text-align: center">Image from <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a></p>
+
+<p>The Scaled Dot-Product Attention is a particular attention that takes as input queries $Q$, keys $K$ and values $V$. These three matrices are obtained by multiplying our embeddings $X$ with some weights matrices $W^Q, W^K, W^V$ that we trained. The attention is then calculated as:</p>
+<p>$$
+Attention(Q,K,V) = softmax(\frac{QK^T}{\sqrt{d_k}})V
+$$</p>
+<p>The reason for which they scale the dot products by $\sqrt{d_k}$ is</p>
+<blockquote>
+<p>to counteract the fact that for large values of $d_k$ the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients.</p>
+</blockquote>
+<p>Now, this is the Scaled Dot-Product Attention. As we can see from the above image, taken from the paper, it is just a component of the <strong>Multi-Head Attention</strong>. Despite its name, Multi-Head Attention is exactly what we just said, but copied and pasted multiple times. We have indeed multiple sets of $Q, K, V$, one for each attention head (the Transformer has $8$ attention heads). This means that we will end up with $8$ matrices, so how can we feed them to the feed-forward layer? Attention function is performed in parallel and the resulting $d_v$-dimensional output values are <strong>concatenated</strong>, multiplied by a trained matrix $W^O$ and projected. Mathematically speaking:</p>
+<p>$$
+MultiHead(Q,K,V) = Concat(head_1,&hellip;,head_h) W^O
+$$</p>
+<p>$$
+head_i = Attention(QW_i^Q, KW_i^K, VW_i^V)
+$$</p>
+<p>This multi-head attention is used in:</p>
+<ul>
+<li>the <em>encoder-decoder attention</em> layers:
+<blockquote>
+<p>the queries come from the previous decoder layer, while the keys and values come from the output of the encoder, allowing every position in the decoder to attend over all positions in the input sequence.</p>
+</blockquote>
+</li>
+<li>the <em>self-attention</em> layers of the encoder:
+<blockquote>
+<p>each position in the encoder can attend to all positions in the previous layer of the encoder.</p>
+</blockquote>
+</li>
+<li>the <em>self-attention</em> layers of the decoder:
+<blockquote>
+<p>self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position. This is obtained by setting to $-\infty$ all values in the input of the softmax that correspond to illegal connections.</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="position-wise-feed-forward-networks">Position-wise Feed-Forward Networks<a hidden class="anchor" aria-hidden="true" href="#position-wise-feed-forward-networks">#</a></h3>
+<p>The next component is the Position-wise Feed-Forward Networks, which is a standard fully connected feed-forward network contained in both the encoder and decoder. It consists of two linear transformations with a ReLU activation in between.</p>
+<h3 id="positional-encoding">Positional Encoding<a hidden class="anchor" aria-hidden="true" href="#positional-encoding">#</a></h3>
+<p>Positional encodings are added to the input embeddings in order to deal with the fact that, since the model does not contain any recurrence or convolution, there is the need to take into account the order of the sequence. There are different choices of positional encodings, in the paper they used sine and cosine functions of different frequencies.</p>
+<h3 id="other-observations">Other observations<a hidden class="anchor" aria-hidden="true" href="#other-observations">#</a></h3>
+<p>One layer which we did not discuss is the <strong>Add &amp; Norm</strong> layer, in which through a residual connection the input embeddings are added to the result of the multi-head attention layer and then normalized.</p>
+<p>The last two layers of the Transformer architecture are a <strong>linear</strong> layer and a <strong>softmax</strong> layer. Also in this case anything strange, the output of the decoder stack is a vector of floats, which goes through the linear layer, that flattens the vector into a very large logits vector (with size equal to our vocabulary). The final softmax layer transforms these values into probabilities.</p>
+<h3 id="why-self-attention">Why Self attention<a hidden class="anchor" aria-hidden="true" href="#why-self-attention">#</a></h3>
+<p>As written in the paper (section 4), there are different reasons to use self-attention, and I will try to summarize them here:</p>
+<ul>
+<li>total computational complexity per layer</li>
+<li>amount of computation that can be parallelized</li>
+<li>path length between long-range dependencies in the network</li>
+</ul>
+
+
+<img src="/img/seq2seq-and-attention/transformer_table.png" style="display: block; margin-left: auto; margin-right: auto; width: 600px;">
+<p style="text-align: center">Image from <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a></p>
+
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ul>
+<li><a href="https://arxiv.org/pdf/1410.5401.pdf">Neural Turing Machines - Graves, Wayne, Danihelka - Google DeepMind</a></li>
+<li><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need- NIPS 2017</a></li>
+<li><a href="https://distill.pub/2016/augmented-rnns/">Olah &amp; Carter, &ldquo;Attention and Augmented Recurrent Neural Networks&rdquo;, Distill, 2016</a></li>
+<li><a href="http://jalammar.github.io/illustrated-transformer/">Alammar, Jay (2018). The Illustrated Transformer [Blog post]</a></li>
+<li><a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">Andrej Karpathy - RNN Effectiveness</a></li>
+<li><a href="https://medium.com/@Aj.Cheng/seq2seq-18a0730d1d77">Aj.Cheng&rsquo;s Medium post - Seq2Seq Models</a></li>
+<li><a href="https://www.tensorflow.org/tutorials/text/nmt_with_attention">Tensorflow Tutorial - NMT with attention</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/attention/">attention</a></li>
+      <li><a href="/tags/neural-turing-machine/">neural turing machine</a></li>
+      <li><a href="/tags/seq2seq/">seq2seq</a></li>
+      <li><a href="/tags/transformer/">transformer</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

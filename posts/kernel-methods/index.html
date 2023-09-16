@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Kernel Methods | Matt Log</title>
+<meta name="keywords" content="kernel methods, radial basis function, gaussian process, kernel trick">
+<meta name="description" content="In this post we will talk about Kernel Methods, explaining the math behind them in order to understand how powerful they are and for what tasks they can be used in an efficient way.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+Kernel Methods Kernel methods are non-parametric and memory-based (e.g. K-NN), i.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/kernel-methods/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Kernel Methods" />
+<meta property="og:description" content="In this post we will talk about Kernel Methods, explaining the math behind them in order to understand how powerful they are and for what tasks they can be used in an efficient way.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+Kernel Methods Kernel methods are non-parametric and memory-based (e.g. K-NN), i." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/kernel-methods/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-10-24T18:30:08+02:00" />
+<meta property="article:modified_time" content="2019-10-24T18:30:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Kernel Methods"/>
+<meta name="twitter:description" content="In this post we will talk about Kernel Methods, explaining the math behind them in order to understand how powerful they are and for what tasks they can be used in an efficient way.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+Kernel Methods Kernel methods are non-parametric and memory-based (e.g. K-NN), i."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Kernel Methods",
+      "item": "/posts/kernel-methods/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Kernel Methods",
+  "name": "Kernel Methods",
+  "description": "In this post we will talk about Kernel Methods, explaining the math behind them in order to understand how powerful they are and for what tasks they can be used in an efficient way.\nDisclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book \u0026lsquo;Pattern Recognition and Machine Learning'.\nKernel Methods Kernel methods are non-parametric and memory-based (e.g. K-NN), i.",
+  "keywords": [
+    "kernel methods", "radial basis function", "gaussian process", "kernel trick"
+  ],
+  "articleBody": "In this post we will talk about Kernel Methods, explaining the math behind them in order to understand how powerful they are and for what tasks they can be used in an efficient way.\nDisclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book ‘Pattern Recognition and Machine Learning'.\nKernel Methods Kernel methods are non-parametric and memory-based (e.g. K-NN), i.e. methods that involve storing the entire training set in order to make predictions for future data points, that typically require a metric to be defined that measures the similarity of any two vectors in input space, and are generally fast to ‘train’ but slow at making predictions for test data points.\nMany linear parametric models can be re-cast into an equivalent ‘dual representation’ in which the predictions are also based on linear combinations of a kernel function evaluated at the training data points. As we shall see, for models which are based on a fixed nonlinear feature space mapping $\\phi(\\boldsymbol{x})$, the kernel function is given by the relation\n$k(\\boldsymbol{x},\\boldsymbol{x’}) = \\phi(\\boldsymbol{x})^T\\phi(\\boldsymbol{x’})$\nNote that the kernel is a symmetric function of its argument, so that $k(\\boldsymbol{x},\\boldsymbol{x’}) = k(\\boldsymbol{x’},\\boldsymbol{x})$ and it can be interpreted as similarity between $\\boldsymbol{x}$ and $\\boldsymbol{x’}$.\nThe simplest example of a kernel is obtained by considering the identity mapping for the feature space, so that $\\phi(\\boldsymbol{x}) = \\boldsymbol{x}$ (we are not transforming the features’ space), i.e. $k(\\boldsymbol{x},\\boldsymbol{x’}) = \\boldsymbol{x}^T\\boldsymbol{x’}$, called linear kernel.\nThe concept of a kernel formulated as an inner product in a feature space allows us to build interesting extensions of many well-known algorithms by making use of the kernel trick, also known as kernel substitution. The general idea is that if we have an algorithm formulated in such a way that the input vector $\\boldsymbol{x}$ enters only in the form of scalar products, then we can replace that scalar product with some other choice of kernel.\nThere exist various form of kernels functions:\n $k(\\boldsymbol{x},\\boldsymbol{x’}) = k(\\boldsymbol{x}-\\boldsymbol{x’})$, called stationary, because they are invariant to translations in input space. $k(\\boldsymbol{x},\\boldsymbol{x’}) = k(||\\boldsymbol{x}-\\boldsymbol{x’}||)$, called homogeneous kernels and also known as radial basis functions, which depend only on the magnitude of the distance (typically Euclidean) between the arguments. etc.  Dual representation Consider a linear regression model in which the parameters are obtained by minimizing the regularized sum-of-squares error function\n$L_{\\boldsymbol{w}} = \\frac{1}{2}\\sum_{n=1}^{N}(\\boldsymbol{w}^T\\phi(\\boldsymbol{x_n})-t_n)^2 + \\frac{\\lambda}{2}\\boldsymbol{w}^t\\boldsymbol{w}$\nWhat we want is to make $\\boldsymbol{w}$ and $\\phi$ disappear. Setting the gradient of $L_{\\boldsymbol{w}}$ w.r.t. $\\boldsymbol{w}$ equal to zero we obtain\n$\\boldsymbol{w} = -\\frac{1}{\\lambda}\\sum_{n=1}^{N}(\\boldsymbol{w}^T\\phi(\\boldsymbol{x_n})-t_n)\\phi(\\boldsymbol{x_n}) = \\sum_{n=1}^{N}a_n\\phi(\\boldsymbol{x_n}) = \\Phi^T\\boldsymbol{a}$\nwhere $\\Phi$ is the usual design matrix and $a_n = -\\frac{1}{\\lambda}(\\boldsymbol{w}^T\\phi(\\boldsymbol{x_n})-t_n)$.\nWe now define the Gram matrix $K = \\phi \\times \\phi^T$ an $N \\times N$ symmetric matrix, with elements\n$K_{nm} = \\phi(\\boldsymbol{x_n})^T\\phi(\\boldsymbol{x_m}) = k(\\boldsymbol{x_n},\\boldsymbol{x_m})$\nGiven $N$ vectors, the Gram matrix is the matrix of all inner products, hence for example if we take the first row and the first column we will find the kernel between $\\boldsymbol{x_1}$ and $\\boldsymbol{x_1}$.\nSubstituting $\\boldsymbol{w} = \\Phi^T\\boldsymbol{a}$ into $L_{\\boldsymbol{w}}$ gives\n$L_{\\boldsymbol{w}} = \\frac{1}{2}\\boldsymbol{a}^T\\Phi\\Phi^T\\Phi\\Phi^T\\boldsymbol{a} - \\boldsymbol{a}^T\\Phi\\Phi^T\\boldsymbol{t} + \\frac{1}{2}\\boldsymbol{t}^T\\boldsymbol{t} + \\frac{\\lambda}{2}\\boldsymbol{a}^t\\Phi\\Phi^T\\boldsymbol{a}$\nwhere $\\boldsymbol{t} = (t_1,…,t_N)^T$.\nIn terms of the Gram matrix, the sum-of-squares error function can be written as\n$L_{\\boldsymbol{a}} = \\frac{1}{2}\\boldsymbol{a}^TKK\\boldsymbol{a} - \\boldsymbol{a}^TK\\boldsymbol{t} + \\frac{1}{2}\\boldsymbol{t}^T\\boldsymbol{t} + \\frac{\\lambda}{2}\\boldsymbol{a}^tK\\boldsymbol{a}$\nAnd solving for $\\boldsymbol{a}$\n$\\boldsymbol{a} = (K + \\lambda\\boldsymbol{I_N})^{-1}\\boldsymbol{t}$\nIf we substitute this back into the linear regression model, we obtain the following prediction for a new input $\\boldsymbol{x}$\n$y(\\boldsymbol{x}) = \\boldsymbol{w}^T\\phi(\\boldsymbol{x}) = a^T\\Phi\\phi(\\boldsymbol{x}) = \\boldsymbol{k}(\\boldsymbol{x})^T(K+\\lambda\\boldsymbol{I_N})^{-1}\\boldsymbol{t}$\nwhere $\\boldsymbol{k}(\\boldsymbol{x})$ has elements $k_n(\\boldsymbol{x}) = k(\\boldsymbol{x_n},\\boldsymbol{x})$, that means how much each sample is similar to the query vector $\\boldsymbol{x}$.\nThus we see that the dual formulation allows the solution to the least-squares problem to be expressed entirely in terms of the kernel function $k(\\boldsymbol{x},\\boldsymbol{x’})$. In this new formulation, we determine the parameter vector a by inverting an $N \\times N$ matrix, whereas in the original parameter space formulation we had to invert an $M \\times M$ matrix in order to determine $\\boldsymbol{w}$. Because $N$ is typically much larger than $M$, the dual formulation does not seem to be particularly useful. However, the advantage of the dual formulation, as we shall see, is that it is expressed entirely in terms of the kernel function $k(\\boldsymbol{x},\\boldsymbol{x’})$. We can therefore work directly in terms of kernels and avoid the explicit introduction of the feature vector $\\phi(\\boldsymbol{x})$, which allows us implicitly to use feature spaces of high, even infinite, dimensionality.\nConstructing kernels In order to exploit kernel substitution, we need to be able to construct valid kernel functions.\nFirst method\nOne approach is to choose a feature space mapping $\\phi(\\boldsymbol{x})$ and then use this to find the corresponding kernel. In case of one-dimensional input space:\n$k(\\boldsymbol{x},\\boldsymbol{x’}) = \\phi(\\boldsymbol{x})^T\\phi(\\boldsymbol{x}') = \\sum_{i=1}^{M}\\phi_i(\\boldsymbol{x})\\phi_i(\\boldsymbol{x’})$\nwhere $\\phi_i(\\boldsymbol{x})$ are the basis functions.\nSecond method\nAn alternative approach is to construct kernel functions directly. In this case, we must ensure that the function we choose is a valid kernel, in other words that it corresponds to a scalar product in some (perhaps infinite dimensional) feature space.\nFor example, consider the kernel function $k(\\boldsymbol{x},\\boldsymbol{z}) = (\\boldsymbol{x}^T\\boldsymbol{z})^2$ in two dimensional space:\n$k(\\boldsymbol{x},\\boldsymbol{z}) = (\\boldsymbol{x}^T\\boldsymbol{z})^2 = (x_1z_1+x_2z_2)^2 = x_1^2z_1^2 + 2x_1z_1x_2z_2 + x_2^2z_2^2 = (x_1^2,\\sqrt{2}x_1x_2,x_2^2)(z_1^2,\\sqrt{2}z_1z_2,z_2^2)^T = \\phi(\\boldsymbol{x})^T\\phi(\\boldsymbol{z})$\nMore generally, however, we need a simple way to test whether a function constitutes a valid kernel without having to construct the function $\\phi(\\boldsymbol{x})$ explicitly, and fortunately there is a way.\nA necessary and sufficient condition for a function $k(\\boldsymbol{x},\\boldsymbol{x’})$ to be a valid kernel is that the Gram matrix $K$ is positive semidefinite for all possible choices of the set ${\\boldsymbol{x_n}}$.\nOne powerful technique for constructing new kernels is to build them out of simpler kernels as building blocks. Given valid kernels $k_1(\\boldsymbol{x},\\boldsymbol{x’})$ and $k_2(\\boldsymbol{x},\\boldsymbol{x’})$, the following new kernels will also be valid:\n $k(\\boldsymbol{x},\\boldsymbol{x’}) = ck_1(\\boldsymbol{x},\\boldsymbol{x’})$ $k(\\boldsymbol{x},\\boldsymbol{x’}) = f(\\boldsymbol{x})k_1(\\boldsymbol{x},\\boldsymbol{x’})f(\\boldsymbol{x})$ $k(\\boldsymbol{x},\\boldsymbol{x’}) = q(k_1(\\boldsymbol{x},\\boldsymbol{x’}))$, where $q()$ is a polynomial with non-negative coefficients. $k(\\boldsymbol{x},\\boldsymbol{x’}) = e^{k_1(\\boldsymbol{x},\\boldsymbol{x’})}$ $k(\\boldsymbol{x},\\boldsymbol{x’}) = k_1(\\boldsymbol{x},\\boldsymbol{x’}) + k_2(\\boldsymbol{x},\\boldsymbol{x’})$ $k(\\boldsymbol{x},\\boldsymbol{x’}) = k_1(\\boldsymbol{x},\\boldsymbol{x’})k_2(\\boldsymbol{x},\\boldsymbol{x’})$ $k(\\boldsymbol{x},\\boldsymbol{x’}) = k_3(\\phi(\\boldsymbol{x}),\\phi(\\boldsymbol{x’}))$, where $\\phi(\\boldsymbol{x})$ is a function from $\\boldsymbol{x}$ to $\\mathcal{R}^M$. $k(\\boldsymbol{x},\\boldsymbol{x’}) = \\boldsymbol{x}^TA\\boldsymbol{x’}$, where $A$ is a symmetric positive semidefinite matrix. $k(\\boldsymbol{x},\\boldsymbol{x’}) = k_a(x_a,x’_a) + k_b(x_b,x’_b)$, where $x_a$ and $x_b$ are variables with $\\boldsymbol{x} = (x_a,x_b)$ and $k_a$ and $k_b$ are valid kernel functions. $k(\\boldsymbol{x},\\boldsymbol{x’}) =k_a(x_a,x’_a)k_b(x_b,x’_b)$  A commonly used kernel is the Gaussian kernel:\n$$k(\\boldsymbol{x},\\boldsymbol{x’}) = e^{-\\frac{||\\boldsymbol{x}-\\boldsymbol{x’}||^2}{2\\sigma^2}}$$\nwhere $\\sigma^2$ indicates how much you generalize, so $underfitting \\implies reduce \\ \\sigma^2$.\nLastly, there is another powerful approach, which makes use of probabilistic generative models, allowing us to apply generative models in a discriminative setting. Generative models can deal naturally with missing data and in the case of hidden Markov models can handle sequences of varying length. By contrast, discriminative models generally give better performance on discriminative tasks than generative models. It is therefore of some interest to combine these two approaches. One way to combine them is to use a generative model to define a kernel, and then use this kernel in a discriminative approach.\nGiven a generative model $p(\\boldsymbol{x})$ we can define a kernel by\n$k(\\boldsymbol{x},\\boldsymbol{x’}) = p(\\boldsymbol{x})p(\\boldsymbol{x’})$\nThis is clearly a valid kernel function and it says that two inputs $\\boldsymbol{x}$ and $\\boldsymbol{x’}$ are similar if they both have high probabilities.\nRadial Basis Functions A radial basis function, RBF, $\\phi(\\boldsymbol{x})$ is a function with respect to the origin or a certain point $c$, i.e. $\\phi(\\boldsymbol{x}) = f(||\\boldsymbol{x}-\\boldsymbol{c}||)$, where typically the norm is the standard Euclidean norm of the input vector, but technically speaking one can use any other norm as well.\nThe RBF learning model assumes that the dataset $\\mathcal{D} = (x_n,y_n), n=1,…,N$ influences the hypothesis set $h(x)$, for a new observation $x$, in the following way:\n$$ h(x) = \\sum_{n=1}^{N}w_n e^{-\\gamma ||x-x_n||^2} $$\nwhich means that each $x_i$ of the dataset influences the observation in a gaussian shape. Of course, if a datapoint is far away from the observation its influence is residual (the exponential decay of the tails of the gaussian make it so). It is an example of a localized function ($x \\rightarrow \\infty \\implies \\phi(x) \\rightarrow 0$).\nOk, so, given this type of basis function, how do we find $\\boldsymbol{w}$?\nThe choice of $\\boldsymbol{w}$ should follow the goal of minimizing the in-sample error of the dataset $\\mathcal{D}$:\n$\\sum_{m=1}^{N}w_m e^{-\\gamma ||x_n-x_m||^2} = y_n$ for each datapoint $x_n \\in \\mathcal{D}$\nwhich in matrix form can be expressed as\n$\\Phi\\boldsymbol{w} = \\boldsymbol{y}$\n$\\boldsymbol{w} = \\Phi^{-1}\\boldsymbol{y}$\nNote that $\\Phi$ is not a square matrix, so we have to compute the pseudo-inverse:\n$\\boldsymbol{w} = (\\Phi^T\\Phi)^{-1}\\Phi^T\\boldsymbol{y}$ (recall what we saw in the Linear Regression chapter)\nOf course, all this can be adapted for classification problems:\n$$h(x) = sign(b + \\sum_{n=1}^{N}w_n e^{-\\gamma ||x-x_n||^2})$$\nIn machine learning, radial basis functions are most commonly used as a kernel for classification with the support vector machine (SVM).\nGaussian Processes In probability theory and statistics, a Gaussian process is a stochastic process (a collection of random variables indexed by time or space), such that every finite collection of those random variables has a multivariate normal distribution, i.e. every finite linear combination of them is normally distributed. The distribution of a Gaussian process is the joint distribution of all those (infinitely many) random variables, and as such, it is a distribution over functions with a continuous domain, e.g. time or space.\nA machine-learning algorithm that involves a Gaussian process uses lazy learning and a measure of the similarity between points (the kernel function) to predict the value for an unseen point from training data. The prediction is not just an estimate for that point, but also has uncertainty information—it is a one-dimensional Gaussian distribution.\nI will not enter in the details, for which I direct you to the book Pattern Recognition and Machine Learning, but the idea is that Gaussian Process approach differs from the Bayesian one thanks to the non-parametric property. Indeed, it finds a distribution over the possible functions $f(x)$ that are consistent with the observed data.\nMore precisely, taken from the textbook Machine Learning: A Probabilistic Perspective:\n A GP defines a prior over functions, which can be converted into a posterior over functions once we have seen some data. Although it might seem difficult to represent a distrubution over a function, it turns out that we only need to be able to define a distribution over the function’s values at a finite, but arbitrary, set of points, say $x_1,…,x_N$. A GP assumes that $p(f(x_1),…,f(x_N))$ is jointly Gaussian, with some mean $\\mu(x)$ and covariance $\\sum (x)$ given by $\\sum_{ij} = k(x_i,x_j)$, where $k$ is a positive definite kernel function. The key idea is that if $x_i$ and $x_j$ are deemed by the kernel to be similar, then we expect the output of the function at those points to be similar, too.\n In addition to the book, I highly recommend this post written by Yuge Shi: Gaussian Process, not quite for dummies\n",
+  "wordCount" : "1788",
+  "inLanguage": "en",
+  "datePublished": "2019-10-24T18:30:08+02:00",
+  "dateModified": "2019-10-24T18:30:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/kernel-methods/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Kernel Methods
+    </h1>
+    <div class="post-meta"><span title='2019-10-24 18:30:08 +0200 CEST'>October 24, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post we will talk about <strong>Kernel Methods</strong>, explaining the math behind them in order to understand how powerful they are and for what tasks they can be used in an efficient way.</p>
+<p><strong>Disclaimer:</strong> <em>the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;<a href="https://www.springer.com/gp/book/9780387310732">Pattern Recognition and Machine Learning</a>'.</em></p>
+<h1 id="kernel-methods">Kernel Methods<a hidden class="anchor" aria-hidden="true" href="#kernel-methods">#</a></h1>
+<p>Kernel methods are non-parametric and memory-based (e.g. K-NN), i.e. methods that involve storing the entire training set in order to make predictions for future data points, that typically require a metric to be defined that measures the similarity of any two vectors in input space, and are generally fast to ‘train’ but slow at making predictions for test data points.</p>
+<p>Many linear parametric models can be re-cast into an equivalent ‘dual representation’ in which the predictions are also based on linear combinations of a <strong>kernel function</strong> evaluated at the training data points.
+As we shall see, for models which are based on a fixed nonlinear feature space mapping $\phi(\boldsymbol{x})$, the kernel function is given by the relation</p>
+<p>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = \phi(\boldsymbol{x})^T\phi(\boldsymbol{x&rsquo;})$</p>
+<p>Note that the kernel is a symmetric function of its argument, so that $k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = k(\boldsymbol{x&rsquo;},\boldsymbol{x})$ and it can be interpreted as similarity between $\boldsymbol{x}$ and $\boldsymbol{x&rsquo;}$.</p>
+<p>The simplest example of a kernel is obtained by considering the identity mapping for the feature space, so that $\phi(\boldsymbol{x}) = \boldsymbol{x}$ (we are not transforming the features&rsquo; space), i.e. $k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = \boldsymbol{x}^T\boldsymbol{x&rsquo;}$, called <strong>linear kernel</strong>.</p>
+<p>The concept of a kernel formulated as an inner product in a feature space allows us to build interesting extensions of many well-known algorithms by making use of the <strong>kernel trick</strong>, also known as kernel substitution.
+The general idea is that if we have an algorithm formulated in such a way that the input vector $\boldsymbol{x}$ enters only in the form of <em>scalar products</em>, then we can replace that scalar product with some other choice of kernel.</p>
+<p>There exist various form of kernels functions:</p>
+<ul>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = k(\boldsymbol{x}-\boldsymbol{x&rsquo;})$, called stationary, because they are invariant to translations in input space.</li>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = k(||\boldsymbol{x}-\boldsymbol{x&rsquo;}||)$, called homogeneous kernels and also known as <strong>radial basis functions</strong>, which depend only on the magnitude of the distance (typically Euclidean) between the arguments.</li>
+<li>etc.</li>
+</ul>
+<h2 id="dual-representation">Dual representation<a hidden class="anchor" aria-hidden="true" href="#dual-representation">#</a></h2>
+<p>Consider a linear regression model in which the parameters are obtained by minimizing the regularized sum-of-squares error function</p>
+<p>$L_{\boldsymbol{w}} = \frac{1}{2}\sum_{n=1}^{N}(\boldsymbol{w}^T\phi(\boldsymbol{x_n})-t_n)^2 + \frac{\lambda}{2}\boldsymbol{w}^t\boldsymbol{w}$</p>
+<p>What we want is to make $\boldsymbol{w}$ and $\phi$ disappear.
+Setting the gradient of $L_{\boldsymbol{w}}$ w.r.t. $\boldsymbol{w}$ equal to zero we obtain</p>
+<p>$\boldsymbol{w} = -\frac{1}{\lambda}\sum_{n=1}^{N}(\boldsymbol{w}^T\phi(\boldsymbol{x_n})-t_n)\phi(\boldsymbol{x_n}) = \sum_{n=1}^{N}a_n\phi(\boldsymbol{x_n}) = \Phi^T\boldsymbol{a}$</p>
+<p>where $\Phi$ is the usual design matrix and $a_n = -\frac{1}{\lambda}(\boldsymbol{w}^T\phi(\boldsymbol{x_n})-t_n)$.</p>
+<p>We now define the <strong>Gram matrix</strong> $K = \phi \times \phi^T$ an $N \times N$ symmetric matrix, with elements</p>
+<p>$K_{nm} = \phi(\boldsymbol{x_n})^T\phi(\boldsymbol{x_m}) = k(\boldsymbol{x_n},\boldsymbol{x_m})$</p>
+<p>Given $N$ vectors, the Gram matrix is the matrix of all inner products, hence for example if we take the first row and the first column we will find the kernel between $\boldsymbol{x_1}$ and $\boldsymbol{x_1}$.</p>
+<p>Substituting $\boldsymbol{w} = \Phi^T\boldsymbol{a}$ into $L_{\boldsymbol{w}}$ gives</p>
+<p>$L_{\boldsymbol{w}} = \frac{1}{2}\boldsymbol{a}^T\Phi\Phi^T\Phi\Phi^T\boldsymbol{a} - \boldsymbol{a}^T\Phi\Phi^T\boldsymbol{t} + \frac{1}{2}\boldsymbol{t}^T\boldsymbol{t} + \frac{\lambda}{2}\boldsymbol{a}^t\Phi\Phi^T\boldsymbol{a}$</p>
+<p>where $\boldsymbol{t} = (t_1,&hellip;,t_N)^T$.</p>
+<p>In terms of the Gram matrix, the sum-of-squares error function can be written as</p>
+<p>$L_{\boldsymbol{a}} = \frac{1}{2}\boldsymbol{a}^TKK\boldsymbol{a} - \boldsymbol{a}^TK\boldsymbol{t} + \frac{1}{2}\boldsymbol{t}^T\boldsymbol{t} + \frac{\lambda}{2}\boldsymbol{a}^tK\boldsymbol{a}$</p>
+<p>And solving for $\boldsymbol{a}$</p>
+<p>$\boldsymbol{a} = (K + \lambda\boldsymbol{I_N})^{-1}\boldsymbol{t}$</p>
+<p>If we substitute this back into the linear regression model, we obtain the following prediction for a new input $\boldsymbol{x}$</p>
+<p>$y(\boldsymbol{x}) = \boldsymbol{w}^T\phi(\boldsymbol{x}) = a^T\Phi\phi(\boldsymbol{x}) = \boldsymbol{k}(\boldsymbol{x})^T(K+\lambda\boldsymbol{I_N})^{-1}\boldsymbol{t}$</p>
+<p>where $\boldsymbol{k}(\boldsymbol{x})$ has elements $k_n(\boldsymbol{x}) = k(\boldsymbol{x_n},\boldsymbol{x})$, that means how much each sample is similar to the query vector $\boldsymbol{x}$.</p>
+<p>Thus we see that the dual formulation allows the solution to the least-squares problem to be expressed entirely in terms of the kernel function $k(\boldsymbol{x},\boldsymbol{x&rsquo;})$.
+In this new formulation, we determine the parameter vector a by inverting an $N \times N$ matrix, whereas in the original parameter space formulation we had to invert an $M \times M$ matrix in order to determine $\boldsymbol{w}$.
+Because $N$ is typically much larger than $M$, the dual formulation does not seem to be particularly useful. However, the advantage of the dual formulation, as we shall see, is that <strong>it is expressed entirely in terms of the kernel function</strong> $k(\boldsymbol{x},\boldsymbol{x&rsquo;})$. We can therefore work directly in terms of kernels and avoid the explicit introduction of the feature vector $\phi(\boldsymbol{x})$, which allows us implicitly to use feature spaces of high, even infinite, dimensionality.</p>
+<h2 id="constructing-kernels">Constructing kernels<a hidden class="anchor" aria-hidden="true" href="#constructing-kernels">#</a></h2>
+<p>In order to exploit kernel substitution, we need to be able to construct valid kernel functions.</p>
+<p><em>First method</em></p>
+<p>One approach is to choose a feature space mapping $\phi(\boldsymbol{x})$ and then use this to find the corresponding kernel.
+In case of one-dimensional input space:</p>
+<p>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = \phi(\boldsymbol{x})^T\phi(\boldsymbol{x}') = \sum_{i=1}^{M}\phi_i(\boldsymbol{x})\phi_i(\boldsymbol{x&rsquo;})$</p>
+<p>where $\phi_i(\boldsymbol{x})$ are the basis functions.</p>
+<p><em>Second method</em></p>
+<p>An alternative approach is to construct kernel functions directly. In this case, we must ensure that the function we choose is a valid kernel, in other words that it corresponds to a scalar product in some (perhaps infinite dimensional) feature space.</p>
+<p>For example, consider the kernel function $k(\boldsymbol{x},\boldsymbol{z}) = (\boldsymbol{x}^T\boldsymbol{z})^2$ in two dimensional space:</p>
+<p>$k(\boldsymbol{x},\boldsymbol{z}) = (\boldsymbol{x}^T\boldsymbol{z})^2 = (x_1z_1+x_2z_2)^2 = x_1^2z_1^2 + 2x_1z_1x_2z_2 + x_2^2z_2^2 = (x_1^2,\sqrt{2}x_1x_2,x_2^2)(z_1^2,\sqrt{2}z_1z_2,z_2^2)^T = \phi(\boldsymbol{x})^T\phi(\boldsymbol{z})$</p>
+<p>More generally, however, we need a simple way to test whether a function constitutes a valid kernel without having to construct the function $\phi(\boldsymbol{x})$ explicitly, and fortunately there is a way.</p>
+<p>A necessary and sufficient condition for a function $k(\boldsymbol{x},\boldsymbol{x&rsquo;})$ to be a valid kernel is that the Gram matrix $K$ is positive semidefinite for all possible choices of the set ${\boldsymbol{x_n}}$.</p>
+<p>One powerful technique for constructing new kernels is to build them out of simpler kernels as building blocks.
+Given valid kernels $k_1(\boldsymbol{x},\boldsymbol{x&rsquo;})$ and $k_2(\boldsymbol{x},\boldsymbol{x&rsquo;})$, the following new kernels will also be valid:</p>
+<ol>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = ck_1(\boldsymbol{x},\boldsymbol{x&rsquo;})$</li>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = f(\boldsymbol{x})k_1(\boldsymbol{x},\boldsymbol{x&rsquo;})f(\boldsymbol{x})$</li>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = q(k_1(\boldsymbol{x},\boldsymbol{x&rsquo;}))$, where $q()$ is a polynomial with non-negative coefficients.</li>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = e^{k_1(\boldsymbol{x},\boldsymbol{x&rsquo;})}$</li>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = k_1(\boldsymbol{x},\boldsymbol{x&rsquo;}) + k_2(\boldsymbol{x},\boldsymbol{x&rsquo;})$</li>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = k_1(\boldsymbol{x},\boldsymbol{x&rsquo;})k_2(\boldsymbol{x},\boldsymbol{x&rsquo;})$</li>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = k_3(\phi(\boldsymbol{x}),\phi(\boldsymbol{x&rsquo;}))$, where $\phi(\boldsymbol{x})$ is a function from $\boldsymbol{x}$ to $\mathcal{R}^M$.</li>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = \boldsymbol{x}^TA\boldsymbol{x&rsquo;}$, where $A$ is a symmetric positive semidefinite matrix.</li>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = k_a(x_a,x&rsquo;_a) + k_b(x_b,x&rsquo;_b)$, where $x_a$ and $x_b$ are variables with $\boldsymbol{x} = (x_a,x_b)$ and $k_a$ and $k_b$ are valid kernel functions.</li>
+<li>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) =k_a(x_a,x&rsquo;_a)k_b(x_b,x&rsquo;_b)$</li>
+</ol>
+<p>A commonly used kernel is the <strong>Gaussian kernel</strong>:</p>
+<p>$$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = e^{-\frac{||\boldsymbol{x}-\boldsymbol{x&rsquo;}||^2}{2\sigma^2}}$$</p>
+<p>where $\sigma^2$ indicates how much you generalize, so $underfitting \implies reduce \ \sigma^2$.</p>
+<p>Lastly, there is another powerful approach, which makes use of probabilistic generative models, allowing us to apply generative models in a discriminative setting.
+Generative models can deal naturally with missing data and in the case of hidden Markov models can handle sequences of varying length. By contrast, discriminative models generally give better performance on discriminative tasks than generative models. It is therefore of some interest to combine these two approaches. One way to combine them is to use a generative model to define a kernel, and then use this kernel in a discriminative approach.</p>
+<p>Given a generative model $p(\boldsymbol{x})$ we can define a kernel by</p>
+<p>$k(\boldsymbol{x},\boldsymbol{x&rsquo;}) = p(\boldsymbol{x})p(\boldsymbol{x&rsquo;})$</p>
+<p>This is clearly a valid kernel function and it says that two inputs $\boldsymbol{x}$ and $\boldsymbol{x&rsquo;}$ are similar if they both have high probabilities.</p>
+<h2 id="radial-basis-functions">Radial Basis Functions<a hidden class="anchor" aria-hidden="true" href="#radial-basis-functions">#</a></h2>
+<p>A radial basis function, RBF,  $\phi(\boldsymbol{x})$ is a function with respect to the origin or a certain point $c$, i.e. $\phi(\boldsymbol{x}) = f(||\boldsymbol{x}-\boldsymbol{c}||)$, where typically the norm is the standard Euclidean norm of the input vector, but technically speaking one can use any other norm as well.</p>
+<p>The RBF learning model assumes that the dataset  $\mathcal{D} = (x_n,y_n), n=1,&hellip;,N$ influences the hypothesis set  $h(x)$, for a new observation $x$, in the following way:</p>
+<p>$$
+h(x) = \sum_{n=1}^{N}w_n e^{-\gamma ||x-x_n||^2}
+$$</p>
+<p>which means that each $x_i$ of the dataset influences the observation in a gaussian shape. Of course, if a datapoint is far away from the observation its influence is residual (the exponential decay of the tails of the gaussian make it so). It is an example of a localized function ($x \rightarrow \infty \implies \phi(x) \rightarrow 0$).</p>
+<p>Ok, so, given this type of basis function, how do we find $\boldsymbol{w}$?</p>
+<p>The choice of $\boldsymbol{w}$ should follow the goal of minimizing the in-sample error of the dataset $\mathcal{D}$:</p>
+<p>$\sum_{m=1}^{N}w_m e^{-\gamma ||x_n-x_m||^2} = y_n$ for each datapoint $x_n \in \mathcal{D}$</p>
+<p>which in matrix form can be expressed as</p>
+<p>$\Phi\boldsymbol{w} = \boldsymbol{y}$</p>
+<p>$\boldsymbol{w} = \Phi^{-1}\boldsymbol{y}$</p>
+<p>Note that $\Phi$ is not a square matrix, so we have to compute the pseudo-inverse:</p>
+<p>$\boldsymbol{w} = (\Phi^T\Phi)^{-1}\Phi^T\boldsymbol{y}$ (recall what we saw in the Linear Regression chapter)</p>
+<p>Of course, all this can be adapted for classification problems:</p>
+<p>$$h(x) = sign(b + \sum_{n=1}^{N}w_n e^{-\gamma ||x-x_n||^2})$$</p>
+<p>In machine learning, radial basis functions are most commonly used as a kernel for classification with the support vector machine (SVM).</p>
+<h2 id="gaussian-processes">Gaussian Processes<a hidden class="anchor" aria-hidden="true" href="#gaussian-processes">#</a></h2>
+<p>In probability theory and statistics, a Gaussian process is a stochastic process (a collection of random variables indexed by time or space), such that every finite collection of those random variables has a multivariate normal distribution, i.e. every finite linear combination of them is normally distributed. The distribution of a Gaussian process is the joint distribution of all those (infinitely many) random variables, and as such, it is a distribution over functions with a continuous domain, e.g. time or space.</p>
+<p>A machine-learning algorithm that involves a Gaussian process uses lazy learning and a measure of the similarity between points (the kernel function) to predict the value for an unseen point from training data. The prediction is not just an estimate for that point, but also has uncertainty information—it is a one-dimensional Gaussian distribution.</p>
+<p>I will not enter in the details, for which I direct you to the book <a href="%5Bhttps://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738%5D(https://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738)">Pattern Recognition and Machine Learning</a>, but the idea is that Gaussian Process approach differs from the Bayesian one thanks to the non-parametric property. Indeed, it finds a distribution over the possible <strong>functions</strong>  $f(x)$ that are consistent with the observed data.</p>
+<p>More precisely, taken from the textbook <a href="https://www.amazon.com/Machine-Learning-Probabilistic-Perspective-Computation/dp/0262018020/">Machine Learning: A Probabilistic Perspective</a>:</p>
+<blockquote>
+<p>A GP defines a prior over functions, which can be converted into a posterior over functions once we have seen some data. Although it might seem difficult to represent a distrubution over a function, it turns out that we only need to be able to define a distribution over the function’s values at a finite, but arbitrary, set of points, say $x_1,&hellip;,x_N$. A GP assumes that $p(f(x_1),&hellip;,f(x_N))$ is jointly Gaussian, with some mean $\mu(x)$ and covariance $\sum (x)$ given by $\sum_{ij} = k(x_i,x_j)$, where $k$ is a positive definite kernel function. The key idea is that if $x_i$ and $x_j$ are deemed by the kernel to be similar, then we expect the output of the function at those points to be similar, too.</p>
+</blockquote>
+<p>In addition to the book, I highly recommend this post written by Yuge Shi: <a href="https://yugeten.github.io/posts/2019/09/GP/">Gaussian Process, not quite for dummies</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/gaussian-process/">gaussian process</a></li>
+      <li><a href="/tags/kernel-methods/">kernel methods</a></li>
+      <li><a href="/tags/kernel-trick/">kernel trick</a></li>
+      <li><a href="/tags/radial-basis-function/">radial basis function</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

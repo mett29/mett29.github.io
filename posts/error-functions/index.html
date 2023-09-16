@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Error Functions in NNs | Matt Log</title>
+<meta name="keywords" content="error function, gradient descent, backpropagation, MSE, crossentropy">
+<meta name="description" content="In this post we will talk about how error functions are used in Neural Networks and how they are selected according to the task we have to solve.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/error-functions/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Error Functions in NNs" />
+<meta property="og:description" content="In this post we will talk about how error functions are used in Neural Networks and how they are selected according to the task we have to solve.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/error-functions/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-10-28T18:30:08+02:00" />
+<meta property="article:modified_time" content="2019-10-28T18:30:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Error Functions in NNs"/>
+<meta name="twitter:description" content="In this post we will talk about how error functions are used in Neural Networks and how they are selected according to the task we have to solve.
+Disclaimer: These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Error Functions in NNs",
+      "item": "/posts/error-functions/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Error Functions in NNs",
+  "name": "Error Functions in NNs",
+  "description": "In this post we will talk about how error functions are used in Neural Networks and how they are selected according to the task we have to solve.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the \u0026lsquo;Artificial Neural Networks and Deep Learning\u0026rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.",
+  "keywords": [
+    "error function", "gradient descent", "backpropagation", "MSE", "crossentropy"
+  ],
+  "articleBody": "In this post we will talk about how error functions are used in Neural Networks and how they are selected according to the task we have to solve.\nDisclaimer: These notes are for the most part a collection of concepts taken from the slides of the ‘Artificial Neural Networks and Deep Learning’ course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.\nError Functions Why do we need an error function? As you might now, the standard way in which machine learning algorithms are trained is by using gradient descent, an optimization algorithm based on a convex function that tweaks its parameters iteratively to minimize a given function to its local minimum. Generally speaking, when you train a machine learning model you want to find a function that approximates the true function as well as possible. In other words, the output of your model should be as close as possible to the target function:\n$$ y_n \\approx t_n $$\nHence, what we want to do is to minimize the error function, which indeed tells us how much our output is wrong w.r.t. the target value. Sometimes it is not easy to minimize or maximize analytically a function, and here the gradient descent comes to play. The idea of gradient descent is pretty simple. It works in the following way:\n$$ \\boldsymbol{w}^{k+1} = \\boldsymbol{w}^k - \\eta \\frac{\\partial E}{\\partial \\boldsymbol{w}}\\Big |_k $$\nSo the step can be listed as:\n Pick up a possible solution $\\boldsymbol{w}^0$ at random Compute the derivative of the error function w.r.t. the weights Update the solution  This process is iterated until convergence. Of course, this is the most simple version of gradient descent, thus there are some problems like local minima, slow convergence or even no convergence at all, which can be handled in different ways that are not discussed here.\nWhat error function? Ok, so we need an error function. But how can we choose it?\nThe most intuitive error function that one can think of is this:\n$$ E = \\sum_{n} (t_n - y_n)^2 $$\nIndeed, we said that we want the difference among our prediction and the real value to be as small as possible, which is exactly equivalent to minimize this error function. However, even if it is very intuitive, are we really sure that it is the best error function we can use? In order to answer to this question, let’s do a premise.\nA note on Maximum Likelihood Estimation Let’s observe i.i.d. samples from a Gaussian distribution with known $\\sigma^2$:\n$$ x_1,x_2,…,x_N \\sim N(\\mu, \\sigma^2) $$\n$$ p(x|\\mu,\\sigma^2) = \\frac{1}{\\sqrt{2\\pi}\\sigma} e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}} $$\nIn the picture above, if one asks you “What is the Gaussian that has generated the samples?” you will probably answer the purple one. The real question is “Why is that one?\". Let’s start by saying why the other two are not the ones you want. If we consider for example the last point on the left, it is very unlikely that it comes from the red distribution, since it is very far away from it, so the probability is basically zero. But I have observed this point…so probably the red option is not the right one! The same holds for the last point on the right, so we can infer that also the green one is not the true distribution. This is the idea behind Likelihood Estimation: I want to have a distribution for which I have at least some probability of observing the data. Wait, why not the maximum probability? From here, the Maximum Likelihood Estimation.\nMLE is not the most probable model. We are not maximizing the likelihood of the model, we are maximizing the likelihood of the data.\nMLE works as follows (note that it works also with other distributions):\nLet $\\theta = (\\theta_1,\\theta_2,…,\\theta_p)^T$ a vector of parameters, find the MLE for $\\theta$:\n Write the likelihood $L = P(Data|\\theta)$ for the data (optional) Take the logarithm of likelihood $l = log P(Data|\\theta)$ Work out $\\frac{\\partial L}{\\partial \\theta}$ or $\\frac{\\partial l}{\\partial \\theta}$ Solve $\\frac{\\partial L}{\\partial \\theta} = 0$ or $\\frac{\\partial l}{\\partial \\theta} = 0$ Check that $\\theta^{MLE}$ is a maximum  The ‘logarithm’ part is optional, but it is useful for two reasons:\n logarithms transform products into sums (we are interested in this) logarithms rescale the dynamic of the input  To maximize/minimize the (log)likelihood there are different ways, one of which is the Gradient Descent we mentioned before. In this case, however, we will use the exact solution.\nComing back to the i.i.d. samples we considered before, let’s apply the steps we listed above:\n$$ L = P(Data|\\theta) = p(x_1,x_2,…,x_N|\\mu,\\sigma^2) = \\prod_{n=1}^{N} p(x_n|\\mu,\\sigma^2) = \\prod_{n=1}^{N} \\frac{1}{\\sqrt{2\\pi}\\sigma} e^{-\\frac{(x_n-\\mu)^2}{2\\sigma^2}} $$\n$$ \\displaylines{l = log P(Data|\\theta) = log \\Big( \\prod_{n=1}^{N} \\frac{1}{\\sqrt{2\\pi}\\sigma} e^{-\\frac{(x_n-\\mu)^2}{2\\sigma^2}} \\Big) = \\\\ = \\sum_{n=1}^{N} log \\frac{1}{\\sqrt{2\\pi}\\sigma} e^{-\\frac{(x_n-\\mu)^2}{2\\sigma^2}} = \\\\ = N \\cdot log \\frac{1}{\\sqrt{2\\pi}\\sigma} - \\frac{1}{2\\sigma^2} \\sum_{n}^{N} (x_n - \\mu)^2} $$\n$$ \\displaylines{\\frac{\\partial l(\\mu)}{\\partial \\mu} = \\frac{\\partial}{\\partial \\mu} \\Big( N \\cdot log \\frac{1}{\\sqrt{2\\pi}\\sigma} - \\frac{1}{2\\sigma^2} \\sum_{n}^{N} (x_n - \\mu)^2 \\Big) = \\\\ = -\\frac{1}{2\\sigma^2} \\frac{\\partial}{\\partial \\mu} \\sum_{n}^{N} (x_n - \\mu)^2 = -\\frac{1}{2\\sigma^2} \\sum_{n}^{N} 2(x_n - \\mu)} $$\n$$ \\displaylines{-\\frac{1}{2\\sigma^2} \\sum_{n}^{N} 2(x_n - \\mu) = 0 \\\\ \\sum_{n}^{N} (x_n - \\mu) = 0 \\\\ \\sum_{n}^{N} x_n = \\sum_{n}^{N} \\mu \\implies \\mu_{MLE} = \\frac{1}{N} \\sum_{n}^{N} x_n} $$\nOk, good, so let’s now apply what we got to neural networks. Consider the regression problem: our goal is to approximate a target function $t$ having $N$ observations.\n$$ t_n = g(x_n|w) + \\epsilon_n, \\quad \\epsilon_n \\sim N(0,\\sigma^2) \\implies t_n \\sim N(g(x_n|w), \\sigma^2) $$\nNote that $t_n$ is a classical Gaussian, which has $g(x_n|w)$ instead of $\\mu$. So let’s apply the MLE recipe:\n$$ \\displaylines{L(w) = p(t_1,t_2,…,t_N|g(x|w), \\sigma^2) = \\prod_{n=1}^{N} p(t_n|g(x_n|w),\\sigma^2) = \\\\ = \\prod_{n=1}^{N} \\frac{1}{\\sqrt{2\\pi}\\sigma} e^{-\\frac{(t_n-g(x_n|w))^2}{2\\sigma^2}}} $$\nWe look for weights which maximize the likelihood:\n$$ \\displaylines{argmax_w L(w) = argmax_w \\prod_{n=1}^{N} \\frac{1}{\\sqrt{2\\pi}\\sigma} e^{-\\frac{(t_n-g(x_n|w))^2}{2\\sigma^2}} = \\\\ = argmax_w \\sum_{n}^{N} log \\Big( \\frac{1}{\\sqrt{2\\pi}\\sigma} e^{-\\frac{(t_n-g(x_n|w))^2}{2\\sigma^2}} \\Big) = \\\\ = argmax_w \\sum_{n}^{N} log \\frac{1}{\\sqrt{2\\pi}\\sigma} - \\frac{1}{2\\sigma^2} (t_n-g(x_n|w))^2 = \\\\ = argmin_w \\sum_{n}^{N} (t_n-g(x_n|w))^2} $$\nWe finally reach the end. As you can see, under the assumptions we made for the regression case, in order to find the weights that maximize the likelihood we have to minimize exactly the sum of squared errors, our initial error function.\nObservations:\n  What if $t_n$ is not Gaussian? You can still do this, but it’s not the best solution, or at least it’s not a maximum likelihood estimation, so you can obtain a solution which is not unbiased.\n  Can we derive something different knowing the errors are distributed differently? Well, if we know the distribution of the error yes, the only thing the we have to do is to follow the process we’ve seen, until we get to some result.\n  Regarding the second observation, if you think a bit, there is one common problem in which we know the distribution of $t_n$: binary classification.\n$$ t_n \\in {0,1} \\implies t_n \\sim Be(g(x_n|w)) $$\n$$ p(t|g(x|w)) = g(x|w)^t \\cdot (1-g(x|w))^{1-t} $$\nwhere $t$ acts as a selector.\n$$ \\displaylines{L(w) = p(t_1,t_2,…,t_N|g(x|w)) = \\prod_{n=1}^{N} p(t_n|g(x_n|w)) = \\\\ = \\prod_{n=1}^{N} g(x_n|w)^{t_n} \\cdot (1-g(x_n|w))^{1-t_n}} $$\n$$ \\displaylines{argmax_w L(w) = argmax_w \\prod_{n=1}^{N} g(x_n|w)^{t_n} \\cdot (1-g(x_n|w))^{1-t_n} = \\\\ = argmax_w \\sum_{n}^{N} t_n log; g(x_n|w) + (1-t_n) log (1-g(x_n|w)) = \\\\ = argmin_w -\\sum_{n}^{N} t_n log; g(x_n|w) + (1-t_n) log (1-g(x_n|w))} $$\nWe have obtained a new error function, called cross-entropy error function. Why is it different from the one we found before? Because they solve different problems: regression (additive Gaussian noise), classification (predictive Bernoulli distribution). Basically, the error function that you are minimizing describes the problem you’re trying to solve. If so, how can we design a new error function?\n Use all your knowledge/assumptions about the data distribution Exploit background knowledge on the task and the model Use your creativity (lots of trial and error)  Final Comments Let’s make a final observation considering the following samples:\nBy looking at this data, I immediately observe that the hypothesis that they come from a nonlinear function plus a Gaussian noise with some constant variance is wrong. Indeed, the dispersion of points is different; more precisely, when the value we want to predict is small, the error is small, and when the value we want to predict is high, the error is high. There is a correlation between the noise and the function we want to learn, and this correlation is not described in the squared error function. The hypothesis of constant variance in the data is called homoscedasticity, which in this case is not true. Thus, there might be a better error function to deal with this data, which takes into consideration the so called eteroscedasticity. Another way to see the problem is that when you have to draw the line which represents your model, you will give more importance to the last samples, not because they are more important, but because in those points the error is bigger. This was just to say that in some cases the squared error function is not enough and you have to apply some changes.\nJust to conclude, to handle the case of the picture, we can think to have something like:\n$$ t_n = g(x_n|w) \\cdot \\epsilon_n $$\nOne trick that we can use in this scenario, which statisticians call variance stabilizing transformation, is to make the regression of $log t$, instead of the regression of $t$:\n$$ log t_n = log(g(x_n|w)) + log(\\epsilon_n) $$\nIf the effect of distorsion of the variance is not too big, this method can sometimes solve the problem. There are other transformations, like sqrt, polynomial etc.\n",
+  "wordCount" : "1621",
+  "inLanguage": "en",
+  "datePublished": "2019-10-28T18:30:08+02:00",
+  "dateModified": "2019-10-28T18:30:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/error-functions/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Error Functions in NNs
+    </h1>
+    <div class="post-meta"><span title='2019-10-28 18:30:08 +0200 +0200'>October 28, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post we will talk about how <strong>error functions</strong> are used in Neural Networks and how they are selected according to the task we have to solve.</p>
+<p><strong>Disclaimer:</strong> <em>These notes are for the most part a collection of concepts taken from the slides of the &lsquo;Artificial Neural Networks and Deep Learning&rsquo; course at Polytechnic of Milan and from some other online resources. I am simply putting together all the information to study for the exam and I thought it would be a good idea to upload them here since they can be useful for someone who is interested in this topic.</em></p>
+<h1 id="error-functions">Error Functions<a hidden class="anchor" aria-hidden="true" href="#error-functions">#</a></h1>
+<h2 id="why-do-we-need-an-error-function">Why do we need an error function?<a hidden class="anchor" aria-hidden="true" href="#why-do-we-need-an-error-function">#</a></h2>
+<p>As you might now, the standard way in which machine learning algorithms are trained is by using <strong>gradient descent</strong>, an optimization algorithm based on a convex function that tweaks its parameters iteratively to minimize a given function to its local minimum.
+Generally speaking, when you train a machine learning model you want to find a function that approximates the true function as well as possible. In other words, the output of your model should be as close as possible to the target function:</p>
+<p>$$
+y_n \approx t_n
+$$</p>
+<p>Hence, what we want to do is to <strong>minimize the error function</strong>, which indeed tells us how much our output is wrong w.r.t. the target value. Sometimes it is not easy to minimize or maximize analytically a function, and here the gradient descent comes to play.
+The idea of gradient descent is pretty simple. It works in the following way:</p>
+<p>$$
+\boldsymbol{w}^{k+1} = \boldsymbol{w}^k - \eta \frac{\partial E}{\partial \boldsymbol{w}}\Big |_k
+$$</p>
+<p>So the step can be listed as:</p>
+<ul>
+<li>Pick up a possible solution $\boldsymbol{w}^0$ at random</li>
+<li>Compute the derivative of the error function w.r.t. the weights</li>
+<li>Update the solution</li>
+</ul>
+<p>This process is iterated until convergence. Of course, this is the most simple version of gradient descent, thus there are some problems like <em>local minima</em>, <em>slow convergence</em> or even <em>no convergence at all</em>, which can be handled in different ways that are not discussed here.</p>
+<p><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Gradient_descent.gif" alt="gradient_descent"  />
+</p>
+<h2 id="what-error-function">What error function?<a hidden class="anchor" aria-hidden="true" href="#what-error-function">#</a></h2>
+<p>Ok, so we need an error function. But how can we choose it?</p>
+<p>The most intuitive error function that one can think of is this:</p>
+<p>$$
+E = \sum_{n} (t_n - y_n)^2
+$$</p>
+<p>Indeed, we said that we want the difference among our prediction and the real value to be as small as possible, which is exactly equivalent to minimize this error function. However, even if it is very intuitive, are we really sure that it is the best error function we can use? In order to answer to this question, let&rsquo;s do a premise.</p>
+<h2 id="a-note-on-maximum-likelihood-estimation">A note on Maximum Likelihood Estimation<a hidden class="anchor" aria-hidden="true" href="#a-note-on-maximum-likelihood-estimation">#</a></h2>
+<p>Let’s observe i.i.d. samples from a Gaussian distribution with known $\sigma^2$:</p>
+<p>$$
+x_1,x_2,&hellip;,x_N \sim N(\mu, \sigma^2)
+$$</p>
+<p>$$
+p(x|\mu,\sigma^2) = \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(x-\mu)^2}{2\sigma^2}}
+$$</p>
+<p><img loading="lazy" src="/img/error-functions/MLE.png" alt="MLE"  />
+</p>
+<p>In the picture above, if one asks you &ldquo;What is the Gaussian that has generated the samples?&rdquo; you will probably answer the purple one. The real question is &ldquo;Why is that one?&quot;. Let&rsquo;s start by saying why the other two are not the ones you want. If we consider for example the last point on the left, it is very unlikely that it comes from the red distribution, since it is very far away from it, so the probability is basically zero. But I have observed this point&hellip;so probably the red option is not the right one! The same holds for the last point on the right, so we can infer that also the green one is not the true distribution.
+This is the idea behind Likelihood Estimation: I want to have a distribution for which I have at least some probability of observing the data. Wait, why not the maximum probability? From here, the <strong>Maximum Likelihood Estimation</strong>.</p>
+<p><strong>MLE is not the most probable model. We are not maximizing the likelihood of the model, we are maximizing the likelihood of the data.</strong></p>
+<p>MLE works as follows (note that it works also with other distributions):</p>
+<p>Let $\theta = (\theta_1,\theta_2,&hellip;,\theta_p)^T$ a vector of parameters, find the MLE for $\theta$:</p>
+<ul>
+<li>Write the likelihood $L = P(Data|\theta)$ for the data</li>
+<li><em>(optional)</em> Take the logarithm of likelihood $l = log P(Data|\theta)$</li>
+<li>Work out $\frac{\partial L}{\partial \theta}$ or $\frac{\partial l}{\partial \theta}$</li>
+<li>Solve $\frac{\partial L}{\partial \theta} = 0$ or $\frac{\partial l}{\partial \theta} = 0$</li>
+<li>Check that $\theta^{MLE}$ is a maximum</li>
+</ul>
+<p>The &lsquo;logarithm&rsquo; part is optional, but it is useful for two reasons:</p>
+<ul>
+<li>logarithms transform products into sums (we are interested in this)</li>
+<li>logarithms rescale the dynamic of the input</li>
+</ul>
+<p>To maximize/minimize the (log)likelihood there are different ways, one of which is the Gradient Descent we mentioned before. In this case, however, we will use the <strong>exact solution</strong>.</p>
+<p>Coming back to the i.i.d. samples we considered before, let&rsquo;s apply the steps we listed above:</p>
+<p>$$
+L = P(Data|\theta) = p(x_1,x_2,&hellip;,x_N|\mu,\sigma^2) = \prod_{n=1}^{N} p(x_n|\mu,\sigma^2) = \prod_{n=1}^{N} \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(x_n-\mu)^2}{2\sigma^2}}
+$$</p>
+<p>$$
+\displaylines{l = log P(Data|\theta) = log \Big( \prod_{n=1}^{N} \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(x_n-\mu)^2}{2\sigma^2}} \Big) = \\ = \sum_{n=1}^{N} log \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(x_n-\mu)^2}{2\sigma^2}} = \\ = N \cdot log \frac{1}{\sqrt{2\pi}\sigma} - \frac{1}{2\sigma^2} \sum_{n}^{N} (x_n - \mu)^2}
+$$</p>
+<p>$$
+\displaylines{\frac{\partial l(\mu)}{\partial \mu} = \frac{\partial}{\partial \mu} \Big( N \cdot log \frac{1}{\sqrt{2\pi}\sigma} - \frac{1}{2\sigma^2} \sum_{n}^{N} (x_n - \mu)^2 \Big) = \\ = -\frac{1}{2\sigma^2} \frac{\partial}{\partial \mu} \sum_{n}^{N} (x_n - \mu)^2 = -\frac{1}{2\sigma^2} \sum_{n}^{N} 2(x_n - \mu)}
+$$</p>
+<p>$$
+\displaylines{-\frac{1}{2\sigma^2} \sum_{n}^{N} 2(x_n - \mu) = 0 \\ \sum_{n}^{N} (x_n - \mu) = 0 \\ \sum_{n}^{N} x_n = \sum_{n}^{N} \mu \implies \mu_{MLE} = \frac{1}{N} \sum_{n}^{N} x_n}
+$$</p>
+<p>Ok, good, so let&rsquo;s now apply what we got to neural networks. Consider the <strong>regression</strong> problem: our goal is to approximate a target function $t$ having $N$ observations.</p>
+<p>$$
+t_n = g(x_n|w) + \epsilon_n, \quad \epsilon_n \sim N(0,\sigma^2) \implies t_n \sim N(g(x_n|w), \sigma^2)
+$$</p>
+<p>Note that $t_n$ is a classical Gaussian, which has $g(x_n|w)$ instead of $\mu$. So let&rsquo;s apply the MLE recipe:</p>
+<p>$$
+\displaylines{L(w) = p(t_1,t_2,&hellip;,t_N|g(x|w), \sigma^2) = \prod_{n=1}^{N} p(t_n|g(x_n|w),\sigma^2) = \\ = \prod_{n=1}^{N} \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(t_n-g(x_n|w))^2}{2\sigma^2}}}
+$$</p>
+<p>We look for weights which maximize the likelihood:</p>
+<p>$$
+\displaylines{argmax_w L(w) = argmax_w \prod_{n=1}^{N} \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(t_n-g(x_n|w))^2}{2\sigma^2}} = \\ = argmax_w \sum_{n}^{N} log \Big( \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(t_n-g(x_n|w))^2}{2\sigma^2}} \Big) = \\ = argmax_w \sum_{n}^{N} log \frac{1}{\sqrt{2\pi}\sigma} - \frac{1}{2\sigma^2} (t_n-g(x_n|w))^2 = \\ = argmin_w \sum_{n}^{N} (t_n-g(x_n|w))^2}
+$$</p>
+<p>We finally reach the end. As you can see, under the assumptions we made for the regression case, in order to find the weights that maximize the likelihood we have to minimize exactly the sum of squared errors, our initial error function.</p>
+<p><strong>Observations:</strong></p>
+<ul>
+<li>
+<p>What if $t_n$ is not Gaussian? You can still do this, but it&rsquo;s not the best solution, or at least it&rsquo;s not a maximum likelihood estimation, so you can obtain a solution which is not unbiased.</p>
+</li>
+<li>
+<p>Can we derive something different knowing the errors are distributed differently? Well, if we know the distribution of the error yes, the only thing the we have to do is to follow the process we&rsquo;ve seen, until we get to some result.</p>
+</li>
+</ul>
+<p>Regarding the second observation, if you think a bit, there is one common problem in which we know the distribution of $t_n$: <strong>binary classification</strong>.</p>
+<p>$$
+t_n \in {0,1} \implies t_n \sim Be(g(x_n|w))
+$$</p>
+<p>$$
+p(t|g(x|w)) = g(x|w)^t \cdot (1-g(x|w))^{1-t}
+$$</p>
+<p>where $t$ acts as a selector.</p>
+<p>$$
+\displaylines{L(w) = p(t_1,t_2,&hellip;,t_N|g(x|w)) = \prod_{n=1}^{N} p(t_n|g(x_n|w)) = \\ = \prod_{n=1}^{N} g(x_n|w)^{t_n} \cdot (1-g(x_n|w))^{1-t_n}}
+$$</p>
+<p>$$
+\displaylines{argmax_w L(w) = argmax_w \prod_{n=1}^{N} g(x_n|w)^{t_n} \cdot (1-g(x_n|w))^{1-t_n} = \\ = argmax_w \sum_{n}^{N} t_n log; g(x_n|w) + (1-t_n) log (1-g(x_n|w)) = \\ = argmin_w -\sum_{n}^{N} t_n log; g(x_n|w) + (1-t_n) log (1-g(x_n|w))}
+$$</p>
+<p>We have obtained a new error function, called <strong>cross-entropy error function</strong>. Why is it different from the one we found before? Because they solve different problems: regression (additive Gaussian noise), classification (predictive Bernoulli distribution).  Basically, the error function that you are minimizing describes the problem you&rsquo;re trying to solve. If so, how can we design a new error function?</p>
+<ul>
+<li>Use all your knowledge/assumptions about the data distribution</li>
+<li>Exploit background knowledge on the task and the model</li>
+<li>Use your creativity (lots of trial and error)</li>
+</ul>
+<h2 id="final-comments">Final Comments<a hidden class="anchor" aria-hidden="true" href="#final-comments">#</a></h2>
+<p>Let&rsquo;s make a final observation considering the following samples:</p>
+<p><img loading="lazy" src="/img/error-functions/data.png" alt="example"  />
+</p>
+<p>By looking at this data, I immediately observe that the hypothesis that they come from a nonlinear function plus a Gaussian noise with some constant variance is wrong. Indeed, the dispersion of points is different; more precisely, when the value we want to predict is small, the error is small, and when the value we want to predict is high, the error is high. There is a correlation between the noise and the function we want to learn, and this correlation is not described in the squared error function.
+The hypothesis of constant variance in the data is called <strong>homoscedasticity</strong>, which in this case is not true. Thus, there might be a better error function to deal with this data, which takes into consideration the so called <strong>eteroscedasticity</strong>.
+Another way to see the problem is that when you have to draw the line which represents your model, you will give more importance to the last samples, not because they are more important, but because in those points the error is bigger.
+This was just to say that in some cases the squared error function is not enough and you have to apply some changes.</p>
+<p>Just to conclude, to handle the case of the picture, we can think to have something like:</p>
+<p>$$
+t_n = g(x_n|w) \cdot \epsilon_n
+$$</p>
+<p>One trick that we can use in this scenario, which statisticians call <strong>variance stabilizing transformation</strong>, is to make the regression of $log t$, instead of the regression of $t$:</p>
+<p>$$
+log t_n = log(g(x_n|w)) + log(\epsilon_n)
+$$</p>
+<p>If the effect of distorsion of the variance is not too big, this method can sometimes solve the problem. There are other transformations, like sqrt, polynomial etc.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/backpropagation/">backpropagation</a></li>
+      <li><a href="/tags/crossentropy/">crossentropy</a></li>
+      <li><a href="/tags/error-function/">error function</a></li>
+      <li><a href="/tags/gradient-descent/">gradient descent</a></li>
+      <li><a href="/tags/mse/">MSE</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Linear Classification | Matt Log</title>
+<meta name="keywords" content="linear classification, perceptron, logistic regression, naive bayes, KNN, confusion matrix">
+<meta name="description" content="In this post we will talk about Linear Classification, explaining some of the main methods which are at the basis of this task.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+Linear Classification The goal in classification is to take an input vector $x$ and to assign it to one of $K$ discrete classes $C_k$ where $k = 1,&hellip;,K$.">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/linear-classification/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.735c14aef5bd53538764fbe842da3b6b2041059e13045d88f457bc438e58e012.css" integrity="sha256-c1wUrvW9U1OHZPvoQto7ayBBBZ4TBF2I9Fe8Q45Y4BI=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Linear Classification" />
+<meta property="og:description" content="In this post we will talk about Linear Classification, explaining some of the main methods which are at the basis of this task.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+Linear Classification The goal in classification is to take an input vector $x$ and to assign it to one of $K$ discrete classes $C_k$ where $k = 1,&hellip;,K$." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/linear-classification/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-09-30T21:40:08+02:00" />
+<meta property="article:modified_time" content="2019-09-30T21:40:08+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Linear Classification"/>
+<meta name="twitter:description" content="In this post we will talk about Linear Classification, explaining some of the main methods which are at the basis of this task.
+Disclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;Pattern Recognition and Machine Learning&#39;.
+Linear Classification The goal in classification is to take an input vector $x$ and to assign it to one of $K$ discrete classes $C_k$ where $k = 1,&hellip;,K$."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Linear Classification",
+      "item": "/posts/linear-classification/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Linear Classification",
+  "name": "Linear Classification",
+  "description": "In this post we will talk about Linear Classification, explaining some of the main methods which are at the basis of this task.\nDisclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book \u0026lsquo;Pattern Recognition and Machine Learning'.\nLinear Classification The goal in classification is to take an input vector $x$ and to assign it to one of $K$ discrete classes $C_k$ where $k = 1,\u0026hellip;,K$.",
+  "keywords": [
+    "linear classification", "perceptron", "logistic regression", "naive bayes", "KNN", "confusion matrix"
+  ],
+  "articleBody": "In this post we will talk about Linear Classification, explaining some of the main methods which are at the basis of this task.\nDisclaimer: the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book ‘Pattern Recognition and Machine Learning'.\nLinear Classification The goal in classification is to take an input vector $x$ and to assign it to one of $K$ discrete classes $C_k$ where $k = 1,…,K$. In the most common scenario these classes are disjoint, hence each input can belong to one and only one class. For this reason the input space is divided into the so called decision regions, whose boundaries are called decision boundaries or decision surfaces.\nIn this chapter we will talk about linear models for classification, so these decision surfaces are defined by $(D - 1)$-dimensional hyperplanes within the $D$-dimensional input space.\nFor regression problems, the target variable $t$ is simply the vector of real numbers whose values we wish to predict. In classification the representation can be different according to the context. For example, in the case of two-class problems, the most common choice is a single target variable $t \\in {0,1}$, that can be interpreted as the probability of the class to be $C_1$ or $C_2$.\nIf instead we have more than two classes, we can expand the previous notation using a vector $\\boldsymbol{t}$ where all elements are $0$ except from the one that represents the right class.\nAnother difference from the regression models is the model prediction. Indeed, instead of having $y(\\boldsymbol{x},\\boldsymbol{w}) = \\boldsymbol{x}^T\\boldsymbol{w} + w_0$, which as said is linear in the parameters, in linear classification models:\n$$ y(\\boldsymbol{x},\\boldsymbol{w}) = f(\\boldsymbol{x}^T\\boldsymbol{w} + w_0) $$\nwhere $f(\\cdot)$ is a nonlinear function, called activation function.\nFinally, to conclude this introduction, note that as for regression there can be used fixed nonlinear basis functions. In particular, the decision surfaces correspond to $y(\\boldsymbol{x}) = constant$, hence they are linear functions of $x$. This is important because if the decision surface is linear, the input space must be linearly separable. If it is not the case, the main idea is to make a fixed nonlinear transformation of the input space, using a vector of basis functions $\\phi(\\boldsymbol{x})$.\nApproaches to classification   Discriminant function (or direct approach): build a function the directly maps each input to a specific class.\n  Probabilistic approach\n Probabilistic discriminative approach: model $p(C_k|\\boldsymbol{x})$ directly (e.g. logistic regression). Probabilistic generative approach: model $p(\\boldsymbol{x}|C_k)$ and $p(C_k)$ and then using the Bayes’ rule:    $$ P(C_k|\\boldsymbol{x}) = \\frac{p(\\boldsymbol{x}|C_k)p(C_k)}{p(\\boldsymbol{x})} $$\nDiscriminant function (direct approach) Two-class Let’s consider a two-classes problem. Considering the following model\n$$ y(\\boldsymbol{x}) = \\boldsymbol{x}^T\\boldsymbol{w} + w_0 $$\na possible approach can be to assign $\\boldsymbol{x}$ to $C_1$ if $y(\\boldsymbol{x}) \\geq 0$ and $C_2$ otherwise.\nLet’s now consider two points that lie on the decision surface $x_A$ and $x_B$. Since they lie on the surface\n$$ \\displaylines{y(x_A) = y(x_B) = 0 \\\\ \\boldsymbol{w}^T(x_A-x_B) = 0} $$\nand this means that the vector $\\boldsymbol{w}$ is orthogonal to every vector lying within the decision surface (scalar product = 0), and so $\\boldsymbol{w}$ determines the orientation of the decision surface.\nLet’s now consider a single point $x$ on the decision surface. As before, $y(x) = 0$, so\n$$ \\frac{\\boldsymbol{w}^Tx}{||\\boldsymbol{w}||} = -\\frac{w_0}{||\\boldsymbol{w}||} $$\nhence the bias parameter $w_0$ determines the translation of the decision surface w.r.t. the origin.\nMultiple classes The first idea that can cross our mind is to put together a number of two-class discriminant functions. However, this can lead to some difficulties.\n ONE-VERSUS-THE-REST : $K-1$ classifiers each of which solves a two-class problem.   ONE-VERSUS-ONE: $\\frac{K(K-1)}{2}$ binary classifiers  As we can see, both approaches lead to regions of input space that are ambiguously classified. The following approach solves this issue.\n Using $K$ linear discriminant functions of the form:  $$ y_k(x) = w_k^Tx + w_{k0} $$\nand $x$ will be assigned to the class $C_k$ such that $y_k(x)  y_j(x) \\ \\forall j \\ne k$\nThis means that the decision boundary between two generic classes $C_k$ and $C_j$ is the hyperplane identified by:\n$$ y_k(x) = y_j(x) \\implies (w_k-w_j)^Tx + (w_{k0}-w_{j0}) = 0 $$\nThis has the same form as the decision boundary for the two-class case, so analogous geometrical properties apply. However, this type of classifiers have the beautiful property of being simply connected and convex (it can be proved).\nLeast squares for classification We know that for regression problems least squares can be a good choice, since it provides a simple closed-form solution. Can we apply it to classification? SPOILER: nope. Let’s see why.\nLet’s consider a general classification problem with $K$ classes using 1-of-$K$ binary coding scheme for the target vector $\\boldsymbol{t}$. This means that each class is described by its own linear model\n$$ y_k(\\boldsymbol{x}) = \\boldsymbol{x}^T\\boldsymbol{w_k} + w_{k0} $$\nIn a vector notation to group all the classes\n$$ \\boldsymbol{y}(\\boldsymbol{x}) = \\boldsymbol{\\tilde{W}}^T\\boldsymbol{\\tilde{x}} $$\nwhere $\\tilde{W}$ is a $(D+1)$ x $K$ matrix, where each column is a weight vector of a different classifier.\nThe next step is to find the optimal weight matrix. Given a dataset $D = {x_i,t_i}$, where $i = 1,…,N$ and considering the loss function\n$$ E_D(\\boldsymbol{\\tilde{W}}) = \\frac{1}{2}Tr\\{(\\boldsymbol{\\tilde{X}}\\boldsymbol{\\tilde{W}}-\\boldsymbol{T})^T(\\boldsymbol{\\tilde{X}}\\boldsymbol{\\tilde{W}}-\\boldsymbol{T})\\} $$\nwhere $Tr{}$ means the trace of the matrix. Minimizing least squares will lead to the already known closed-form solution\n$$ \\boldsymbol{\\tilde{W}} = (\\boldsymbol{\\tilde{X}^T}\\boldsymbol{\\tilde{X}})^{-1}\\boldsymbol{\\tilde{X}^T\\boldsymbol{T}} $$\nWhat’s the problem?\nActually the problem is always the same: least squares is highly sensitive to outliers, as we can see from this image\nThis is due to the loss function, that penalizes predictions which are “too correct” in that they lie a long way on the correct side of the decision boundary. However, this is not the only problem that affects least squares. Recall that it corresponds to maximum likelihood under the assumption of a Gaussian conditional distribution, but for sure binary target vectors have a distribution that is far from Gaussian.\nPerceptron algorithm Ok, let’s skip to another linear discriminant model: the perceptron of Rosenblatt (1962). Unlike least squares, which has a closed-form solution, it is an online linear classification algorithm. More precisely, it corresponds to a two-class model:\n$$ y(\\boldsymbol{x}) = f(\\boldsymbol{w}^T\\phi(\\boldsymbol{x})) $$\nwhere $f(\\cdot)$ is a step function, i.e.\n$$ \\displaylines{f(a) = \\begin{cases} +1 \u0026 {if } \\ {a \\geq 0} \\\\ -1 \u0026 {if } \\ {a For sure to determine the parameters $\\boldsymbol{w}$ we will try to minimize an error function. A natural choice of this error function would be the total number of misclassified patterns. However, doing so the error will be a piecewise constant function of $\\boldsymbol{w}$, with discontinuities wherever a change in $\\boldsymbol{w}$ causes the decision boundary to move across one of the data points. For this reason we cannot use methods based on the gradient, because the latter is zero almost everywhere.\nThat’s why there is a specific error function, called perceptron criterion:\n$$ L_P(\\boldsymbol{x}) = -\\sum_{n \\in \\mathcal{M}}\\boldsymbol{w}^T\\phi_n(\\boldsymbol{x_n})t_n $$\nwhere $\\mathcal{M}$ is the set of misclassified points.\nThe idea is that the algorithm finds the separating hyperplane by minimizing the distance of misclassified points to the decision boundary. The contribution to the error associated with a particular misclassified pattern is a linear function of $\\boldsymbol{w}$ in regions of $\\boldsymbol{w}$ where the pattern is misclassified and zero in regions where it is correctly classified. The total error function is therefore piecewise linear.Note that the minus in the loss function is a trick to make it always positive, since in the summation $\\boldsymbol{w}^T\\phi_n(x_n)t_n$ is always negative (remember that we are considering only misclassified points).\nSo, how do we minimize this loss function? Stochastic gradient descent.\n$$ \\boldsymbol{w}^{(k+1)} = \\boldsymbol{w}^k - \\eta\\nabla L_P(\\boldsymbol{w}) = \\boldsymbol{w}^{(k)} + \\eta\\phi(\\boldsymbol{x_n})t_n $$\nwhere $\\eta$ is the learning rate and $k$ represents the steps of the algorithm. Since if we multiply $\\boldsymbol{w}$ by a constant the perceptron function is unchanged, we can set $\\eta = 1$.\nIn a nutshell, the algorithm does the following: we cycle through the training patterns and for each of them we evaluate the perceptron function. If the pattern is correctly classified, then the weight vectors remains unchanged, otherwise for class $C_1$ we add the vector $\\phi(\\boldsymbol{x_n})$ to the current estimate of $\\boldsymbol{w}$, while for class $C_2$ we subtract it from $\\boldsymbol{w}$.\nSome observation:\n the perceptron learning rule is not guaranteed to reduce the total error function at each stage. the perceptron convergence theorem states that if the input space is linearly separable, then the perceptron algorithm is guaranteed to find an exact solution in a finite number of steps. However, note that the number of steps could be substantial and in practice, until convergence is achieved, we will not be able to distinguish between a nonseparable problem and one that is simply slow to converge!  In addition to the difficulties with the learning algorithm, the perceptron does not provide probabilistic outputs, does not generalize to $K2$ classes and, as all the models we’ve seen, it is based on linear combinations of fixed basis functions.\nThat is why we are going to skip to a more powerful model.\nProbabilistic Discriminative Models Logistic Regression First of all, note that even if the name can be tricky, logistic regression is a CLASSIFICATION algorithm.\nLogistic regression can be seen as a special case of the generalized linear model and thus analogous to linear regression. The model of logistic regression, however, is based on quite different assumptions (about the relationship between dependent and independent variables) from those of linear regression. In particular the key differences between these two models can be seen in the following two features of logistic regression:\n First, the conditional distribution $y \\mid x$ is a Bernoulli distribution rather than a Gaussian distribution, because the dependent variable is binary. Second, the predicted values are probabilities and are therefore restricted to (0,1) through the logistic distribution function because logistic regression predicts the probability of particular outcomes rather than the outcomes themselves.  Without entering too much in the details, under rather general assumptions, the posterior probability of class $C_1$ can be written as a logistic sigmoid acting on a linear function of the feature vector $\\phi$, so that\n$$ p(C_1|\\phi) = \\frac{1}{1+e^{-\\boldsymbol{w}^T\\phi}} = \\sigma(\\boldsymbol{w}^T\\phi) $$\nwith $p(C_2|\\phi) = 1 - p(C_1|\\phi)$\nAn important advantage of logistic regression is that for an $M$-dimensional feature space $\\phi$, it has $M$ adjustable parameters, while if we had fitted Gaussian class conditional densities using maximum likelihood we would have used $\\sim M^2$ parameters.\nWe now used maximum likelihood to determine the parameters of the logistic regression models. To do this, note this beautiful property:\n$$ \\frac{d\\sigma}{da} = \\sigma(1-\\sigma) $$\nSo, given a dataset $D =$ {$\\phi_n,t_n$}, $t_n \\in$ {$0,1$}, applying ML means maximizing the probability of getting the right label:\n$$ p(\\boldsymbol{t}|\\boldsymbol{X},\\boldsymbol{w}) = \\prod_{n=1}^{N}y_n^{t_n}(1-y_n)^{1-t_n}, \\ y_n = \\sigma(\\boldsymbol{w}^T\\phi_n) $$\nAs usual, we can define an error function by taking the negative logarithm of the likelihood, which gives the cross-entropy error function:\n$$ L(\\boldsymbol{w}) = -ln \\ p(\\boldsymbol{t}|\\boldsymbol{X},\\boldsymbol{w}) = -\\sum_{n=1}^{N}(t_n \\ ln \\ y_n + (1-t_n) \\ ln \\ (1-y_n)) = \\sum_{n=1}^{N}L_n $$\nTaking the gradient of the error function with respect to $\\boldsymbol{w}$, we obtain\n$$ \\frac{\\partial L_n}{\\partial y_n} = \\frac{y_n-t_n}{y_n(1-t_n)} $$\n$$ \\frac{\\partial y_n}{\\partial \\boldsymbol{w}} = y_n(1-y_n)\\phi_n $$\n$$ \\frac{\\partial L_n}{\\partial \\boldsymbol{w}} = \\frac{\\partial L_n}{\\partial y_n}\\frac{\\partial y_n}{\\partial \\boldsymbol{w}} = (y_n-t_n)\\phi_n $$\n$$ \\implies \\nabla L(\\boldsymbol{w}) = \\sum_{n=1}^{N}(y_n-t_n)\\phi_n $$\nNote that it takes precisely the same form as the gradient of the sum-of-squares error function for the linear regression model, but in this case $y$ is not a linear function of $\\boldsymbol{w}$, so there is no closed-form solution. However, the error function is convex, hence it can be optimized by standard gradient-based optimization techniques (can be adapted also to the online learning setting).\nMulticlass Logistic Regression For the multiclass case, the posterior probabilities can be represented by a softmax transformation of linear functions of the feauture variables, so that\n$$ p(C_k|\\phi) = y_k(\\phi) = \\frac{e^{\\boldsymbol{w_k}^T\\phi}}{\\sum_{j}e^{\\boldsymbol{w_j}^T\\phi}} $$\nIn mathematics, the softmax function, also known as softargmax or normalized exponential function, is a function that takes as input a vector of $K$ real numbers, and normalizes it into a probability distribution consisting of $K$ probabilities. That is, prior to applying softmax, some vector components could be negative, or greater than one, and might not sum to 1; but after applying softmax, each component will be in the interval $(0,1)$, and the components will add up to $1$, so that they can be interpreted as probabilities. Furthermore, the larger input components will correspond to larger probabilities.\nAs before, we use ML to determine directly the parameters\n$$ p(\\boldsymbol{T}|\\Phi,\\boldsymbol{w_1},…,\\boldsymbol{w_K}) = \\prod_{n=1}^{N}(\\prod_{k=1}^{K}p(C_k|\\phi_n)^{t_{nk}}) = \\prod_{n=1}^{N}(\\prod_{k=1}^{K}y_{nk}^{t_{nk}}) $$\nwhere $y_{nk} = p(C_k|\\phi_n)$\nThe cross-entropy function is\n$$ L(\\boldsymbol{w_1},…,\\boldsymbol{w_K}) = -ln \\ p(\\boldsymbol{T}|\\Phi,\\boldsymbol{w_1},…,\\boldsymbol{w_K}) = -\\sum_{n=1}^{N}(\\sum_{k=1}^{K}t_{nk}ln \\ y_{nk}) $$\nTaking the gradient\n$$ \\nabla L_{\\boldsymbol{w_j}}(\\boldsymbol{w_1},…,\\boldsymbol{w_K}) = \\sum_{n=1}^{N}(y_{nj}-t_{nj})\\phi_n $$\nProbabilistic Generative Models Generative models have the purpose of modeling the joint probability density function of the couple input/output $p(C_k,\\boldsymbol{x})$, which allows to generate also new data from what has been learned.\nNaive Bayes There is not a single algorithm for training this type of classifiers, but a family of algorithms based on a common principle: the assumption that each input is conditionally (w.r.t the class) independent from each other.\n$$ \\displaylines{p(C_k|\\boldsymbol{x}) = \\frac{p(C_k)p(\\boldsymbol{x}|C_k)}{p(\\boldsymbol{x})} \\propto p(x_1,…,x_M,C_k) \\\\ = p(x_1|x_2,…,x_M,C_k)p(x_2,…,x_M,C_k) \\\\ = p(x_1|x_2,…,x_M,C_k)p(x_2|x_3,…,x_M,C_k)p(x_3,…,x_M,C_k) \\\\ = p(x_1|x_2,…,x_M,C_k)p(x_2|x_3,…,x_M,C_k)…p(x_{M-1}|x_M,C_k)p(x_M|C_k)p(C_k) \\\\ = p(C_k)\\prod_{j=1}^{M}p(x_j|C_k)} $$\nThe decision function, that maximizes the MAP probability, is the following:\n$$ y(\\boldsymbol{x}) = arg \\ max_k \\ p(C_k) \\prod_{j=1}^{M}p(x_j|C_k) $$\nA class’s prior may be calculated by assuming equiprobable classes, i.e. $p(C_k) = \\frac{1}{K}$.The assumptions on distributions of features are called the event model of the Naive Bayes classifier. For discrete features, multinomial and Bernoulli distributions are popular.When dealing with continuous data, a typical assumption is that the continuous values associated with each class are distributed according to a Gaussian distribution. For example, suppose the training data contains a continuous attribute, $x$. We first segment the data by the class, and then compute the mean and variance of $x$ in each class.\nLet $\\mu_k$ be the mean of the values in $x$ associated with class $C_k$, and let $\\sigma_k^2$ be the variance of the values in $x$ associated with class $C_k$. Suppose we have collected some observation value $v$. Then, the probability distribution of $v$ given a class $C_k$, $p(x=v|C_k)$, can be computed by plugging $v$ into the equation for a Normal distribution parameterized by $\\mu_k$ and $\\sigma_k^2$. That is,\n$$ p(x=v|C_k) = \\frac{1}{\\sqrt{2\\pi\\sigma_k^2}}e^{-\\frac{(v-\\mu_k)^2}{2\\sigma_k^2}} $$\nNon-parametric methods Algorithms that do not make strong assumptions about the form of the mapping function are called nonparametric machine learning algorithms. By not making assumptions, they are free to learn any functional form from the training data.\n“Nonparametric methods are good when you have a lot of data and no prior knowledge, and when you don’t want to worry too much about choosing just the right features.” Artificial Intelligence: A Modern Approach\nK-nearest neighbor k-NN is a type of instance-based learning, or lazy learning, where the function is only approximated locally and all computation is deferred until classification. Note indeed that the training phase is practically absent, but the prediction phase is quite slow, since it must iterate over all the data points every time.\nFor each sample to predict, the closest k samples are selected and the label belonging to the majority of them is assigned to the new sample. If k is even, a policy for breaking the ties has to be chosen, e.g. randomly.\nThe concept of closest requires the definition of a similarity measure, which is not always trivial but that has the advantage of the possibility to use K-NN also for objects (such as graphs) for which a similarity can be defined.\nIt is affected by the curse of dimensionality, which means that having a very high number of dimensions will decrease the performance of the predictor. The curse is caused by the fact that with high dimensions, all the points tend to have the same distance from one to another.\nThe choice of the k parameter is very important for the performance of the algorithm and it can be chosen through cross-validation. A very low k will have high variance and low bias, while a high k will have a low variance but high bias.\nPerformance measures We are at the end! To conclude this chapter we’re going to answer the question: how can we evaluate the performance of a method?\nConfusion matrix The confusion matrix is a simple table which shows the number of points that have been correctly classified and those that have been misclassified.\nFrom this matrix we can compute the following useful metrics:\n Accuracy: $\\frac{tp+tn}{N}$, fraction of the samples correctly classified in the dataset Precision: $\\frac{tp}{tp+fp}$, fraction of samples correctly classified in the positive class among the ones classified in the positive class Recall: $\\frac{tp}{tp+fn}$, fraction of samples correctly classified in the positive class among the ones belonging to the positive class  ",
+  "wordCount" : "2801",
+  "inLanguage": "en",
+  "datePublished": "2019-09-30T21:40:08+02:00",
+  "dateModified": "2019-09-30T21:40:08+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/linear-classification/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Linear Classification
+    </h1>
+    <div class="post-meta"><span title='2019-09-30 21:40:08 +0200 CEST'>September 30, 2019</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In this post we will talk about <strong>Linear Classification</strong>, explaining some of the main methods which are at the basis of this task.</p>
+<p><strong>Disclaimer:</strong> <em>the following notes were written following the slides provided by the professor Restelli at Polytechnic of Milan and the book &lsquo;<a href="https://www.springer.com/gp/book/9780387310732">Pattern Recognition and Machine Learning</a>'.</em></p>
+<h1 id="linear-classification">Linear Classification<a hidden class="anchor" aria-hidden="true" href="#linear-classification">#</a></h1>
+<p>The goal in classification is to take an input vector $x$ and to assign it to one of $K$ discrete classes $C_k$ where $k = 1,&hellip;,K$. In the most common scenario these classes are disjoint, hence each input can belong to one and only one class. For this reason the input space is divided into the so called <strong>decision regions</strong>, whose boundaries are called <strong>decision boundaries</strong> or <strong>decision surfaces</strong>.</p>
+<p>In this chapter we will talk about linear models for classification, so these decision surfaces are defined by $(D - 1)$-dimensional hyperplanes within the $D$-dimensional input space.</p>
+<p>For regression problems, the target variable $t$ is simply the vector of real numbers whose values we wish to predict. In classification the representation can be different according to the context. For example, in the case of two-class problems, the most common choice is a single target variable $t \in {0,1}$, that can be interpreted as the probability of the class to be $C_1$ or $C_2$.</p>
+<p>If instead we have more than two classes, we can expand the previous notation using a vector $\boldsymbol{t}$ where all elements are $0$ except from the one that represents the right class.</p>
+<p>Another difference from the regression models is the model prediction. Indeed, instead of having $y(\boldsymbol{x},\boldsymbol{w}) = \boldsymbol{x}^T\boldsymbol{w} + w_0$, which as said is linear in the parameters, in linear classification models:</p>
+<p>$$
+y(\boldsymbol{x},\boldsymbol{w}) = f(\boldsymbol{x}^T\boldsymbol{w} + w_0)
+$$</p>
+<p>where $f(\cdot)$ is a nonlinear function, called <strong>activation function</strong>.</p>
+<p>Finally, to conclude this introduction, note that as for regression there can be used <strong>fixed nonlinear basis functions</strong>. In particular, the decision surfaces correspond to $y(\boldsymbol{x}) = constant$, hence they are linear functions of $x$. This is important because if the decision surface is linear, the input space must be linearly separable. If it is not the case, the main idea is to make a fixed nonlinear transformation of the input space, using a vector of basis functions $\phi(\boldsymbol{x})$.</p>
+<h2 id="approaches-to-classification">Approaches to classification<a hidden class="anchor" aria-hidden="true" href="#approaches-to-classification">#</a></h2>
+<ol>
+<li>
+<p><strong>Discriminant function</strong> (or direct approach): build a function the directly maps each input to a specific class.</p>
+</li>
+<li>
+<p><strong>Probabilistic approach</strong></p>
+<ul>
+<li>Probabilistic discriminative approach: model $p(C_k|\boldsymbol{x})$ directly (e.g. logistic regression).</li>
+<li>Probabilistic generative approach: model $p(\boldsymbol{x}|C_k)$ and $p(C_k)$ and then using the <strong>Bayes&rsquo; rule</strong>:</li>
+</ul>
+</li>
+</ol>
+<p>$$
+P(C_k|\boldsymbol{x}) = \frac{p(\boldsymbol{x}|C_k)p(C_k)}{p(\boldsymbol{x})}
+$$</p>
+<h2 id="discriminant-function-direct-approach">Discriminant function (direct approach)<a hidden class="anchor" aria-hidden="true" href="#discriminant-function-direct-approach">#</a></h2>
+<h3 id="two-class">Two-class<a hidden class="anchor" aria-hidden="true" href="#two-class">#</a></h3>
+<p>Let&rsquo;s consider a two-classes problem. Considering the following model</p>
+<p>$$
+y(\boldsymbol{x}) = \boldsymbol{x}^T\boldsymbol{w} + w_0
+$$</p>
+<p>a possible approach can be to assign $\boldsymbol{x}$ to $C_1$ if $y(\boldsymbol{x}) \geq 0$ and $C_2$ otherwise.</p>
+<p>Let&rsquo;s now consider two points that lie on the decision surface $x_A$ and $x_B$. Since they lie on the surface</p>
+<p>$$
+\displaylines{y(x_A) = y(x_B) = 0 \\ \boldsymbol{w}^T(x_A-x_B) = 0}
+$$</p>
+<p>and this means that the vector $\boldsymbol{w}$ is orthogonal to every vector lying within the decision surface (scalar product = 0), and so $\boldsymbol{w}$ determines the orientation of the decision surface.</p>
+<p>Let&rsquo;s now consider a single point $x$ on the decision surface. As before, $y(x) = 0$, so</p>
+<p>$$
+\frac{\boldsymbol{w}^Tx}{||\boldsymbol{w}||} = -\frac{w_0}{||\boldsymbol{w}||}
+$$</p>
+<p>hence the bias parameter $w_0$ determines the translation of the decision surface w.r.t. the origin.</p>
+
+
+<img src="/img/linear-classification/geometry-linear-classification.png" style="display: block; margin-left: auto; margin-right: auto;width:400px;heigth:300px">
+
+<h3 id="multiple-classes">Multiple classes<a hidden class="anchor" aria-hidden="true" href="#multiple-classes">#</a></h3>
+<p>The first idea that can cross our mind is to put together a number of two-class discriminant functions. However, this can lead to some difficulties.</p>
+<ul>
+<li>ONE-VERSUS-THE-REST : $K-1$ classifiers each of which solves a two-class problem.</li>
+</ul>
+
+
+<img src="/img/linear-classification/one-versus-the-rest.png" style="width:300px;heigth:200px">
+
+<ul>
+<li>ONE-VERSUS-ONE: $\frac{K(K-1)}{2}$ binary classifiers</li>
+</ul>
+
+
+<img src="/img/linear-classification/one-versus-one.png" style="width:300px;heigth:200px">
+
+<p>As we can see, both approaches lead to regions of input space that are ambiguously classified. The following approach solves this issue.</p>
+<ul>
+<li>Using $K$ linear discriminant functions of the form:</li>
+</ul>
+<p>$$
+y_k(x) = w_k^Tx + w_{k0}
+$$</p>
+<p>and $x$ will be assigned to the class $C_k$ such that $y_k(x) &gt; y_j(x) \ \forall j \ne k$</p>
+<p>This means that the decision boundary between two generic classes $C_k$ and $C_j$ is the hyperplane identified by:</p>
+<p>$$
+y_k(x) = y_j(x) \implies (w_k-w_j)^Tx + (w_{k0}-w_{j0}) = 0
+$$</p>
+<p>This has the same form as the decision boundary for the two-class case, so analogous geometrical properties apply.
+However, this type of classifiers have the beautiful property of being <strong>simply connected</strong> and <strong>convex</strong> (it can be proved).</p>
+<h3 id="least-squares-for-classification">Least squares for classification<a hidden class="anchor" aria-hidden="true" href="#least-squares-for-classification">#</a></h3>
+<p>We know that for regression problems least squares can be a good choice, since it provides a simple closed-form solution. Can we apply it to classification? SPOILER: nope. Let&rsquo;s see why.</p>
+<p>Let&rsquo;s consider a general classification problem with $K$ classes using 1-of-$K$ binary coding scheme for the target vector $\boldsymbol{t}$. This means that each class is described by its own linear model</p>
+<p>$$
+y_k(\boldsymbol{x}) = \boldsymbol{x}^T\boldsymbol{w_k} + w_{k0}
+$$</p>
+<p>In a vector notation to group all the classes</p>
+<p>$$
+\boldsymbol{y}(\boldsymbol{x}) = \boldsymbol{\tilde{W}}^T\boldsymbol{\tilde{x}}
+$$</p>
+<p>where $\tilde{W}$ is a $(D+1)$ x $K$ matrix, where each column is a weight vector of a different classifier.</p>
+<p>The next step is to find the optimal weight matrix. <!-- raw HTML omitted -->
+Given a dataset $D = {x_i,t_i}$, where $i = 1,&hellip;,N$ and considering the loss function</p>
+<p>$$
+E_D(\boldsymbol{\tilde{W}}) = \frac{1}{2}Tr\{(\boldsymbol{\tilde{X}}\boldsymbol{\tilde{W}}-\boldsymbol{T})^T(\boldsymbol{\tilde{X}}\boldsymbol{\tilde{W}}-\boldsymbol{T})\}
+$$</p>
+<p>where $Tr{}$ means the trace of the matrix. <!-- raw HTML omitted -->
+Minimizing least squares will lead to the already known closed-form solution</p>
+<p>$$
+\boldsymbol{\tilde{W}} = (\boldsymbol{\tilde{X}^T}\boldsymbol{\tilde{X}})^{-1}\boldsymbol{\tilde{X}^T\boldsymbol{T}}
+$$</p>
+<p>What&rsquo;s the problem?</p>
+<p>Actually the problem is always the same: least squares is highly sensitive to outliers, as we can see from this image</p>
+
+
+<img src="/img/linear-classification/outliers.png" style="display: block; margin-left: auto; margin-right: auto;width:500px;heigth:300px">
+
+<p>This is due to the loss function, that penalizes predictions which are &ldquo;too correct&rdquo; in that they lie a long way on the correct side of the decision boundary. <!-- raw HTML omitted -->
+However, this is not the only problem that affects least squares. Recall that it corresponds to maximum likelihood under the assumption of a Gaussian conditional distribution, but for sure binary target vectors have a distribution that is far from Gaussian.</p>
+<h2 id="perceptron-algorithm">Perceptron algorithm<a hidden class="anchor" aria-hidden="true" href="#perceptron-algorithm">#</a></h2>
+<p>Ok, let&rsquo;s skip to another linear discriminant model: the perceptron of Rosenblatt (1962). Unlike least squares, which has a closed-form solution, it is an online linear classification algorithm. More precisely, it corresponds to a two-class model:</p>
+<p>$$
+y(\boldsymbol{x}) = f(\boldsymbol{w}^T\phi(\boldsymbol{x}))
+$$</p>
+<p>where $f(\cdot)$ is a <strong>step function</strong>, i.e.</p>
+<p>$$
+\displaylines{f(a) = \begin{cases} +1 &amp; {if } \ {a \geq 0} \\ -1 &amp; {if } \ {a &lt; 0} \end{cases}}
+$$</p>
+<p>For sure to determine the parameters $\boldsymbol{w}$ we will try to minimize an error function. A natural choice of this error function would be the total number of misclassified patterns. However, doing so the error will be a piecewise constant function of $\boldsymbol{w}$, with discontinuities wherever a change in $\boldsymbol{w}$ causes the decision boundary to move across one of the data points. For this reason we cannot use methods based on the gradient, because the latter is zero almost everywhere.</p>
+<p>That&rsquo;s why there is a specific error function, called <strong>perceptron criterion</strong>:</p>
+<p>$$
+L_P(\boldsymbol{x}) = -\sum_{n \in \mathcal{M}}\boldsymbol{w}^T\phi_n(\boldsymbol{x_n})t_n
+$$</p>
+<p>where $\mathcal{M}$ is the set of misclassified points.</p>
+<p>The idea is that the algorithm finds the separating hyperplane by minimizing the distance of misclassified points to the decision boundary. The contribution to the error associated with a particular misclassified pattern is a linear function of $\boldsymbol{w}$ in regions of $\boldsymbol{w}$ where the pattern is misclassified and zero in regions where it is correctly classified. The total error function is therefore piecewise linear.<!-- raw HTML omitted -->
+Note that the minus in the loss function is a trick to make it always positive, since in the summation $\boldsymbol{w}^T\phi_n(x_n)t_n$ is always negative (remember that we are considering only misclassified points).</p>
+<p>So, how do we minimize this loss function? <strong>Stochastic gradient descent</strong>.</p>
+<p>$$
+\boldsymbol{w}^{(k+1)} = \boldsymbol{w}^k - \eta\nabla L_P(\boldsymbol{w}) = \boldsymbol{w}^{(k)} + \eta\phi(\boldsymbol{x_n})t_n
+$$</p>
+<p>where $\eta$ is the learning rate and $k$ represents the steps of the algorithm. Since if we multiply $\boldsymbol{w}$ by a constant the perceptron function is unchanged, we can set $\eta = 1$.</p>
+<p>In a nutshell, the algorithm does the following: we cycle through the training patterns and for each of them we evaluate the perceptron function. If the pattern is correctly classified, then the weight vectors remains unchanged, otherwise for class $C_1$ we add the vector $\phi(\boldsymbol{x_n})$ to the current estimate of $\boldsymbol{w}$, while for class $C_2$ we subtract it from $\boldsymbol{w}$.</p>
+<p>Some observation:</p>
+<ul>
+<li>the perceptron learning rule is not guaranteed to reduce the total error function at each stage.</li>
+<li>the <strong>perceptron convergence theorem</strong> states that if the input space is linearly separable, then the perceptron algorithm is guaranteed to find an exact solution in a finite number of steps. However, note that the number of steps could be substantial and in practice, until convergence is achieved, we will not be able to distinguish between a nonseparable problem and one that is simply slow to converge!</li>
+</ul>
+<p>In addition to the difficulties with the learning algorithm, the perceptron does not provide probabilistic outputs, does not generalize to $K&gt;2$ classes and, as all the models we&rsquo;ve seen, it is based on linear combinations of fixed basis functions.</p>
+<p>That is why we are going to skip to a more powerful model.</p>
+<h2 id="probabilistic-discriminative-models">Probabilistic Discriminative Models<a hidden class="anchor" aria-hidden="true" href="#probabilistic-discriminative-models">#</a></h2>
+<h3 id="logistic-regression">Logistic Regression<a hidden class="anchor" aria-hidden="true" href="#logistic-regression">#</a></h3>
+<p>First of all, note that even if the name can be tricky, logistic regression is a CLASSIFICATION algorithm.</p>
+<p>Logistic regression can be seen as a special case of the generalized linear model and thus analogous to linear regression. The model of logistic regression, however, is based on quite different assumptions (about the relationship between dependent and independent variables) from those of linear regression. In particular the key differences between these two models can be seen in the following two features of logistic regression:</p>
+<ul>
+<li>First, the conditional distribution $y \mid x$ is a Bernoulli distribution rather than a Gaussian distribution, because the dependent variable is binary.</li>
+<li>Second, the predicted values are probabilities and are therefore restricted to (0,1) through the logistic distribution function because logistic regression predicts the probability of particular outcomes rather than the outcomes themselves.</li>
+</ul>
+<p>Without entering too much in the details, under rather general assumptions, the posterior probability of class $C_1$ can be written as a logistic sigmoid acting on a linear function of the feature vector $\phi$, so that</p>
+<p>$$
+p(C_1|\phi) = \frac{1}{1+e^{-\boldsymbol{w}^T\phi}} = \sigma(\boldsymbol{w}^T\phi)
+$$</p>
+<p>with $p(C_2|\phi) = 1 - p(C_1|\phi)$</p>
+<p>An important advantage of logistic regression is that for an $M$-dimensional feature space $\phi$, it has $M$ adjustable parameters, while if we had fitted Gaussian class conditional densities using maximum likelihood we would have used $\sim M^2$ parameters.</p>
+<p>We now used maximum likelihood to determine the parameters of the logistic regression models. To do this, note this beautiful property:</p>
+<p>$$
+\frac{d\sigma}{da} = \sigma(1-\sigma)
+$$</p>
+<p>So, given a dataset $D =$ {$\phi_n,t_n$}, $t_n \in$ {$0,1$}, applying ML means maximizing the probability of getting the right label:</p>
+<p>$$
+p(\boldsymbol{t}|\boldsymbol{X},\boldsymbol{w}) = \prod_{n=1}^{N}y_n^{t_n}(1-y_n)^{1-t_n}, \ y_n = \sigma(\boldsymbol{w}^T\phi_n)
+$$</p>
+<p>As usual, we can define an error function by taking the negative logarithm of the likelihood, which gives the <strong>cross-entropy</strong> error function:</p>
+<p>$$
+L(\boldsymbol{w}) = -ln \ p(\boldsymbol{t}|\boldsymbol{X},\boldsymbol{w}) = -\sum_{n=1}^{N}(t_n \ ln \ y_n + (1-t_n) \ ln \ (1-y_n)) = \sum_{n=1}^{N}L_n
+$$</p>
+<p>Taking the gradient of the error function with respect to $\boldsymbol{w}$, we obtain</p>
+<p>$$
+\frac{\partial L_n}{\partial y_n} = \frac{y_n-t_n}{y_n(1-t_n)}
+$$</p>
+<p>$$
+\frac{\partial y_n}{\partial \boldsymbol{w}} = y_n(1-y_n)\phi_n
+$$</p>
+<p>$$
+\frac{\partial L_n}{\partial \boldsymbol{w}} = \frac{\partial L_n}{\partial y_n}\frac{\partial y_n}{\partial \boldsymbol{w}} = (y_n-t_n)\phi_n
+$$</p>
+<p>$$
+\implies \nabla L(\boldsymbol{w}) = \sum_{n=1}^{N}(y_n-t_n)\phi_n
+$$</p>
+<p>Note that it takes precisely the same form as the gradient of the sum-of-squares error function for the linear regression model, but in this case $y$ is not a linear function of $\boldsymbol{w}$, so there is no closed-form solution. However, the error function is <strong>convex</strong>, hence it can be optimized by standard gradient-based optimization techniques (can be adapted also to the online learning setting).</p>
+<h3 id="multiclass-logistic-regression">Multiclass Logistic Regression<a hidden class="anchor" aria-hidden="true" href="#multiclass-logistic-regression">#</a></h3>
+<p>For the multiclass case, the posterior probabilities can be represented by a <strong>softmax transformation</strong> of linear functions of the feauture variables, so that</p>
+<p>$$
+p(C_k|\phi) = y_k(\phi) = \frac{e^{\boldsymbol{w_k}^T\phi}}{\sum_{j}e^{\boldsymbol{w_j}^T\phi}}
+$$</p>
+<p>In mathematics, the softmax function, also known as softargmax or normalized exponential function, is a function that takes as input a vector of $K$ real numbers, and normalizes it into a probability distribution consisting of $K$ probabilities. That is, prior to applying softmax, some vector components could be negative, or greater than one, and might not sum to 1; but after applying softmax, each component will be in the interval $(0,1)$, and the components will add up to $1$, so that they can be interpreted as probabilities. Furthermore, the larger input components will correspond to larger probabilities.</p>
+<p>As before, we use ML to determine directly the parameters</p>
+<p>$$
+p(\boldsymbol{T}|\Phi,\boldsymbol{w_1},&hellip;,\boldsymbol{w_K}) = \prod_{n=1}^{N}(\prod_{k=1}^{K}p(C_k|\phi_n)^{t_{nk}}) = \prod_{n=1}^{N}(\prod_{k=1}^{K}y_{nk}^{t_{nk}})
+$$</p>
+<p>where $y_{nk} = p(C_k|\phi_n)$</p>
+<p>The cross-entropy function is</p>
+<p>$$
+L(\boldsymbol{w_1},&hellip;,\boldsymbol{w_K}) = -ln \ p(\boldsymbol{T}|\Phi,\boldsymbol{w_1},&hellip;,\boldsymbol{w_K}) = -\sum_{n=1}^{N}(\sum_{k=1}^{K}t_{nk}ln \ y_{nk})
+$$</p>
+<p>Taking the gradient</p>
+<p>$$
+\nabla L_{\boldsymbol{w_j}}(\boldsymbol{w_1},&hellip;,\boldsymbol{w_K}) = \sum_{n=1}^{N}(y_{nj}-t_{nj})\phi_n
+$$</p>
+<h2 id="probabilistic-generative-models">Probabilistic Generative Models<a hidden class="anchor" aria-hidden="true" href="#probabilistic-generative-models">#</a></h2>
+<p>Generative models have the purpose of modeling the joint probability density function of the couple input/output $p(C_k,\boldsymbol{x})$, which allows to generate also new data from what has been learned.</p>
+<h3 id="naive-bayes">Naive Bayes<a hidden class="anchor" aria-hidden="true" href="#naive-bayes">#</a></h3>
+<p>There is not a single algorithm for training this type of classifiers, but a family of algorithms based on a common principle: the assumption that each input is conditionally (w.r.t the class) independent from each other.</p>
+<p>$$
+\displaylines{p(C_k|\boldsymbol{x}) = \frac{p(C_k)p(\boldsymbol{x}|C_k)}{p(\boldsymbol{x})} \propto p(x_1,&hellip;,x_M,C_k) \\ = p(x_1|x_2,&hellip;,x_M,C_k)p(x_2,&hellip;,x_M,C_k) \\ = p(x_1|x_2,&hellip;,x_M,C_k)p(x_2|x_3,&hellip;,x_M,C_k)p(x_3,&hellip;,x_M,C_k) \\ = p(x_1|x_2,&hellip;,x_M,C_k)p(x_2|x_3,&hellip;,x_M,C_k)&hellip;p(x_{M-1}|x_M,C_k)p(x_M|C_k)p(C_k) \\ = p(C_k)\prod_{j=1}^{M}p(x_j|C_k)}
+$$</p>
+<p>The decision function, that maximizes the MAP probability, is the following:</p>
+<p>$$
+y(\boldsymbol{x}) = arg \ max_k \ p(C_k) \prod_{j=1}^{M}p(x_j|C_k)
+$$</p>
+<p>A class&rsquo;s prior may be calculated by assuming equiprobable classes, i.e. $p(C_k) = \frac{1}{K}$.<!-- raw HTML omitted -->
+The assumptions on distributions of features are called the event model of the Naive Bayes classifier. For discrete features, multinomial and Bernoulli distributions are popular.<!-- raw HTML omitted --></p>
+<p>When dealing with continuous data, a typical assumption is that the continuous values associated with each class are distributed according to a Gaussian distribution. For example, suppose the training data contains a continuous attribute, $x$. We first segment the data by the class, and then compute the mean and variance of $x$ in each class.</p>
+<p>Let $\mu_k$ be the mean of the values in $x$ associated with class $C_k$, and let $\sigma_k^2$ be the variance of the values in $x$ associated with class $C_k$. Suppose we have collected some observation value $v$. Then, the probability distribution of $v$ given a class $C_k$, $p(x=v|C_k)$, can be computed by plugging $v$ into the equation for a Normal distribution parameterized by $\mu_k$ and $\sigma_k^2$. That is,</p>
+<p>$$
+p(x=v|C_k) = \frac{1}{\sqrt{2\pi\sigma_k^2}}e^{-\frac{(v-\mu_k)^2}{2\sigma_k^2}}
+$$</p>
+<h2 id="non-parametric-methods">Non-parametric methods<a hidden class="anchor" aria-hidden="true" href="#non-parametric-methods">#</a></h2>
+<p>Algorithms that do not make strong assumptions about the form of the mapping function are called nonparametric machine learning algorithms. By not making assumptions, they are free to learn any functional form from the training data.</p>
+<p>&ldquo;Nonparametric methods are good when you have a lot of data and no prior knowledge, and when you don’t want to worry too much about choosing just the right features.&rdquo; <a href="http://aima.cs.berkeley.edu/">Artificial Intelligence: A Modern Approach</a></p>
+<h3 id="k-nearest-neighbor">K-nearest neighbor<a hidden class="anchor" aria-hidden="true" href="#k-nearest-neighbor">#</a></h3>
+<p>k-NN is a type of instance-based learning, or lazy learning, where the function is only approximated locally and all computation is deferred until classification. Note indeed that the training phase is practically absent, but the prediction phase is quite slow, since it must iterate over all the data points every time.</p>
+<p>For each sample to predict, the closest k samples are selected and the label belonging to the majority of them is assigned to the new sample. If k is even, a policy for breaking the ties has to be chosen, e.g. randomly.</p>
+<p>The concept of closest requires the definition of a similarity measure, which is not always trivial but that has the advantage of the possibility to use K-NN also for objects (such as graphs) for which a similarity can be defined.</p>
+<p>It is affected by the curse of dimensionality, which means that having a very high number of dimensions will decrease the performance of the predictor. The curse is caused by the fact that with high dimensions, all the points tend to have the same distance from one to another.</p>
+<p>The choice of the k parameter is very important for the performance of the algorithm and it can be chosen through cross-validation. A very low k will have high variance and low bias, while a high k will have a low variance but high bias.</p>
+<h2 id="performance-measures">Performance measures<a hidden class="anchor" aria-hidden="true" href="#performance-measures">#</a></h2>
+<p>We are at the end! To conclude this chapter we&rsquo;re going to answer the question: how can we evaluate the performance of a method?</p>
+<h3 id="confusion-matrix">Confusion matrix<a hidden class="anchor" aria-hidden="true" href="#confusion-matrix">#</a></h3>
+<p>The confusion matrix is a simple table which shows the number of points that have been correctly classified and those that have been misclassified.</p>
+
+
+<img src="/img/linear-classification/confusion-matrix.png" style="display: block; margin-left: auto; margin-right: auto;width:350px;heigth:300px">
+
+<p>From this matrix we can compute the following useful metrics:</p>
+<ul>
+<li>Accuracy: $\frac{tp+tn}{N}$, fraction of the samples correctly classified in the dataset</li>
+<li>Precision: $\frac{tp}{tp+fp}$, fraction of samples correctly classified in the positive class among the ones classified in the positive class</li>
+<li>Recall: $\frac{tp}{tp+fn}$, fraction of samples correctly classified in the positive class among the ones belonging to the positive class</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/confusion-matrix/">confusion matrix</a></li>
+      <li><a href="/tags/knn/">KNN</a></li>
+      <li><a href="/tags/linear-classification/">linear classification</a></li>
+      <li><a href="/tags/logistic-regression/">logistic regression</a></li>
+      <li><a href="/tags/naive-bayes/">naive bayes</a></li>
+      <li><a href="/tags/perceptron/">perceptron</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
