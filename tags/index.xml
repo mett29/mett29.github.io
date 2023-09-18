@@ -6,7 +6,52 @@
     <description>Recent content in Tags on Matt Log</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 25 Dec 2019 22:55:08 +0200</lastBuildDate><atom:link href="https://mett29.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 18 Sep 2023 21:46:00 +0200</lastBuildDate><atom:link href="https://mett29.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>attention</title>
+      <link>https://mett29.github.io/tags/attention/</link>
+      <pubDate>Mon, 18 Sep 2023 21:46:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/attention/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>KV cache</title>
+      <link>https://mett29.github.io/tags/kv-cache/</link>
+      <pubDate>Mon, 18 Sep 2023 21:46:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/kv-cache/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>LLM</title>
+      <link>https://mett29.github.io/tags/llm/</link>
+      <pubDate>Mon, 18 Sep 2023 21:46:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/llm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>transformer</title>
+      <link>https://mett29.github.io/tags/transformer/</link>
+      <pubDate>Mon, 18 Sep 2023 21:46:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/transformer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>transformers</title>
+      <link>https://mett29.github.io/tags/transformers/</link>
+      <pubDate>Mon, 18 Sep 2023 21:46:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/transformers/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>CBOW</title>
       <link>https://mett29.github.io/tags/cbow/</link>
@@ -44,15 +89,6 @@
     </item>
     
     <item>
-      <title>attention</title>
-      <link>https://mett29.github.io/tags/attention/</link>
-      <pubDate>Mon, 23 Dec 2019 22:55:08 +0200</pubDate>
-      
-      <guid>https://mett29.github.io/tags/attention/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>neural turing machine</title>
       <link>https://mett29.github.io/tags/neural-turing-machine/</link>
       <pubDate>Mon, 23 Dec 2019 22:55:08 +0200</pubDate>
@@ -67,15 +103,6 @@
       <pubDate>Mon, 23 Dec 2019 22:55:08 +0200</pubDate>
       
       <guid>https://mett29.github.io/tags/seq2seq/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>transformer</title>
-      <link>https://mett29.github.io/tags/transformer/</link>
-      <pubDate>Mon, 23 Dec 2019 22:55:08 +0200</pubDate>
-      
-      <guid>https://mett29.github.io/tags/transformer/</guid>
       <description></description>
     </item>
     
