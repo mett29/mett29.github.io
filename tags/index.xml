@@ -6,7 +6,79 @@
     <description>Recent content in Tags on Matt Log</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 18 Sep 2023 21:46:00 +0200</lastBuildDate><atom:link href="https://mett29.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 25 Sep 2023 21:09:00 +0200</lastBuildDate><atom:link href="https://mett29.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>deep learning</title>
+      <link>https://mett29.github.io/tags/deep-learning/</link>
+      <pubDate>Mon, 25 Sep 2023 21:09:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/deep-learning/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>floating point</title>
+      <link>https://mett29.github.io/tags/floating-point/</link>
+      <pubDate>Mon, 25 Sep 2023 21:09:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/floating-point/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>post-training quantization</title>
+      <link>https://mett29.github.io/tags/post-training-quantization/</link>
+      <pubDate>Mon, 25 Sep 2023 21:09:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/post-training-quantization/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>precision</title>
+      <link>https://mett29.github.io/tags/precision/</link>
+      <pubDate>Mon, 25 Sep 2023 21:09:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/precision/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>PTQ</title>
+      <link>https://mett29.github.io/tags/ptq/</link>
+      <pubDate>Mon, 25 Sep 2023 21:09:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/ptq/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>QAT</title>
+      <link>https://mett29.github.io/tags/qat/</link>
+      <pubDate>Mon, 25 Sep 2023 21:09:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/qat/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>quantization</title>
+      <link>https://mett29.github.io/tags/quantization/</link>
+      <pubDate>Mon, 25 Sep 2023 21:09:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/quantization/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>quantization aware training</title>
+      <link>https://mett29.github.io/tags/quantization-aware-training/</link>
+      <pubDate>Mon, 25 Sep 2023 21:09:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/tags/quantization-aware-training/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>attention</title>
       <link>https://mett29.github.io/tags/attention/</link>

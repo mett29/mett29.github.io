@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Quantization in Deep Learning | Matt Log</title>
+<meta name="keywords" content="quantization, post-training quantization, PTQ, quantization aware training, QAT, deep learning, floating point, precision">
+<meta name="description" content="In recent years deep learning models have become huge, reaching hundreds of billions of parameters. Hence the need to reduce their size. Of course, there was the need to accomplish this task without resulting in a reduced accuracy. Enters quantization.
+Background As you might know, deep learning models eat numbers, both during training and inference. When the task has to do with images, we just note that images are nothing more than matrices of pixels, so we&rsquo;re already good to go.">
+<meta name="author" content="">
+<link rel="canonical" href="https://mett29.github.io/posts/quantization/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.0f21954db480b5bf5a45ab9ac4b9a7141baaef4db07466e008890636dc132e5d.css" integrity="sha256-DyGVTbSAtb9aRauaxLmnFBuq702wdGbgCIkGNtwTLl0=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://mett29.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://mett29.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://mett29.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://mett29.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://mett29.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><meta property="og:title" content="Quantization in Deep Learning" />
+<meta property="og:description" content="In recent years deep learning models have become huge, reaching hundreds of billions of parameters. Hence the need to reduce their size. Of course, there was the need to accomplish this task without resulting in a reduced accuracy. Enters quantization.
+Background As you might know, deep learning models eat numbers, both during training and inference. When the task has to do with images, we just note that images are nothing more than matrices of pixels, so we&rsquo;re already good to go." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://mett29.github.io/posts/quantization/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-25T21:09:00+02:00" />
+<meta property="article:modified_time" content="2023-09-25T21:09:00+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Quantization in Deep Learning"/>
+<meta name="twitter:description" content="In recent years deep learning models have become huge, reaching hundreds of billions of parameters. Hence the need to reduce their size. Of course, there was the need to accomplish this task without resulting in a reduced accuracy. Enters quantization.
+Background As you might know, deep learning models eat numbers, both during training and inference. When the task has to do with images, we just note that images are nothing more than matrices of pixels, so we&rsquo;re already good to go."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Quantization in Deep Learning",
+      "item": "https://mett29.github.io/posts/quantization/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Quantization in Deep Learning",
+  "name": "Quantization in Deep Learning",
+  "description": "In recent years deep learning models have become huge, reaching hundreds of billions of parameters. Hence the need to reduce their size. Of course, there was the need to accomplish this task without resulting in a reduced accuracy. Enters quantization.\nBackground As you might know, deep learning models eat numbers, both during training and inference. When the task has to do with images, we just note that images are nothing more than matrices of pixels, so we\u0026rsquo;re already good to go.",
+  "keywords": [
+    "quantization", "post-training quantization", "PTQ", "quantization aware training", "QAT", "deep learning", "floating point", "precision"
+  ],
+  "articleBody": "In recent years deep learning models have become huge, reaching hundreds of billions of parameters. Hence the need to reduce their size. Of course, there was the need to accomplish this task without resulting in a reduced accuracy. Enters quantization.\nBackground As you might know, deep learning models eat numbers, both during training and inference. When the task has to do with images, we just note that images are nothing more than matrices of pixels, so we’re already good to go. When we have to manage text, things get a little tricky, but tokenization and embedding techniques can come to the aid.\nThe point is: at the end we always have numbers. More precisely, floating-point numbers.\nFloating-point numbers are meant to represent real numbers. A floating-point number is typically indicated with a specific notation:\n$$ s \\times b^e $$\n $s$ is the significand (also called fraction, mantissa, coefficient, argument etc. just to confuse our mind), whose length determines the precision to which numbers can be represented $b$ is the base (also called radix) $e$ is the exponent (one name here, as far as I know)  Why are they called “floating-point” numbers? The reason is that the radix point, i.e. the symbol that separates the integer part of a value from its fractional part, can “float” in any position according to the exponent.\nTwo important notes:\n When you use a fixed number of bits (as in our case) there is a limit on the set of numbers that you can represent. In any range of real numbers, no matter how small it is, there are infinite numbers, while we can represent at most $2^n$ numbers Although there are ways to speed it up, floating number arithmetic is much less efficient than integer arithmetic  Floating-point numbers in Deep Learning The two most commonly used floating-point representations in deep learning are 32-bit (FP32) and 16-bit (FP16) floats. There are also double precision formats such as float64 (FP64), but they are not typically used since as you can imagine they allow for much more accurate results but at the cost of greater computational power, memory usage, and data transfer.\nFP32 representation is called single precision and as the name suggests it uses 32 bits distributed as follows:\n 1 sign bit, which is 0 for positive numbers and 1 for negative numbers 8 bits represent the exponent 23 bits represent the significand  FP16 representation is called half-precision and it uses 16 bits (half of the bits):\n 1 sign bit, which is 0 for positive numbers and 1 for negative numbers 5 bits represent the exponent 10 bits represent the significand  Quantization Now that we have seen a bit of theoretical background, it would be much easier to understand quantization.\nThe idea is very simple: reduce the model size by converting high-precision floating-point representation to low-precision floating-point or even integer representations. Empirically, it has been shown that even using the simple 8-bit (INT8) representation the accuracy of the model could not be highly affected, especially if weighted with the fact that we’re gaining a lot in terms of performance.\nIs it that easy though?\nNot really, in order to reach a successful quantization we need to consider other aspects:\n it depends on the model we’re using it typically requires extensive fine-tuning it can in fact reduce the model accuracy in a significant way, especially if we go from a dynamic FP32 range to a range of 256 values as in the case of INT8 it needs to be supported by the hardware we’re using  Calibration In practice, when we quantize weights/activations we are essentially multiplying the floating point value by some scale factor and rounding the result to a whole number.\nLet’s suppose we want to go from FP32 to INT8. As we know, only 256 values can be represented in INT8. If $[a, b]$ is our FP32 range, we need to project it to the INT8 subspace.\nIf $x$ is our floating-point number, the quantized version becomes: $$ x_q = \\text{clip}(\\text{round}(x/S + z), \\text{round}(a/S + Z), \\text{round}(b/S + Z)) $$ where $S$ and $Z$ are the quantization parameters:\n $S$ is the scale (FP32 value) $Z$ is called the zero-point and it is the INT8 value that corresponds to the value $0$ in the FP32 realm  You can see how $S$ and $Z$ are computed in the paper Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference.\nIn the above formula, we’re projecting our floating-point values to the signed INT8 range $[-2^{b-1}, 2^{b-1} - 1] = [-128, 127]$. However, it’s common to use a symmetric version of this scheme, meaning that we want our final range to be in the form $[-a, a]$, i.e. $[-127, 127]$ in our example. Why? The reason is that doing so leads the zero-point $Z$ to be zero, and thus we can improve performance even more by skipping addition operations.\nAt this point one could ask: how is the $[a, b]$ range calculated?\n for weights we know the range at quantization-time for activations there exist different approaches  Post-training Quantization As the name suggests, post-training quantization is applied once the model is already trained.\nPost-training Dynamic Quantization Dynamic range quantization is typically the recommended starting point because it can be easily applied without any extra effort. The model parameters are known and they are converted ahead of time and stored in INT8 form. Instead, the scale factor for activations is determined dynamically according to the data range seen at runtime.\nPyTorch documentation says that\n Arithmetic in the quantized model is done using vectorized INT8 instructions. Accumulation is typically done with INT16 or INT32 to avoid overflow. This higher precision value is scaled back to INT8 if the next layer is quantized or converted to FP32 for output.\n while Tensorflow documentation says\n The outputs are still stored using floating point so the increased speed of dynamic-range ops is less than a full fixed-point computation.\n so I guess it depends on the framework you use.\nOne drawback of this type of quantization is that it can be a bit slower than the static quantization due to the fact that we’re introducing a computational overhead.\nPost-training Static Quantization Same as above, but the range for each activation is computed at quantization-time. This means we need to run a few inference cycles. As a result, the converter requires a representative dataset to calibrate them, which can be a small subset of the training or validation data.\nQuantization-Aware Training (QAT) Until now we’ve seen how to apply quantization as a kind of post-processing technique, after the model is trained. What if we embed quantization into the training process? This is exactly what Quantization-Aware Training does.\nThis approach is similar to the static one, except for fact that the range for each activation is computed at training-time. Instead of just observing the values resulting from inference, we use their quantized version to let the model adapt to it. This typically allows the model to retain much of its original accuracy. Moreover, QAT allows for finer-grained control over the quantization process, as the kind of quantization can be set according to the layers’ sensitivity to quantization errors.\nConclusions Quantization techniqueData requirementsSize reductionAccuracypost-training dynamic range quantizationno dataup to 75%smallest accuracy losspost-training static quantizationunlabelled representative sampleup to 75%small accuracy lossquantization-aware traininglabelled training dataup to 75%smallest accuracy loss There are much more details about quantization, and as you can image in the years researchers have dug deeper and deeper trying to squeeze every drop from the rock. Moreover, each framework has its own peculiarities and features. Hence, if you want to use quantization for your project, take a look at the documentation of the tools/libraries you’re using to see what is possible and what is not.\nReferences  Floating-point Arithmetic - Wikipedia Huggingface guide The Ultimate Guide to Deep Learning Model Quantization and Quantization-Aware Training TFLite documentation PyTorch tutorials Nvidia documentation Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference  ",
+  "wordCount" : "1319",
+  "inLanguage": "en",
+  "datePublished": "2023-09-25T21:09:00+02:00",
+  "dateModified": "2023-09-25T21:09:00+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://mett29.github.io/posts/quantization/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Matt Log",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://mett29.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://mett29.github.io/" accesskey="h" title="Matt Log (Alt + H)">Matt Log</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://mett29.github.io/archive/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://mett29.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Quantization in Deep Learning
+    </h1>
+    <div class="post-meta"><span title='2023-09-25 21:09:00 +0200 CEST'>September 25, 2023</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>In recent years deep learning models have become huge, reaching hundreds of billions of parameters. Hence the need to reduce their size. Of course, there was the need to accomplish this task without resulting in a reduced accuracy. Enters quantization.</p>
+<h2 id="background">Background<a hidden class="anchor" aria-hidden="true" href="#background">#</a></h2>
+<p>As you might know, deep learning models eat numbers, both during training and inference. When the task has to do with images, we just note that images are nothing more than matrices of pixels, so we&rsquo;re already good to go. When we have to manage text, things get a little tricky, but tokenization and embedding techniques can come to the aid.</p>
+<p>The point is: at the end we always have numbers. More precisely, <strong>floating-point numbers</strong>.</p>
+<p>Floating-point numbers are meant to represent real numbers. A floating-point number is typically indicated with a specific notation:</p>
+<p>$$
+s \times b^e
+$$</p>
+<ul>
+<li>$s$ is the <strong>significand</strong> (also called fraction, mantissa, coefficient, argument etc. just to confuse our mind), whose length determines the precision to which numbers can be represented</li>
+<li>$b$ is the <strong>base</strong> (also called radix)</li>
+<li>$e$ is the <strong>exponent</strong> (one name here, as far as I know)</li>
+</ul>
+
+
+<img src="/img/quantization/floating-point-notation.svg" style="display: block; margin-left: auto; margin-right: auto; width: 300px;">
+
+<p>Why are they called &ldquo;floating-point&rdquo; numbers? The reason is that the <strong>radix point</strong>, i.e. the symbol that separates the integer part of a value from its fractional part, can &ldquo;float&rdquo; in any position according to the exponent.</p>
+<p>Two important notes:</p>
+<ul>
+<li>When you use a fixed number of bits (as in our case) there is a limit on the set of numbers that you can represent. In any range of real numbers, no matter how small it is, there are infinite numbers, while we can represent at most $2^n$ numbers</li>
+<li>Although there are ways to speed it up, floating number arithmetic is much less efficient than integer arithmetic</li>
+</ul>
+<h2 id="floating-point-numbers-in-deep-learning">Floating-point numbers in Deep Learning<a hidden class="anchor" aria-hidden="true" href="#floating-point-numbers-in-deep-learning">#</a></h2>
+<p>The two most commonly used floating-point representations in deep learning are <strong>32-bit (FP32)</strong> and <strong>16-bit (FP16)</strong> floats. There are also double precision formats such as <strong>float64 (FP64)</strong>, but they are not typically used since as you can imagine they allow for much more accurate  results but at the cost of greater computational power, memory usage, and data transfer.</p>
+<p>FP32 representation is called <strong>single precision</strong> and as the name suggests it uses 32 bits distributed as follows:</p>
+<ul>
+<li>1 sign bit, which is 0 for positive numbers and 1 for negative numbers</li>
+<li>8 bits represent the exponent</li>
+<li>23 bits represent the significand</li>
+</ul>
+<p>FP16 representation is called <strong>half-precision</strong> and it uses 16 bits (half of the bits):</p>
+<ul>
+<li>1 sign bit, which is 0 for positive numbers and 1 for negative numbers</li>
+<li>5 bits represent the exponent</li>
+<li>10 bits represent the significand</li>
+</ul>
+<h2 id="quantization">Quantization<a hidden class="anchor" aria-hidden="true" href="#quantization">#</a></h2>
+<p>Now that we have seen a bit of theoretical background, it would be much easier to understand quantization.</p>
+<p>The idea is very simple: reduce the model size by converting high-precision floating-point representation to low-precision floating-point or even integer representations. Empirically, it has been shown that even using the simple 8-bit (INT8) representation the accuracy of the model could not be highly affected, especially if weighted with the fact that we&rsquo;re gaining a lot in terms of performance.</p>
+<p>Is it that easy though?</p>
+<p>Not really, in order to reach a successful quantization we need to consider other aspects:</p>
+<ul>
+<li>it depends on the model we&rsquo;re using</li>
+<li>it typically requires extensive fine-tuning</li>
+<li>it can in fact reduce the model accuracy in a significant way, especially if we go from a dynamic FP32 range to a range of 256 values as in the case of INT8</li>
+<li>it needs to be supported by the hardware we&rsquo;re using</li>
+</ul>
+<h3 id="calibration">Calibration<a hidden class="anchor" aria-hidden="true" href="#calibration">#</a></h3>
+<p>In practice, when we quantize weights/activations we are essentially multiplying the floating point value by some scale factor and rounding the result to a whole number.</p>
+<p>Let&rsquo;s suppose we want to go from FP32 to INT8. As we know, only 256 values can be represented in INT8. If $[a, b]$ is our FP32 range, we need to project it to the INT8 subspace.</p>
+<p>If $x$ is our floating-point number, the quantized version becomes:
+$$
+x_q = \text{clip}(\text{round}(x/S + z), \text{round}(a/S + Z), \text{round}(b/S + Z))
+$$
+where $S$ and $Z$ are the quantization parameters:</p>
+<ul>
+<li>$S$ is the scale (FP32 value)</li>
+<li>$Z$ is called the <strong>zero-point</strong> and it is the INT8 value that corresponds to the value $0$ in the FP32 realm</li>
+</ul>
+<p>You can see how $S$ and $Z$ are computed in the paper <a href="https://arxiv.org/abs/1712.05877">Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference</a>.</p>
+<p>In the above formula, we&rsquo;re projecting our floating-point values to the signed INT8 range $[-2^{b-1}, 2^{b-1} - 1] = [-128, 127]$. However, it&rsquo;s common to use a <strong>symmetric</strong> version of this scheme, meaning that we want our final range to be in the form $[-a, a]$, i.e. $[-127, 127]$ in our example. Why? The reason is that doing so leads the zero-point $Z$ to be zero, and thus we can improve performance even more by skipping addition operations.</p>
+<p>At this point one could ask: how is the $[a, b]$ range calculated?</p>
+<ul>
+<li>for weights we know the range at quantization-time</li>
+<li>for activations there exist different approaches</li>
+</ul>
+<h3 id="post-training-quantization">Post-training Quantization<a hidden class="anchor" aria-hidden="true" href="#post-training-quantization">#</a></h3>
+<p>As the name suggests, <strong>post-training quantization</strong> is applied once the model is already trained.</p>
+<h4 id="post-training-dynamic-quantization">Post-training Dynamic Quantization<a hidden class="anchor" aria-hidden="true" href="#post-training-dynamic-quantization">#</a></h4>
+<p>Dynamic range quantization is typically the recommended starting point because it can be easily applied without any extra effort. The model parameters are known and they are converted ahead of time and stored in INT8 form. Instead, the scale factor for activations is determined dynamically according to the data range seen at runtime.</p>
+<p><a href="https://pytorch.org/tutorials/recipes/recipes/dynamic_quantization.html#what-is-dynamic-quantization">PyTorch documentation</a> says that</p>
+<blockquote>
+<p><em>Arithmetic in the quantized model is done using vectorized INT8 instructions. Accumulation is typically done with INT16 or INT32 to avoid overflow. This higher precision value is scaled back to INT8 if the next layer is quantized or converted to FP32 for output.</em></p>
+</blockquote>
+<p>while <a href="https://www.tensorflow.org/lite/performance/post_training_quantization?hl=en">Tensorflow documentation</a> says</p>
+<blockquote>
+<p><em>The outputs are still stored using floating point so the increased speed of dynamic-range ops is less than a full fixed-point computation.</em></p>
+</blockquote>
+<p>so I guess it depends on the framework you use.</p>
+<p>One drawback of this type of quantization is that it can be a bit slower than the static quantization due to the fact that we&rsquo;re introducing a computational overhead.</p>
+<h4 id="post-training-static-quantization">Post-training Static Quantization<a hidden class="anchor" aria-hidden="true" href="#post-training-static-quantization">#</a></h4>
+<p>Same as above, but the range for each activation is computed at quantization-time. This means we need to run a few inference cycles. As a result, the converter requires a representative dataset to calibrate them, which can be a small subset of the training or validation data.</p>
+<h3 id="quantization-aware-training-qat">Quantization-Aware Training (QAT)<a hidden class="anchor" aria-hidden="true" href="#quantization-aware-training-qat">#</a></h3>
+<p>Until now we&rsquo;ve seen how to apply quantization as a kind of post-processing technique, after the model is trained. What if we embed quantization into the training process? This is exactly what <strong>Quantization-Aware Training</strong> does.</p>
+<p>This approach is similar to the static one, except for fact that the range for each activation is computed at training-time. Instead of just observing the values resulting from inference, we use their quantized version to let the model adapt to it. This typically allows the model to retain much of its original accuracy. Moreover, QAT allows for finer-grained control over the quantization process, as the kind of quantization can be set according to the layers&rsquo; sensitivity to quantization errors.</p>
+<h2 id="conclusions">Conclusions<a hidden class="anchor" aria-hidden="true" href="#conclusions">#</a></h2>
+
+
+<table style="border-collapse:collapse;border-spacing:0" class="tg"><thead><tr><th style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Quantization technique</th><th style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Data requirements</th><th style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Size reduction</th><th style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Accuracy</th></tr></thead><tbody><tr><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">post-training dynamic range quantization</td><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">no data</td><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">up to 75%</td><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">smallest accuracy loss</td></tr><tr><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">post-training static quantization</td><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">unlabelled representative sample</td><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">up to 75%</td><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">small accuracy loss</td></tr><tr><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">quantization-aware training</td><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">labelled training data</td><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">up to 75%</td><td style="border-color:inherit;border-style:solid;border-width:1px;font-family:Arial, Helvetica, sans-serif !important;font-size:14px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">smallest accuracy loss</td></tr></tbody></table>
+
+<p>There are much more details about quantization, and as you can image in the years researchers have dug deeper and deeper trying to squeeze every drop from the rock. Moreover, each framework has its own peculiarities and features. Hence, if you want to use quantization for your project, take a look at the documentation of the tools/libraries you&rsquo;re using to see what is possible and what is not.</p>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Floating-point_arithmetic">Floating-point Arithmetic - Wikipedia</a></li>
+<li><a href="https://huggingface.co/docs/optimum/concept_guides/quantization">Huggingface guide</a></li>
+<li><a href="https://deci.ai/quantization-and-quantization-aware-training/">The Ultimate Guide to Deep Learning Model Quantization and Quantization-Aware Training</a></li>
+<li><a href="https://www.tensorflow.org/lite/performance/model_optimization?hl=en">TFLite documentation</a></li>
+<li><a href="https://pytorch.org/tutorials/recipes/recipes/dynamic_quantization.html#what-is-dynamic-quantization">PyTorch tutorials</a></li>
+<li><a href="https://docs.nvidia.com/deeplearning/tensorrt/tensorflow-quantization-toolkit/docs/docs/intro_to_quantization.html">Nvidia documentation</a></li>
+<li><a href="https://arxiv.org/abs/1712.05877">Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://mett29.github.io/tags/deep-learning/">deep learning</a></li>
+      <li><a href="https://mett29.github.io/tags/floating-point/">floating point</a></li>
+      <li><a href="https://mett29.github.io/tags/post-training-quantization/">post-training quantization</a></li>
+      <li><a href="https://mett29.github.io/tags/precision/">precision</a></li>
+      <li><a href="https://mett29.github.io/tags/ptq/">PTQ</a></li>
+      <li><a href="https://mett29.github.io/tags/qat/">QAT</a></li>
+      <li><a href="https://mett29.github.io/tags/quantization/">quantization</a></li>
+      <li><a href="https://mett29.github.io/tags/quantization-aware-training/">quantization aware training</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://mett29.github.io/">Matt Log</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

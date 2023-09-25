@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>floating point on Matt Log</title>
+    <link>https://mett29.github.io/tags/floating-point/</link>
+    <description>Recent content in floating point on Matt Log</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 25 Sep 2023 21:09:00 +0200</lastBuildDate><atom:link href="https://mett29.github.io/tags/floating-point/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Quantization in Deep Learning</title>
+      <link>https://mett29.github.io/posts/quantization/</link>
+      <pubDate>Mon, 25 Sep 2023 21:09:00 +0200</pubDate>
+      
+      <guid>https://mett29.github.io/posts/quantization/</guid>
+      <description>In recent years deep learning models have become huge, reaching hundreds of billions of parameters. Hence the need to reduce their size. Of course, there was the need to accomplish this task without resulting in a reduced accuracy. Enters quantization.
+Background As you might know, deep learning models eat numbers, both during training and inference. When the task has to do with images, we just note that images are nothing more than matrices of pixels, so we&amp;rsquo;re already good to go.</description>
+    </item>
+    
+  </channel>
+</rss>

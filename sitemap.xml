@@ -3,6 +3,66 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://mett29.github.io/tags/deep-learning/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/tags/floating-point/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/tags/post-training-quantization/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/posts/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/tags/precision/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/tags/ptq/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/tags/qat/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/tags/quantization/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/tags/quantization-aware-training/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/posts/quantization/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mett29.github.io/tags/</loc>
+    <lastmod>2023-09-25T21:09:00+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://mett29.github.io/tags/attention/</loc>
     <lastmod>2023-09-18T21:46:00+02:00</lastmod>
   </url>
@@ -14,21 +74,6 @@
   
   <url>
     <loc>https://mett29.github.io/tags/llm/</loc>
-    <lastmod>2023-09-18T21:46:00+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mett29.github.io/</loc>
-    <lastmod>2023-09-18T21:46:00+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mett29.github.io/posts/</loc>
-    <lastmod>2023-09-18T21:46:00+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mett29.github.io/tags/</loc>
     <lastmod>2023-09-18T21:46:00+02:00</lastmod>
   </url>
   
